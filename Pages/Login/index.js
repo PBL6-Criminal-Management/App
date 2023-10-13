@@ -1,5 +1,5 @@
 import React, {useContext, useState, useEffect} from 'react';
-import { Linking, View, TouchableOpacity, TextInput, ActivityIndicator, Image, Pressable } from 'react-native';
+import { Linking, View, TouchableOpacity, TextInput, ActivityIndicator, Image, Pressable, StatusBar } from 'react-native';
 import Checkbox from 'expo-checkbox';
 import styles from './style.js'
 import {CustomText} from '../Components/CustomText.js'
@@ -18,11 +18,18 @@ const Main = () => {
     useEffect(() => {
         fetchData = async () => {
             let isRememberLogin = await AsyncStorage.getItem('isRememberLogin')
+            let userInfo = await AsyncStorage.getItem('userInfo')
 
             if(isRememberLogin == null || isRememberLogin.toLowerCase() == 'false')
                 SetRememberLogin(false)
-            else
+            else{
+                if(userInfo != null){
+                    userInfo = JSON.parse(userInfo)
+                    SetUsername(userInfo.userName)
+                }
                 SetRememberLogin(true)
+            }
+                
         }
         fetchData()
     }, [])
@@ -37,7 +44,9 @@ const Main = () => {
 
     return (
         <View style={styles.container}>
-            <View style={styles.form}>            
+            <View style={styles.form}> 
+                {/*statusbar to set wifi, battery... to white*/}
+                <StatusBar barStyle="light-content" /> 
                 {
                     isLoading && (
                         <View style={styles.waitingCircle}>
@@ -58,9 +67,7 @@ const Main = () => {
                         <CustomText style={{ width: '34%' }}>
                             Tên đăng nhập:
                         </CustomText>
-                        <TextInput               
-                            key="username"
-                            name="user"
+                        <TextInput      
                             style={styles.input}
                             placeholder='Tên đăng nhập'
                             value={username}
@@ -71,9 +78,7 @@ const Main = () => {
                         <CustomText style={{ width: '34%' }}>
                             Mật khẩu:
                         </CustomText>
-                        <TextInput                        
-                            key="password"
-                            name="pwd"
+                        <TextInput   
                             style={styles.input}
                             placeholder='Mật khẩu'
                             value={password}
@@ -97,14 +102,14 @@ const Main = () => {
                             {message}
                         </CustomText>   
                     }            
-                    <View style={{flexDirection: 'row', alignSelf: 'flex-start', marginStart: '34%', paddingStart: 10}}>
+                    <Pressable style={{flexDirection: 'row', alignSelf: 'flex-start', marginStart: '34%', paddingStart: 10}} onPress={() => SetRememberLogin(!isRememberLogin)}>
                         <Checkbox
                             value={isRememberLogin}
                             onValueChange={SetRememberLogin}
                             style={{ borderColor: '#DFE0E2', borderRadius: 3 }}
                         />
                         <CustomText>{' '}Ghi nhớ đăng nhập</CustomText>
-                    </View>
+                    </Pressable>
                     <View style={{ gap: 14 }}>                    
                         <TouchableOpacity
                             onPress={
