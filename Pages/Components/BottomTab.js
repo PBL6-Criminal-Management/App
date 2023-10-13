@@ -4,7 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 
 import Home from '../Home/index'
 import Criminal from '../Criminal/index'
-import Camera from '../Camera/index'
+import FaceDetect from '../FaceDetect/index'
 import Case from '../Case/index'
 import Profile from '../Profile/index'
 import { CustomText } from "./CustomText";
@@ -77,8 +77,8 @@ const BottomTab = ({navigation}) => {
                 }}
             />
             <Tab.Screen 
-                name="Camera" 
-                component={Camera}
+                name="FaceDetect" 
+                component={FaceDetect}
                 options={{
                     tabBarIcon: () => (
                         <Image
