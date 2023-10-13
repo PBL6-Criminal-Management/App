@@ -6,22 +6,60 @@ const styles = StyleSheet.create({
       backgroundColor: 'white'
     },
     head:{
-        flex: 1.2,
-        paddingStart: 20,
-        justifyContent: 'center'
+        height: '30%',
+        backgroundColor: '#152259'
     },
-    title:{
+    content: {
+      alignSelf: 'center',
+      position: 'absolute',
+      top: '8%',
+      bottom: '31%',
+      width: '100%',
+      paddingHorizontal: 10
+    },
+    title: {
+        fontFamily: 'Be Vietnam bold',
         fontSize: 22,
-        fontStyle: 'normal',
         opacity: 1,
-        letterSpacing: 0.4
+        color: 'white'
     },
-    foot:{
-      flex: 1,
+    search:{
+      opacity: 1,
       flexDirection: 'row',
+      gap: 10,
+      backgroundColor: 'white',
+      padding: 15,
+      marginTop: 20,
+      borderRadius: 5
+    },
+    input: {
+      height: 50,
+      backgroundColor: '#DFE0E2',
+      color: 'black',
+      width: '65%',
+      borderRadius: 5,
+      padding: 10,
+      paddingStart: 35,
+      justifyContent: 'center'
+    },
+    icon: {
+      position: 'absolute',
+      left: 10,
+      width: 20,
+      height: 20
+    },
+    btnFilter:{
+      flexGrow: 1, //fill the remaining space.
+      backgroundColor: '#DFE0E2',
+      borderRadius: 5,
       alignItems: 'center',
       justifyContent: 'center',
-      gap: 14
+      paddingStart: 20,
+    },
+    body:{
+      marginTop: 30
+    },
+    scroll: {
     }
 });
 

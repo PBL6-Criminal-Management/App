@@ -95,14 +95,18 @@ export const AuthProvider = ({children}) => {
         })
     }
 
-    const logout = () => {
-        SetIsLoading(true)
+    const logout = async () => {
+        let isRememberLogin = await AsyncStorage.getItem('isRememberLogin')
+        if(isRememberLogin == null || isRememberLogin.toLowerCase() == 'false'){
+            SetIsLoading(true)
 
-        AsyncStorage.removeItem('username')
-        AsyncStorage.removeItem('userInfo')
+            AsyncStorage.removeItem('username')
+            AsyncStorage.removeItem('userInfo')
+
+            SetIsLoading(false)            
+        }        
         SetUsername('')
         SetUserInfo({})
-        SetIsLoading(false)
         // axios.post(API_URL + '/logout', 
         // {},
         // {

@@ -3,7 +3,7 @@ const styles = StyleSheet.create({
     container:{
       flex: 1,
       justifyContent: 'center',
-      backgroundColor: '#53B6ED'
+      backgroundColor: '#152259'
     },
     waitingCircle:{
       position: 'absolute',
@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
         fontSize: 45,
         fontFamily: 'Inter',
         fontStyle: 'normal',
-        color:'#53B6ED',
+        color:'#152259',
         opacity: 1,
         textAlign: 'center',
         textAlignVertical: 'center'
@@ -71,14 +71,14 @@ const styles = StyleSheet.create({
     },
     btnLogin:{
       borderRadius: 5,
-      backgroundColor: '#53B6ED',
+      backgroundColor: '#152259',
       width: 246,
       height: 56,
       alignItems: 'center',
       justifyContent: 'center'
     },
     txtLogin:{
-      color: 'black',
+      color: 'white',
       fontSize: 18,
       fontWeight: 'bold'
     },

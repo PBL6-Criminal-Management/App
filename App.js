@@ -9,7 +9,8 @@ function App() {
   let [fontsLoaded] = useFonts({
     'Inter': require('./Public/Fonts/Inter-Bold.ttf'),
     'Be Vietnam': require('./Public/Fonts/BeVietnamPro-Regular.ttf'),
-    'Be Vietnam italic': require('./Public/Fonts/BeVietnamPro-Italic.ttf')
+    'Be Vietnam italic': require('./Public/Fonts/BeVietnamPro-Italic.ttf'),
+    'Be Vietnam bold': require('./Public/Fonts/BeVietnamPro-Bold.ttf')
   })
 
   if (!fontsLoaded) {
