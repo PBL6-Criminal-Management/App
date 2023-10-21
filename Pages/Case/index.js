@@ -1,81 +1,122 @@
-import React, { useRef } from "react";
-import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
+import React, { useState, useRef } from "react";
+import {
+    View,
+    Text,
+    StyleSheet,
+    Dimensions,
+    TouchableOpacity,
+} from "react-native";
 import { Camera } from "expo-camera";
+import { PinchGestureHandler, State } from "react-native-gesture-handler";
+import { CustomText } from "../Components/CustomText.js";
 
-const ZoomableCamera = () => {
+const { width, height } = Dimensions.get("window");
+
+export default function ZoomCameraScreen() {
     const cameraRef = useRef(null);
 
-    const handleZoomIn = async () => {
-        if (cameraRef.current) {
-            const { zoom, canZoom } = await cameraRef.current.getZoomAsync();
-            if (canZoom) {
-                const newZoom = Math.min(zoom + 0.1, 1);
-                cameraRef.current.setZoomAsync(newZoom);
-            }
-        }
+    const [zoom, setZoom] = useState(0);
+    const [lastZoom, setLastZoom] = useState(0);
+
+    const baseScale = 1;
+    const [lastScale, setLastScale] = useState(1);
+
+    const [isZoomingEnded, setIsZoomingEnded] = useState(false);
+
+    //call function while zooming
+    const handleZoomEvent = (event) => {
+        const newScale = event.nativeEvent.scale;
+        const denta = newScale - lastScale;
+        const zoomDelta = denta >= 0 ? denta / 10 : denta / 3;
+        // console.log(denta >= 0 ? "phóng to" : "phóng nhỏ", "zoom Delta", zoomDelta);
+
+        const newZoom = Math.max(0, Math.min(lastZoom + zoomDelta, 1));
+        setZoom(newZoom);
+        // console.log("last zoom", lastZoom, "new zoom", newZoom);
     };
 
-    const handleZoomOut = async () => {
-        if (cameraRef.current) {
-            const { zoom, canZoom } = await cameraRef.current.getZoomAsync();
-            if (canZoom) {
-                const newZoom = Math.max(zoom - 0.1, 0);
-                cameraRef.current.setZoomAsync(newZoom);
-            }
+    //call function when release your hand from the screen
+    const handleZoomEnd = (event) => {
+        if (event.nativeEvent.oldState === State.ACTIVE) {
+            setLastZoom(zoom);
+            setLastScale(baseScale);
+            if (zoom == 0) setIsZoomingEnded(false);
+            else setIsZoomingEnded(true);
         }
     };
 
     return (
         <View style={styles.container}>
-            <Camera
-                style={styles.camera}
-                ref={cameraRef}
-                type={Camera.Constants.Type.back}
-                zoom={1}
-            />
+            {/* <TouchableOpacity
+                onPress={() => {
+                    setZoom(0);
+                    setLastZoom(0);
+                    setIsZoomingEnded(false);
+                }}
+                style={styles.zoomResetButton}
+            >
+                <CustomText style={styles.zoomResetText}>
+                    Đặt lại tỷ lệ
+                </CustomText>
+            </TouchableOpacity>
 
-            <View style={styles.zoomButtonsContainer}>
-                <TouchableOpacity
-                    onPress={handleZoomIn}
-                    style={styles.zoomButton}
-                >
-                    <Text style={styles.zoomButtonText}>Zoom In</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    onPress={handleZoomOut}
-                    style={styles.zoomButton}
-                >
-                    <Text style={styles.zoomButtonText}>Zoom Out</Text>
-                </TouchableOpacity>
-            </View>
+            <TouchableOpacity
+                // onPress={async () => {
+                //     if (checkLogic())
+                //         SetMessage(
+                //             await login(username, password, isRememberLogin)
+                //         );
+                // }}
+                style={styles.btnLogin}
+            >
+                <CustomText style={styles.txtLogin}>Đăng nhập</CustomText>
+            </TouchableOpacity> */}
         </View>
     );
-};
+}
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        backgroundColor: "#000",
+    },
+    center: {
+        // flex: 4,
+    },
+    cameraContainer: {
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
     },
     camera: {
-        flex: 1,
+        flex: 0.5,
     },
-    zoomButtonsContainer: {
-        flexDirection: "row",
-        justifyContent: "center",
+    zoomResetButton: {
+        marginTop: 200,
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        borderRadius: 8,
         alignItems: "center",
-        marginTop: 10,
+        // width: "50%",
+        width: 100,
+        borderWidth: 1,
+        backgroundColor: "white",
     },
-    zoomButton: {
-        paddingHorizontal: 20,
-        paddingVertical: 10,
-        backgroundColor: "#007AFF",
-        marginHorizontal: 10,
-        borderRadius: 5,
-    },
-    zoomButtonText: {
-        color: "white",
+    zoomResetText: {
         fontSize: 16,
+        color: "#000",
+    },
+    btnLogin: {
+        borderRadius: 5,
+        backgroundColor: "#152259",
+        // width: 246,
+        height: 56,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    txtLogin: {
+        color: "white",
+        fontSize: 18,
+        fontWeight: "bold",
     },
 });
-
-export default ZoomableCamera;

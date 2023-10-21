@@ -28,12 +28,22 @@ const styles = StyleSheet.create({
     },
     centerImage: {
         flex: 4,
-        justifyContent: "center",
-        borderWidth: 1,
     },
     camera: {
         flex: 1,
+    },
+    zoomResetButton: {
+        width: 150,
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        borderRadius: 8,
         alignItems: "center",
+        alignSelf: "center",
+        overflow: "hidden",
+        backgroundColor: "white",
+    },
+    zoomResetText: {
+        color: "black",
     },
     foot: {
         flex: 1,
@@ -45,11 +55,18 @@ const styles = StyleSheet.create({
     bodyFoot: {
         flexDirection: "row",
         alignItems: "center",
-        gap: 60,
     },
-    btnSelectImage: {},
+    btnDetectImage: {
+        flexDirection: "column",
+        gap: 5,
+        alignItems: "center",
+    },
     btnTakePhoto: {},
-    btnFlipCamera: {},
+    btnFlipCamera: {
+        flexDirection: "column",
+        gap: 5,
+        alignItems: "center",
+    },
 });
 
 export default styles;
