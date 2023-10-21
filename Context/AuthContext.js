@@ -1,40 +1,40 @@
-import React, {createContext, useEffect, useState} from 'react'
-import axios from "axios"
-import { API_URL } from '../Utils/constants.js'
-import AsyncStorage from '@react-native-async-storage/async-storage'
+import React, { createContext, useEffect, useState } from "react";
+import axios from "axios";
+import { API_URL } from "../Utils/constants.js";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export const AuthContext = createContext()
+export const AuthContext = createContext();
 
-export const AuthProvider = ({children}) => {
-    const [username, SetUsername] = useState('')
-    const [userInfo, SetUserInfo] = useState({})
-    const [isLoading, SetIsLoading] = useState(false)
-    const [splashLoading, SetSplashLoading] = useState(false)
+export const AuthProvider = ({ children }) => {
+    const [username, SetUsername] = useState("");
+    const [userInfo, SetUserInfo] = useState({});
+    const [isLoading, SetIsLoading] = useState(false);
+    const [splashLoading, SetSplashLoading] = useState(false);
 
     const register = (username, password) => {
-        SetIsLoading(true)
+        SetIsLoading(true);
         axios
-            .post(API_URL + 'auth/register', {
+            .post(API_URL + "auth/register", {
                 username: username,
-                password: password
+                password: password,
             })
-            .then(res => {
-                let userInfo = res.data
-                SetUsername(username)
-                SetUserInfo(userInfo)
-                AsyncStorage.setItem('username', username)
-                AsyncStorage.setItem('userInfo', JSON.stringify(userInfo))
-                SetIsLoading(false)
-                console.log(userInfo)
+            .then((res) => {
+                let userInfo = res.data;
+                SetUsername(username);
+                SetUserInfo(userInfo);
+                AsyncStorage.setItem("username", username);
+                AsyncStorage.setItem("userInfo", JSON.stringify(userInfo));
+                SetIsLoading(false);
+                console.log(userInfo);
             })
-            .catch(e => {
-                console.log(`register error ${e}`)
-                SetIsLoading(false)
-            })
-    }
+            .catch((e) => {
+                console.log(`register error ${e}`);
+                SetIsLoading(false);
+            });
+    };
 
     const login = (username, password, isRememberLogin) => {
-        SetIsLoading(true)
+        SetIsLoading(true);
 
         // axios
         //     .post(API_URL + 'identity/token', {
@@ -53,61 +53,66 @@ export const AuthProvider = ({children}) => {
         //         SetIsLoading(false)
         //     })
 
-        return fetch(API_URL + 'identity/token', {
-            method: 'POST', // *GET, POST, PUT, DELETE, etc.
-            mode: 'cors', // no-cors, cors, *same-origin
-            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-            credentials: 'same-origin', // include, *same-origin, omit
+        return fetch(API_URL + "identity/token", {
+            method: "POST", // *GET, POST, PUT, DELETE, etc.
+            mode: "cors", // no-cors, cors, *same-origin
+            cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+            credentials: "same-origin", // include, *same-origin, omit
             headers: {
-                'Content-Type': 'application/json',
+                "Content-Type": "application/json",
                 // 'Content-Type': 'application/x-www-form-urlencoded',
             },
-            redirect: 'follow', // manual, *follow, error
-            referrer: 'no-referrer', // no-referrer, *client
-            body: JSON.stringify({userName: username, password: password}), // body data type must match "Content-Type" header
+            redirect: "follow", // manual, *follow, error
+            referrer: "no-referrer", // no-referrer, *client
+            body: JSON.stringify({ userName: username, password: password }), // body data type must match "Content-Type" header
         })
-        .then(res => res.json())
-        .then(res => {
-            var message = ''
-            if(res.succeeded){
-                // let userInfo = {"access_token":res.token, "refresh_token":res.refreshToken}
-                // let userInfo = new UserToken(res.data)
-                let userInfo = res.data
-                console.log(userInfo)
-                message = "Đăng nhập thành công!"
-                SetUsername(username)
-                SetUserInfo(userInfo)
-                AsyncStorage.setItem('username', username)
-                AsyncStorage.setItem('userInfo', JSON.stringify(userInfo))
-                AsyncStorage.setItem('isRememberLogin', isRememberLogin.toString())
-            }
-            else{
-                // console.log(res.messages)
-                message = res.messages
-            }
-            SetIsLoading(false)
-            return message
-        })
-        .catch(e => {
-            console.log(`login error: ${e}`)
-            SetIsLoading(false)
-            return e
-        })
-    }
+            .then((res) => res.json())
+            .then((res) => {
+                var message = "";
+                if (res.succeeded) {
+                    // let userInfo = {"access_token":res.token, "refresh_token":res.refreshToken}
+                    // let userInfo = new UserToken(res.data)
+                    let userInfo = res.data;
+                    console.log(userInfo);
+                    message = "Đăng nhập thành công!";
+                    SetUsername(username);
+                    SetUserInfo(userInfo);
+                    AsyncStorage.setItem("username", username);
+                    AsyncStorage.setItem("userInfo", JSON.stringify(userInfo));
+                    AsyncStorage.setItem(
+                        "isRememberLogin",
+                        isRememberLogin.toString()
+                    );
+                } else {
+                    // console.log(res.messages)
+                    message = res.messages;
+                }
+                SetIsLoading(false);
+                return message;
+            })
+            .catch((e) => {
+                console.log(`login error: ${e}`);
+                SetIsLoading(false);
+                return "Có lỗi xảy ra (lỗi server)";
+            });
+    };
 
     const logout = async () => {
-        let isRememberLogin = await AsyncStorage.getItem('isRememberLogin')
-        if(isRememberLogin == null || isRememberLogin.toLowerCase() == 'false'){
-            SetIsLoading(true)
+        let isRememberLogin = await AsyncStorage.getItem("isRememberLogin");
+        if (
+            isRememberLogin == null ||
+            isRememberLogin.toLowerCase() == "false"
+        ) {
+            SetIsLoading(true);
 
-            AsyncStorage.removeItem('username')
-            AsyncStorage.removeItem('userInfo')
+            AsyncStorage.removeItem("username");
 
-            SetIsLoading(false)            
-        }        
-        SetUsername('')
-        SetUserInfo({})
-        // axios.post(API_URL + '/logout', 
+            SetIsLoading(false);
+        }
+        AsyncStorage.removeItem("userInfo");
+        SetUsername("");
+        SetUserInfo({});
+        // axios.post(API_URL + '/logout',
         // {},
         // {
         //     headers: {Authorization: `Bearer ${userInfo.access_token}`},
@@ -121,41 +126,46 @@ export const AuthProvider = ({children}) => {
         //     console.log(`logout error: ${e}`)
         //     SetIsLoading(false)
         // })
-    }
+    };
     const isLoggedIn = async () => {
-        try{
-            let isRememberLogin = await AsyncStorage.getItem('isRememberLogin')
-            if(isRememberLogin == null || isRememberLogin.toLowerCase() == 'false')
-                return
+        try {
+            let isRememberLogin = await AsyncStorage.getItem("isRememberLogin");
+            if (
+                isRememberLogin == null ||
+                isRememberLogin.toLowerCase() == "false"
+            )
+                return;
 
-            SetSplashLoading(true)
+            SetSplashLoading(true);
 
-            let userInfo = await AsyncStorage.getItem('userInfo')
-            userInfo = JSON.parse(userInfo)
-            
-            let username = await AsyncStorage.getItem('username')
-
-            if(userInfo){
-                SetUserInfo(userInfo)
-            }
-            if(username){
-                SetUsername(username)
+            let username = await AsyncStorage.getItem("username");
+            if (username) {
+                SetUsername(username);
             }
 
-            SetSplashLoading(false)
+            let userInfo = await AsyncStorage.getItem("userInfo");
+            if (userInfo == null) {
+                SetSplashLoading(false);
+                return;
+            }
+            userInfo = JSON.parse(userInfo);
+            if (userInfo) {
+                SetUserInfo(userInfo);
+            }
 
-        }catch(e){
-            SetSplashLoading(false)
-            console.log('check logged in error: ', e)
+            SetSplashLoading(false);
+        } catch (e) {
+            SetSplashLoading(false);
+            console.log("check logged in error: ", e);
         }
-    }
+    };
 
     useEffect(() => {
-        isLoggedIn()
-    }, [])
+        isLoggedIn();
+    }, []);
 
     return (
-        <AuthContext.Provider 
+        <AuthContext.Provider
             value={{
                 isLoading,
                 username,
@@ -163,9 +173,10 @@ export const AuthProvider = ({children}) => {
                 splashLoading,
                 register,
                 login,
-                logout
-            }}>
+                logout,
+            }}
+        >
             {children}
         </AuthContext.Provider>
-    )
-}
+    );
+};
