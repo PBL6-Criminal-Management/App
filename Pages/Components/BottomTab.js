@@ -2,7 +2,7 @@ import React from "react";
 import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-import Home from "../Home/index";
+import HomeTab from "../HomeTab/index";
 import Criminal from "../Criminal/index";
 import Case from "../Case/index";
 import Profile from "../Profile/index";
@@ -32,7 +32,7 @@ const BottomTab = ({ navigation }) => {
         >
             <Tab.Screen
                 name="Home"
-                component={Home}
+                component={HomeTab}
                 options={{
                     tabBarIcon: ({ focused }) => (
                         <View
