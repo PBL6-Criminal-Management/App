@@ -1,217 +1,87 @@
 import React, { useState, useEffect } from "react";
 import {
-    TextInput,
     View,
     ScrollView,
     RefreshControl,
     StatusBar,
-    TouchableOpacity,
     Image,
-    Modal,
+    TouchableOpacity,
 } from "react-native";
 import styles from "./style.js";
-import WantedElement from "../Components/WantedElement.js";
-import FilterFields from "../Components/FilterFields.js";
 import { CustomText } from "../Components/CustomText.js";
-import DropDown from "../Components/DropDown.js";
+import InformationFields from "../Components/InformationFields.js";
 
-const Home = ({ navigation }) => {
-    const [txtSearch, SetTxtSearch] = useState("");
-    const [refresh, SetRefresh] = useState(true);
-    const [modalVisible, SetModalVisible] = useState(false);
+const WantedDetail = ({ navigation }) => {
+    // Lấy từ API (get by id)
+    const wantedCriminal = {
+        fullName: "Nguyễn Thế Đăng Hoan",
+        otherName: "Xút",
+        birthday: "3/2/2002",
+        gender: true,
+        phoneNumber: "0852556258",
+        homeTown: "Quảng Nam",
+        nationality: "Việt Nam",
+        ethnicity: "Kinh",
+        religion: "Không",
+        cccd_cmnd: "206431580",
+        career_and_workplace: "Sinh viên học tại trường bách khoa DN",
+        permanent_residence: "Quảng Nam",
+        current_accommodation: "Đà Nẵng",
+        father_name: "Nguyễn Văn A",
+        father_birthday: "2/3/1970",
+        father_CCCD_CMND: "75847957824",
+        mother_name: "Trần Thị B",
+        mother_birthday: "4/6/1980",
+        mother_CCCD_CMND: "54353452454",
+        characteristics: "Có nốt ruồi ở mặt cách mũi 3cm",
+        other_information: "Không",
+        image: require("../../Public/Hoan.jpg"),
+        charge: "Trộm cắp tài sản",
+    };
 
-    const [value, setValue] = useState([]);
-
-    //now - 200 -> now (0 years old - 200 years old)
-    const [items, setItems] = useState({
-        label: Array.from({ length: 201 }, (_, i) => {
-            i + (new Date().getFullYear() - 200);
-        }),
-        value: Array.from({ length: 201 }, (_, i) => {
-            i + (new Date().getFullYear() - 200);
-        }),
-    });
-
-    const wantedList = [
-        {
-            criminalName: "Đăng Hoan",
-            image: require("../../Public/Hoan.jpg"),
-            birthday: "2002",
-            charge: "Trộm cắp tài sản",
-            characteristic: "Có nốt ruồi ở mặt cách mũi 3cm",
-            murderWeapon: "Dao",
-            wantedType: "Bình thường",
-        },
-        {
-            criminalName: "Khắc Luận",
-            image: require("../../Public/Luan.png"),
-            birthday: "2002",
-            charge: "Trộm cắp tài sản",
-            characteristic: "Có nốt ruồi ở mặt cách mũi 3cm",
-            murderWeapon: "Dao",
-            wantedType: "Nguy hiểm",
-        },
-        {
-            criminalName: "Thục Nhi",
-            image: require("../../Public/Nhi.jpg"),
-            birthday: "2002",
-            charge: "Trộm cắp tài sản",
-            characteristic: "Có nốt ruồi ở mặt cách mũi 3cm",
-            murderWeapon: "Dao",
-            wantedType: "Đặc biệt",
-        },
-        {
-            criminalName: "Thanh Nhàn",
-            image: require("../../Public/chi_Nhan.png"),
-            birthday: "2001",
-            charge: "Trộm cắp tài sản",
-            characteristic: "Có nốt ruồi ở mặt cách mũi 3cm",
-            murderWeapon: "Dao",
-            wantedType: "Nguy hiểm",
-        },
-        {
-            criminalName: "Đăng Hoan",
-            image: require("../../Public/Hoan.jpg"),
-            birthday: "2002",
-            charge: "Trộm cắp tài sản",
-            characteristic: "Có nốt ruồi ở mặt cách mũi 3cm",
-            murderWeapon: "Dao",
-            wantedType: "Bình thường",
-        },
-        {
-            criminalName: "Khắc Luận",
-            image: require("../../Public/Luan.png"),
-            birthday: "2002",
-            charge: "Trộm cắp tài sản",
-            characteristic: "Có nốt ruồi ở mặt cách mũi 3cm",
-            murderWeapon: "Dao",
-            wantedType: "Nguy hiểm",
-        },
-        {
-            criminalName: "Thục Nhi",
-            image: require("../../Public/Nhi.jpg"),
-            birthday: "2002",
-            charge: "Trộm cắp tài sản",
-            characteristic: "Có nốt ruồi ở mặt cách mũi 3cm",
-            murderWeapon: "Dao",
-            wantedType: "Đặc biệt",
-        },
-        {
-            criminalName: "Thanh Nhàn",
-            image: require("../../Public/chi_Nhan.png"),
-            birthday: "2001",
-            charge: "Trộm cắp tài sản",
-            characteristic: "Có nốt ruồi ở mặt cách mũi 3cm",
-            murderWeapon: "Dao",
-            wantedType: "Nguy hiểm",
-        },
-    ];
-    const checkLogic = () => {};
-
-    const dangerousLevels = ["Bình thường", "Nguy hiểm", "Đặc biệt"];
-    const [dangerousLevelsChecked, SetDangerousLevelsChecked] = useState([]);
+    const basicInformation = {
+        "Họ và tên": wantedCriminal.fullName,
+        "Tên khác": wantedCriminal.otherName,
+        "Ngày sinh": wantedCriminal.birthday,
+        "Giới tính": wantedCriminal.gender ? "Nam" : "Nữ",
+        "Số điện thoại": wantedCriminal.phoneNumber,
+        "Quê quán": wantedCriminal.homeTown,
+        "Quốc tịch": wantedCriminal.nationality,
+        "Dân tộc": wantedCriminal.ethnicity,
+        "Tôn giáo": wantedCriminal.religion,
+        "CCCD/CMND": wantedCriminal.cccd_cmnd,
+        "Nghề nghiệp, nơi làm việc": wantedCriminal.career_and_workplace,
+        "Nơi ĐKTT": wantedCriminal.permanent_residence,
+        "Chỗ ở hiện tại": wantedCriminal.current_accommodation,
+        "Họ và tên cha": wantedCriminal.father_name,
+        "Ngày sinh cha": wantedCriminal.father_birthday,
+        "CCCD/CMND cha": wantedCriminal.father_CCCD_CMND,
+        "Họ và tên mẹ": wantedCriminal.mother_name,
+        "Ngày sinh mẹ": wantedCriminal.mother_birthday,
+        "CCCD/CMND mẹ": wantedCriminal.mother_CCCD_CMND,
+        "Đặc điểm nhận dạng": wantedCriminal.characteristics,
+        "Thông tin khác": wantedCriminal.other_information,
+    };
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: "#F1F2F2" }]}>
             {/*statusbar to set wifi, battery... to white*/}
             <StatusBar barStyle="light-content" />
-            <View style={styles.head}></View>
-            <View style={styles.content}>
-                <CustomText style={styles.title}>Danh sách truy nã</CustomText>
-                <View style={styles.search}>
-                    <View style={styles.input}>
-                        <TextInput
-                            placeholder="Tìm kiếm"
-                            placeholderTextColor="black"
-                            underlineColorAndroid="black"
-                            value={txtSearch}
-                            onChangeText={SetTxtSearch}
-                        ></TextInput>
-                        <Image
-                            style={styles.icon}
-                            source={require("../../Public/search.png")}
-                        />
-                    </View>
-                    <View style={styles.btnFilter}>
-                        <TouchableOpacity onPress={() => SetModalVisible(true)}>
-                            <CustomText style={{ color: "black" }}>
-                                Bộ lọc
-                            </CustomText>
-                        </TouchableOpacity>
-                        <Image
-                            style={styles.icon}
-                            source={require("../../Public/filter.png")}
-                        />
-                    </View>
-                </View>
-                <Modal
-                    animationType="slide"
-                    transparent={true}
-                    visible={modalVisible}
-                    onRequestClose={() => {
-                        // Alert.alert('Modal has been closed.');
-                        SetModalVisible(!modalVisible);
-                    }}
-                >
-                    <View style={styles.modalContainer}>
-                        <View style={styles.modalView}>
-                            <View style={styles.modalHead}>
-                                <TouchableOpacity
-                                    style={styles.btnCancel}
-                                    onPress={() => SetModalVisible(false)}
-                                >
-                                    <Image
-                                        source={require("../../Public/darkCancel.png")}
-                                    />
-                                </TouchableOpacity>
-                                <CustomText style={styles.modalTitle}>
-                                    Bộ lọc
-                                </CustomText>
-                                <TouchableOpacity
-                                    style={styles.btnCancel}
-                                    onPress={() => navigation.goBack()}
-                                >
-                                    <CustomText
-                                        style={{
-                                            color: "#53B6ED",
-                                        }}
-                                    >
-                                        Cài lại
-                                    </CustomText>
-                                </TouchableOpacity>
-                            </View>
-                            <FilterFields
-                                title="Mức độ nguy hiểm"
-                                listItems={dangerousLevels}
-                                SetListItemsChecked={SetDangerousLevelsChecked}
-                            />
-                            <DropDown
-                                title="Năm sinh"
-                                placeholder="Chọn năm sinh"
-                                value={value}
-                                items={items}
-                                setValue={setValue}
-                                setItems={setItems}
-                            />
-                            <TouchableOpacity
-                                // onPress={() =>
-                                //     handleConfirmWrong(props.item._id)
-                                // }
-                                style={styles.btnAgree}
-                            >
-                                <CustomText
-                                    style={{
-                                        color: "white",
-                                        fontFamily: "Be Vietnam bold",
-                                    }}
-                                >
-                                    Chấp nhận
-                                </CustomText>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                </Modal>
-                <View style={styles.body}>
+            <View style={[styles.head, { height: 350 }]}></View>
+            <View
+                style={[styles.content, { bottom: 400, alignItems: "center" }]}
+            >
+                <Image
+                    style={styles.avatar}
+                    source={wantedCriminal.image}
+                ></Image>
+                <CustomText style={styles.title}>
+                    {wantedCriminal.fullName}
+                </CustomText>
+                <CustomText style={styles.note}>
+                    {wantedCriminal.charge}
+                </CustomText>
+                <View style={{ marginTop: 26 }}>
                     <ScrollView
                         style={styles.scroll}
                         // refreshControl={
@@ -221,18 +91,33 @@ const Home = ({ navigation }) => {
                         //     />
                         // }
                     >
-                        {wantedList.map((item, index) => {
-                            const Max_Image_Number = 20;
-                            if (index < Max_Image_Number)
-                                return (
-                                    <WantedElement key={index} item={item} />
-                                );
-                        })}
+                        <InformationFields
+                            title="Thông tin cơ bản"
+                            listItems={basicInformation}
+                        />
+                        <TouchableOpacity
+                            // onPress={() =>
+                            //     handleConfirmWrong(props.item._id)
+                            // }
+                            style={[
+                                styles.btnAgree,
+                                { width: "100%", marginTop: 20 },
+                            ]}
+                        >
+                            <CustomText
+                                style={{
+                                    color: "white",
+                                    fontFamily: "Be Vietnam bold",
+                                }}
+                            >
+                                Báo cáo tội phạm
+                            </CustomText>
+                        </TouchableOpacity>
                     </ScrollView>
                 </View>
             </View>
         </View>
     );
 };
-export default Home;
+export default WantedDetail;
 // họ tên, đơn vị ra quyết định, hktt, tội danh đặc điêm

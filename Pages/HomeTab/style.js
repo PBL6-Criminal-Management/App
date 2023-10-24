@@ -6,14 +6,19 @@ const styles = StyleSheet.create({
         backgroundColor: "white",
     },
     head: {
-        height: 240,
         backgroundColor: "#152259",
     },
+    avatar: {
+        width: 180,
+        height: 180,
+        marginBottom: 20,
+        borderWidth: 2,
+        borderRadius: 100,
+        borderColor: "white",
+    },
     content: {
-        alignSelf: "center",
         position: "absolute",
         top: 50,
-        bottom: 250,
         width: "100%",
         paddingHorizontal: 10,
     },
@@ -22,6 +27,11 @@ const styles = StyleSheet.create({
         fontSize: 22,
         opacity: 1,
         color: "white",
+    },
+    note: {
+        fontSize: 17,
+        opacity: 1,
+        color: "yellow",
     },
     search: {
         opacity: 1,

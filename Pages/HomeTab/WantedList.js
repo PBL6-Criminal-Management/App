@@ -15,7 +15,7 @@ import FilterFields from "../Components/FilterFields.js";
 import { CustomText } from "../Components/CustomText.js";
 import DropDown from "../Components/DropDown.js";
 
-const Home = ({ navigation }) => {
+const WantedList = ({ navigation }) => {
     const [txtSearch, SetTxtSearch] = useState("");
     const [refresh, SetRefresh] = useState(true);
     const [modalVisible, SetModalVisible] = useState(false);
@@ -122,14 +122,17 @@ const Home = ({ navigation }) => {
         );
         SetValue([]);
     };
+    const goToWantedDetail = () => {
+        navigation.navigate("WantedDetail");
+    };
     const checkLogic = () => {};
 
     return (
         <View style={styles.container}>
             {/*statusbar to set wifi, battery... to white*/}
             <StatusBar barStyle="light-content" />
-            <View style={styles.head}></View>
-            <View style={styles.content}>
+            <View style={[styles.head, { height: 240 }]}></View>
+            <View style={[styles.content, { bottom: 250 }]}>
                 <CustomText style={styles.title}>Danh sách truy nã</CustomText>
                 <View style={styles.search}>
                     <View style={styles.input}>
@@ -236,7 +239,11 @@ const Home = ({ navigation }) => {
                             const Max_Image_Number = 20;
                             if (index < Max_Image_Number)
                                 return (
-                                    <WantedElement key={index} item={item} />
+                                    <WantedElement
+                                        key={index}
+                                        item={item}
+                                        onPress={goToWantedDetail}
+                                    />
                                 );
                         })}
                     </ScrollView>
@@ -245,5 +252,5 @@ const Home = ({ navigation }) => {
         </View>
     );
 };
-export default Home;
+export default WantedList;
 // họ tên, đơn vị ra quyết định, hktt, tội danh đặc điêm
