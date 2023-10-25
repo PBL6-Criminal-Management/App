@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
     TextInput,
     View,
@@ -6,6 +6,7 @@ import {
     RefreshControl,
     StatusBar,
     TouchableOpacity,
+    Pressable,
     Image,
     Modal,
 } from "react-native";
@@ -15,7 +16,7 @@ import FilterFields from "../Components/FilterFields.js";
 import { CustomText } from "../Components/CustomText.js";
 import DropDown from "../Components/DropDown.js";
 
-const Home = ({ navigation }) => {
+const WantedList = ({ navigation }) => {
     const [txtSearch, SetTxtSearch] = useState("");
     const [refresh, SetRefresh] = useState(true);
     const [modalVisible, SetModalVisible] = useState(false);
@@ -122,40 +123,50 @@ const Home = ({ navigation }) => {
         );
         SetValue([]);
     };
+    const goToWantedDetail = () => {
+        navigation.navigate("WantedDetail", (params = { criminalId: 1 }));
+    };
+
+    const inputRef = useRef(null);
     const checkLogic = () => {};
 
     return (
         <View style={styles.container}>
             {/*statusbar to set wifi, battery... to white*/}
             <StatusBar barStyle="light-content" />
-            <View style={styles.head}></View>
-            <View style={styles.content}>
+            <View style={[styles.head, { height: 240 }]}></View>
+            <View style={[styles.content, { bottom: 250 }]}>
                 <CustomText style={styles.title}>Danh sách truy nã</CustomText>
                 <View style={styles.search}>
-                    <View style={styles.input}>
+                    <Pressable
+                        onPress={() => inputRef.current.focus()}
+                        style={styles.input}
+                    >
+                        <Image
+                            style={styles.icon}
+                            source={require("../../Public/search.png")}
+                        />
                         <TextInput
+                            ref={inputRef}
                             placeholder="Tìm kiếm"
                             placeholderTextColor="black"
                             underlineColorAndroid="black"
                             value={txtSearch}
                             onChangeText={SetTxtSearch}
                         ></TextInput>
-                        <Image
-                            style={styles.icon}
-                            source={require("../../Public/search.png")}
-                        />
-                    </View>
-                    <View style={styles.btnFilter}>
-                        <TouchableOpacity onPress={() => SetModalVisible(true)}>
-                            <CustomText style={{ color: "black" }}>
-                                Bộ lọc
-                            </CustomText>
-                        </TouchableOpacity>
+                    </Pressable>
+                    <TouchableOpacity
+                        style={styles.btnFilter}
+                        onPress={() => SetModalVisible(true)}
+                    >
                         <Image
                             style={styles.icon}
                             source={require("../../Public/filter.png")}
                         />
-                    </View>
+                        <CustomText style={{ color: "black" }}>
+                            Bộ lọc
+                        </CustomText>
+                    </TouchableOpacity>
                 </View>
                 <Modal
                     animationType="slide"
@@ -236,7 +247,11 @@ const Home = ({ navigation }) => {
                             const Max_Image_Number = 20;
                             if (index < Max_Image_Number)
                                 return (
-                                    <WantedElement key={index} item={item} />
+                                    <WantedElement
+                                        key={index}
+                                        item={item}
+                                        onPress={goToWantedDetail}
+                                    />
                                 );
                         })}
                     </ScrollView>
@@ -245,5 +260,5 @@ const Home = ({ navigation }) => {
         </View>
     );
 };
-export default Home;
+export default WantedList;
 // họ tên, đơn vị ra quyết định, hktt, tội danh đặc điêm

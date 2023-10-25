@@ -1,43 +1,37 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Pressable, Image } from "react-native";
-import Checkbox from "expo-checkbox";
+import { View, StyleSheet, Image, Pressable } from "react-native";
 
 import { CustomText } from "./CustomText.js";
 
-const FilterFields = (props) => {
-    const [listItemsChecked, SetListItemsChecked] = useState([]);
+const InformationFields = (props) => {
     const [isDropDown, SetIsDropDown] = useState(true);
     const onHeadPressed = () => {
         SetIsDropDown(!isDropDown);
     };
-    const onCheck = (isChecked, checkedValue) => {
-        if (isChecked) SetListItemsChecked([...listItemsChecked, checkedValue]);
-        else
-            SetListItemsChecked(
-                listItemsChecked.filter((item) => item != checkedValue)
-            );
-    };
-    //set in useEffect to ensure that listItemChecked done re-render
-    useEffect(() => {
-        props.SetListItemsChecked(listItemsChecked);
-    }, [listItemsChecked]);
 
     return (
         <View style={styles.container}>
-            <Pressable onPress={onHeadPressed}>
+            <Pressable onPress={onHeadPressed} style={{ width: "100%" }}>
                 <View
                     style={{
                         flexDirection: "row",
-                        width: "100%",
-                        // overflow: "visible",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        backgroundColor: "#384664",
+                        height: 56,
+                        padding: 20,
+                        borderTopLeftRadius: 5,
+                        borderTopRightRadius: 5,
+                        borderBottomLeftRadius: !isDropDown ? 5 : 0,
+                        borderBottomRightRadius: !isDropDown ? 5 : 0,
                     }}
                 >
                     <CustomText
                         style={{
-                            width: "70%",
                             fontFamily: "Be Vietnam bold",
                             color: "white",
                             backgroundColor: "#384664",
+                            height: 20,
                         }}
                     >
                         {props.title}
@@ -48,24 +42,20 @@ const FilterFields = (props) => {
                                 ? require("../../Public/upArrow.png")
                                 : require("../../Public/downArrow.png")
                         }
-                        // style={{tintColor: 'red'}}
+                        style={{ tintColor: "white" }}
                     />
                 </View>
             </Pressable>
-            {props.listItems.map((item, index) => {
-                const [isChecked, SetIsChecked] = useState(false);
-                const onPress = () => {
-                    SetIsChecked(!isChecked);
-                    onCheck(!isChecked, item);
-                };
-
-                return (
-                    isDropDown && (
-                        <View key={index} style={styles.item} onPress={onPress}>
+            <View style={styles.body}>
+                {Object.keys(props.listItems).map((_, index) => {
+                    return (
+                        isDropDown && (
                             <View
+                                key={index}
                                 style={{
-                                    flexDirection: "row",
-                                    width: "100%",
+                                    flexDirection: "column",
+                                    paddingBottom: 20,
+                                    paddingTop: index == 0 ? 18 : 0,
                                 }}
                             >
                                 <CustomText
@@ -74,14 +64,16 @@ const FilterFields = (props) => {
                                         color: "#08354F",
                                     }}
                                 >
-                                    {item.field}
+                                    {Object.keys(props.listItems)[index]}:{" "}
                                 </CustomText>
-                                <CustomText style={{}}>{item.value}</CustomText>
+                                <CustomText style={{}}>
+                                    {Object.values(props.listItems)[index]}
+                                </CustomText>
                             </View>
-                        </View>
-                    )
-                );
-            })}
+                        )
+                    );
+                })}
+            </View>
         </View>
     );
 };
@@ -91,14 +83,16 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        gap: 20,
-        padding: 20,
+        marginBottom: 10,
     },
-    item: {
+    body: {
         flexDirection: "column",
-        gap: 10,
-        paddingTop: 10,
+        width: "100%",
+        paddingStart: 32,
+        backgroundColor: "white",
+        borderBottomLeftRadius: 5,
+        borderBottomRightRadius: 5,
     },
 });
 
-export default FilterFields;
+export default InformationFields;
