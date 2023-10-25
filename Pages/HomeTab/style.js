@@ -56,6 +56,52 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         paddingStart: 20,
     },
+    modalContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    modalView: {
+        alignItems: "center",
+        backgroundColor: "white",
+        borderRadius: 10,
+        paddingHorizontal: 5,
+        paddingVertical: 20,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+    modalHead: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 60,
+    },
+    btnCancel: {
+        padding: 5,
+    },
+    modalTitle: {
+        fontSize: 15,
+    },
+    modalText: {
+        marginBottom: 15,
+        textAlign: "center",
+        fontSize: 15,
+    },
+    btnAgree: {
+        width: 200,
+        height: 56,
+        backgroundColor: "#152259",
+        color: "white",
+        alignItems: "center",
+        justifyContent: "center",
+        borderRadius: 5,
+    },
     body: {
         marginTop: 30,
     },

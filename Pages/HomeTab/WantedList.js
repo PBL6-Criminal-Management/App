@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     TextInput,
     View,
@@ -7,15 +7,32 @@ import {
     StatusBar,
     TouchableOpacity,
     Image,
+    Modal,
 } from "react-native";
 import styles from "./style.js";
 import WantedElement from "../Components/WantedElement.js";
+import FilterFields from "../Components/FilterFields.js";
 import { CustomText } from "../Components/CustomText.js";
+import DropDown from "../Components/DropDown.js";
 
 const Home = ({ navigation }) => {
     const [txtSearch, SetTxtSearch] = useState("");
     const [refresh, SetRefresh] = useState(true);
-    const historyList = [
+    const [modalVisible, SetModalVisible] = useState(false);
+
+    const [value, SetValue] = useState([]);
+
+    //now - 200 -> now (0 years old - 200 years old)
+    const [items, SetItems] = useState(
+        Array.from({ length: 201 }, (_, i) => {
+            return {
+                label: i + (new Date().getFullYear() - 200),
+                value: i + (new Date().getFullYear() - 200),
+            };
+        })
+    );
+
+    const wantedList = [
         {
             criminalName: "Đăng Hoan",
             image: require("../../Public/Hoan.jpg"),
@@ -89,7 +106,24 @@ const Home = ({ navigation }) => {
             wantedType: "Nguy hiểm",
         },
     ];
+
+    const dangerousLevels = ["Bình thường", "Nguy hiểm", "Đặc biệt"];
+    const [dangerousLevelsChecked, SetDangerousLevelsChecked] = useState(
+        Array.from({ length: dangerousLevels.length }, (_, i) => false)
+    );
+
+    // useEffect(() => {
+    //     console.log(dangerousLevelsChecked);
+    // }, [dangerousLevelsChecked]);
+
+    const resetFilter = () => {
+        SetDangerousLevelsChecked(
+            Array.from({ length: dangerousLevels.length }, (_, i) => false)
+        );
+        SetValue([]);
+    };
     const checkLogic = () => {};
+
     return (
         <View style={styles.container}>
             {/*statusbar to set wifi, battery... to white*/}
@@ -112,11 +146,7 @@ const Home = ({ navigation }) => {
                         />
                     </View>
                     <View style={styles.btnFilter}>
-                        <TouchableOpacity
-                            onPress={() => {
-                                //show filter
-                            }}
-                        >
+                        <TouchableOpacity onPress={() => SetModalVisible(true)}>
                             <CustomText style={{ color: "black" }}>
                                 Bộ lọc
                             </CustomText>
@@ -127,6 +157,71 @@ const Home = ({ navigation }) => {
                         />
                     </View>
                 </View>
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={modalVisible}
+                    onRequestClose={() => {
+                        // Alert.alert('Modal has been closed.');
+                        SetModalVisible(!modalVisible);
+                    }}
+                >
+                    <View style={styles.modalContainer}>
+                        <View style={styles.modalView}>
+                            <View style={styles.modalHead}>
+                                <TouchableOpacity
+                                    style={styles.btnCancel}
+                                    onPress={() => SetModalVisible(false)}
+                                >
+                                    <Image
+                                        source={require("../../Public/darkCancel.png")}
+                                    />
+                                </TouchableOpacity>
+                                <CustomText style={styles.modalTitle}>
+                                    Bộ lọc
+                                </CustomText>
+                                <TouchableOpacity onPress={resetFilter}>
+                                    <CustomText
+                                        style={{
+                                            color: "#53B6ED",
+                                        }}
+                                    >
+                                        Cài lại
+                                    </CustomText>
+                                </TouchableOpacity>
+                            </View>
+                            <FilterFields
+                                title="Mức độ nguy hiểm"
+                                listItems={dangerousLevels}
+                                listChecked={dangerousLevelsChecked}
+                                setListChecked={SetDangerousLevelsChecked}
+                            />
+                            <DropDown
+                                title="Năm sinh"
+                                placeholder="Chọn năm sinh"
+                                value={value}
+                                items={items}
+                                setValue={SetValue}
+                                setItems={SetItems}
+                            />
+                            <TouchableOpacity
+                                // onPress={() =>
+                                //     handleConfirmWrong(props.item._id)
+                                // }
+                                style={styles.btnAgree}
+                            >
+                                <CustomText
+                                    style={{
+                                        color: "white",
+                                        fontFamily: "Be Vietnam bold",
+                                    }}
+                                >
+                                    Chấp nhận
+                                </CustomText>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
                 <View style={styles.body}>
                     <ScrollView
                         style={styles.scroll}
@@ -137,7 +232,7 @@ const Home = ({ navigation }) => {
                         //     />
                         // }
                     >
-                        {historyList.map((item, index) => {
+                        {wantedList.map((item, index) => {
                             const Max_Image_Number = 20;
                             if (index < Max_Image_Number)
                                 return (
@@ -151,3 +246,4 @@ const Home = ({ navigation }) => {
     );
 };
 export default Home;
+// họ tên, đơn vị ra quyết định, hktt, tội danh đặc điêm
