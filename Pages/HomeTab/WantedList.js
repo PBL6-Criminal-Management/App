@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
     TextInput,
     View,
@@ -6,6 +6,7 @@ import {
     RefreshControl,
     StatusBar,
     TouchableOpacity,
+    Pressable,
     Image,
     Modal,
 } from "react-native";
@@ -123,8 +124,10 @@ const WantedList = ({ navigation }) => {
         SetValue([]);
     };
     const goToWantedDetail = () => {
-        navigation.navigate("WantedDetail");
+        navigation.navigate("WantedDetail", (params = { criminalId: 1 }));
     };
+
+    const inputRef = useRef(null);
     const checkLogic = () => {};
 
     return (
@@ -135,30 +138,35 @@ const WantedList = ({ navigation }) => {
             <View style={[styles.content, { bottom: 250 }]}>
                 <CustomText style={styles.title}>Danh sách truy nã</CustomText>
                 <View style={styles.search}>
-                    <View style={styles.input}>
+                    <Pressable
+                        onPress={() => inputRef.current.focus()}
+                        style={styles.input}
+                    >
+                        <Image
+                            style={styles.icon}
+                            source={require("../../Public/search.png")}
+                        />
                         <TextInput
+                            ref={inputRef}
                             placeholder="Tìm kiếm"
                             placeholderTextColor="black"
                             underlineColorAndroid="black"
                             value={txtSearch}
                             onChangeText={SetTxtSearch}
                         ></TextInput>
-                        <Image
-                            style={styles.icon}
-                            source={require("../../Public/search.png")}
-                        />
-                    </View>
-                    <View style={styles.btnFilter}>
-                        <TouchableOpacity onPress={() => SetModalVisible(true)}>
-                            <CustomText style={{ color: "black" }}>
-                                Bộ lọc
-                            </CustomText>
-                        </TouchableOpacity>
+                    </Pressable>
+                    <TouchableOpacity
+                        style={styles.btnFilter}
+                        onPress={() => SetModalVisible(true)}
+                    >
                         <Image
                             style={styles.icon}
                             source={require("../../Public/filter.png")}
                         />
-                    </View>
+                        <CustomText style={{ color: "black" }}>
+                            Bộ lọc
+                        </CustomText>
+                    </TouchableOpacity>
                 </View>
                 <Modal
                     animationType="slide"

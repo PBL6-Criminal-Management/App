@@ -34,6 +34,7 @@ const FilterFields = (props) => {
                                 ? require("../../Public/upArrow.png")
                                 : require("../../Public/downArrow.png")
                         }
+                        style={{ tintColor: "#53B6ED" }}
                     />
                 </View>
                 <View

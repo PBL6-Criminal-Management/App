@@ -11,7 +11,7 @@ import styles from "./style.js";
 import { CustomText } from "../Components/CustomText.js";
 import InformationFields from "../Components/InformationFields.js";
 
-const WantedDetail = ({ navigation }) => {
+const WantedDetail = ({ navigation, route }) => {
     // Lấy từ API (get by id)
     const wantedCriminal = {
         fullName: "Nguyễn Thế Đăng Hoan",
@@ -24,19 +24,39 @@ const WantedDetail = ({ navigation }) => {
         ethnicity: "Kinh",
         religion: "Không",
         cccd_cmnd: "206431580",
-        career_and_workplace: "Sinh viên học tại trường bách khoa DN",
-        permanent_residence: "Quảng Nam",
-        current_accommodation: "Đà Nẵng",
-        father_name: "Nguyễn Văn A",
-        father_birthday: "2/3/1970",
-        father_CCCD_CMND: "75847957824",
-        mother_name: "Trần Thị B",
-        mother_birthday: "4/6/1980",
-        mother_CCCD_CMND: "54353452454",
+        careerAndWorkplace: "Sinh viên học tại trường bách khoa DN",
+        permanentResidence: "Quảng Nam",
+        currentAccommodation: "Đà Nẵng",
+        fatherName: "Nguyễn Văn A",
+        fatherBirthday: "2/3/1970",
+        fatherCCCD_CMND: "75847957824",
+        motherName: "Trần Thị B",
+        motherBirthday: "4/6/1980",
+        motherCCCD_CMND: "54353452454",
         characteristics: "Có nốt ruồi ở mặt cách mũi 3cm",
-        other_information: "Không",
+        otherCharacteristics: "Cao ráo, đẹp dai",
         image: require("../../Public/Hoan.jpg"),
+        status: "Đang ngồi tù",
+        dangerousLevel: "Rất nghiêm trọng",
+        cases: "HS000123456, HS00742308,...",
         charge: "Trộm cắp tài sản",
+        mostRecentCrimeDate: "21/01/2020",
+        releaseDate: "21/03/2021",
+        exitAndEntryInformation: "xuất ngày 21/03/2021 tại cảng Đà Nẵng",
+        bankAccount: "5845478954387 BIDV",
+        gameAccount: "abcxyz",
+        facebook: "nghgiưohgioehogiưh",
+        zalo: "nghgiưohgioehogiưh",
+        otherSocialNetwork: "nghgiưohgioehogiưh",
+        phoneModel: "hgơehhưeh",
+        study: "nghgiưohgioehogiưh",
+        accessArrangement: "nghgiưohgioehogiưh",
+        otherInformation: "Không",
+        wantedCharge: "Giết người",
+        wantedType: "Khẩn cấp",
+        decisionNo: "4274324",
+        decisionDate: "4274324d",
+        decisionUnit: "4274324d",
     };
 
     const basicInformation = {
@@ -50,18 +70,51 @@ const WantedDetail = ({ navigation }) => {
         "Dân tộc": wantedCriminal.ethnicity,
         "Tôn giáo": wantedCriminal.religion,
         "CCCD/CMND": wantedCriminal.cccd_cmnd,
-        "Nghề nghiệp, nơi làm việc": wantedCriminal.career_and_workplace,
-        "Nơi ĐKTT": wantedCriminal.permanent_residence,
-        "Chỗ ở hiện tại": wantedCriminal.current_accommodation,
-        "Họ và tên cha": wantedCriminal.father_name,
-        "Ngày sinh cha": wantedCriminal.father_birthday,
-        "CCCD/CMND cha": wantedCriminal.father_CCCD_CMND,
-        "Họ và tên mẹ": wantedCriminal.mother_name,
-        "Ngày sinh mẹ": wantedCriminal.mother_birthday,
-        "CCCD/CMND mẹ": wantedCriminal.mother_CCCD_CMND,
+        "Nghề nghiệp, nơi làm việc": wantedCriminal.careerAndWorkplace,
+        "Nơi ĐKTT": wantedCriminal.permanentResidence,
+        "Chỗ ở hiện tại": wantedCriminal.currentAccommodation,
+        "Họ và tên cha": wantedCriminal.fatherName,
+        "Ngày sinh cha": wantedCriminal.fatherBirthday,
+        "CCCD/CMND cha": wantedCriminal.fatherCCCD_CMND,
+        "Họ và tên mẹ": wantedCriminal.motherName,
+        "Ngày sinh mẹ": wantedCriminal.motherBirthday,
+        "CCCD/CMND mẹ": wantedCriminal.motherCCCD_CMND,
         "Đặc điểm nhận dạng": wantedCriminal.characteristics,
-        "Thông tin khác": wantedCriminal.other_information,
+        "Đặc điểm khác": wantedCriminal.otherCharacteristics,
     };
+
+    const criminalInformation = {
+        "Tình trạng": wantedCriminal.status,
+        "Mức độ nguy hiểm": wantedCriminal.dangerousLevel,
+        "Vụ án liên quan": wantedCriminal.cases,
+        "Tiền án, tiền sự": wantedCriminal.charge,
+        "Ngày phạm tội gần nhất": wantedCriminal.mostRecentCrimeDate,
+        "Ngày được thả": wantedCriminal.releaseDate,
+        "Thông tin xuất, nhập cảnh": wantedCriminal.exitAndEntryInformation,
+        "Tài khoản ngân hàng": wantedCriminal.bankAccount,
+        "Tài khoản game": wantedCriminal.gameAccount,
+        Facebook: wantedCriminal.facebook,
+        Zalo: wantedCriminal.zalo,
+        "Mạng xã hội khác": wantedCriminal.otherSocialNetwork,
+        "Model điện thoại": wantedCriminal.phoneModel,
+        "Nghiên cứu": wantedCriminal.study,
+        "Bố trí tiếp cận": wantedCriminal.accessArrangement,
+        "Thông tin khác": wantedCriminal.otherInformation,
+    };
+
+    const wantedInformation = {
+        "Tội danh truy nã": wantedCriminal.wantedCharge,
+        "Loại truy nã": wantedCriminal.wantedType,
+        "Số ra quyết định": wantedCriminal.decisionNo,
+        "Ngày ra quyết định": wantedCriminal.decisionDate,
+        "Đơn vị ra quyết định": wantedCriminal.decisionUnit,
+    };
+
+    useEffect(() => {
+        if (route.params?.criminalId) {
+            //call to GetCriminalById API
+        }
+    }, [route.params]);
 
     return (
         <View style={[styles.container, { backgroundColor: "#F1F2F2" }]}>
@@ -71,6 +124,15 @@ const WantedDetail = ({ navigation }) => {
             <View
                 style={[styles.content, { bottom: 400, alignItems: "center" }]}
             >
+                <TouchableOpacity
+                    style={styles.backContainer}
+                    onPress={() => navigation.goBack()}
+                >
+                    <Image
+                        source={require("../../Public/back.png")}
+                        style={styles.backBtn}
+                    />
+                </TouchableOpacity>
                 <Image
                     style={styles.avatar}
                     source={wantedCriminal.image}
@@ -79,9 +141,9 @@ const WantedDetail = ({ navigation }) => {
                     {wantedCriminal.fullName}
                 </CustomText>
                 <CustomText style={styles.note}>
-                    {wantedCriminal.charge}
+                    Tội danh: {wantedCriminal.charge}
                 </CustomText>
-                <View style={{ marginTop: 26 }}>
+                <View style={{ marginTop: 26, width: "100%" }}>
                     <ScrollView
                         style={styles.scroll}
                         // refreshControl={
@@ -95,14 +157,19 @@ const WantedDetail = ({ navigation }) => {
                             title="Thông tin cơ bản"
                             listItems={basicInformation}
                         />
+                        <InformationFields
+                            title="Thông tin tội phạm"
+                            listItems={criminalInformation}
+                        />
+                        <InformationFields
+                            title="Thông tin truy nã"
+                            listItems={wantedInformation}
+                        />
                         <TouchableOpacity
                             // onPress={() =>
                             //     handleConfirmWrong(props.item._id)
                             // }
-                            style={[
-                                styles.btnAgree,
-                                { width: "100%", marginTop: 20 },
-                            ]}
+                            style={[styles.btnAgree, { width: "100%" }]}
                         >
                             <CustomText
                                 style={{

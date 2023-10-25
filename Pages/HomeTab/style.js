@@ -8,6 +8,17 @@ const styles = StyleSheet.create({
     head: {
         backgroundColor: "#152259",
     },
+    backContainer: {
+        position: "absolute",
+        left: 20,
+        paddingRight: 5,
+        paddingBottom: 5,
+    },
+    backBtn: {
+        width: 25,
+        height: 25,
+        tintColor: "white",
+    },
     avatar: {
         width: 180,
         height: 180,
@@ -20,7 +31,7 @@ const styles = StyleSheet.create({
         position: "absolute",
         top: 50,
         width: "100%",
-        paddingHorizontal: 10,
+        paddingHorizontal: 15,
     },
     title: {
         fontFamily: "Be Vietnam bold",
@@ -43,28 +54,28 @@ const styles = StyleSheet.create({
         borderRadius: 5,
     },
     input: {
+        flexDirection: "row",
         height: 50,
         backgroundColor: "#DFE0E2",
         color: "black",
         width: "65%",
         borderRadius: 5,
-        padding: 10,
-        paddingStart: 35,
-        justifyContent: "center",
+        paddingStart: 10,
+        alignItems: "center",
+        gap: 5,
     },
     icon: {
-        position: "absolute",
-        left: 10,
         width: 20,
         height: 20,
     },
     btnFilter: {
         flexGrow: 1, //fill the remaining space.
+        flexDirection: "row",
         backgroundColor: "#DFE0E2",
         borderRadius: 5,
         alignItems: "center",
         justifyContent: "center",
-        paddingStart: 20,
+        gap: 5,
     },
     modalContainer: {
         flex: 1,

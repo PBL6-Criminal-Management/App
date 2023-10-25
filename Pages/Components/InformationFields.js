@@ -22,6 +22,8 @@ const InformationFields = (props) => {
                         padding: 20,
                         borderTopLeftRadius: 5,
                         borderTopRightRadius: 5,
+                        borderBottomLeftRadius: !isDropDown ? 5 : 0,
+                        borderBottomRightRadius: !isDropDown ? 5 : 0,
                     }}
                 >
                     <CustomText
@@ -29,6 +31,7 @@ const InformationFields = (props) => {
                             fontFamily: "Be Vietnam bold",
                             color: "white",
                             backgroundColor: "#384664",
+                            height: 20,
                         }}
                     >
                         {props.title}
@@ -51,7 +54,8 @@ const InformationFields = (props) => {
                                 key={index}
                                 style={{
                                     flexDirection: "column",
-                                    paddingBottom: 10,
+                                    paddingBottom: 20,
+                                    paddingTop: index == 0 ? 18 : 0,
                                 }}
                             >
                                 <CustomText
@@ -79,13 +83,15 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
+        marginBottom: 10,
     },
     body: {
         flexDirection: "column",
         width: "100%",
-        paddingTop: 15,
         paddingStart: 32,
         backgroundColor: "white",
+        borderBottomLeftRadius: 5,
+        borderBottomRightRadius: 5,
     },
 });
 
