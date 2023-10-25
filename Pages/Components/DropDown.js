@@ -51,6 +51,7 @@ const DropDown = (props) => {
                     color: "#BFC0C1",
                 }}
                 containerStyle={{ width: "67%" /*width: 300*/ }}
+                listMode="SCROLLVIEW"
             />
         </View>
     );

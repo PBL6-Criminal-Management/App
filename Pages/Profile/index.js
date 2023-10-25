@@ -1,50 +1,16 @@
-import React, {useContext, useEffect, useState} from 'react';
-import { Text, View, TouchableOpacity, ScrollView } from 'react-native';
-import Spinner from 'react-native-loading-spinner-overlay'
-import styles from './style.js'
-import { AuthContext } from '../../Context/AuthContext.js';
+import ProfileDetail from "./ProfileDetail";
+import ProfileEdit from "./ProfileEdit";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
+const tab = createNativeStackNavigator();
 
-const Profile = ({navigation}) => {
-    const {userInfo, isLoading, logout} = useContext(AuthContext)
-    
-    const checkLogic = () => {
-        
-    }
-
+function ProfileTab() {
     return (
-        <View style={styles.container}>
-            <Spinner visible={isLoading}/>
-            <ScrollView style={styles.scroll}>
-                <TouchableOpacity
-                    onPress={() => console.log('Doing...')}
-                    style={styles.button}>
-                    <Text style={styles.txtButton}>Change password</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    onPress={() => console.log('Doing...')}
-                    style={styles.button}>
-                    <Text style={styles.txtButton}>Change time between detect times</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    onPress={() => console.log('Doing...')}
-                    style={styles.button}>
-                    <Text style={styles.txtButton}>Turn off the warning sound</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    onPress={() => console.log('Doing...')}
-                    style={styles.button}>
-                    <Text style={styles.txtButton}>Turn on the notification light</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    onPress={logout}
-                    style={styles.button}>
-                    <Text style={styles.txtButton}>Logout</Text>
-                </TouchableOpacity>
-            </ScrollView>
-            
-        </View>
-    )
-    
+        <tab.Navigator screenOptions={{ headerShown: false }}>
+            <tab.Screen name="ProfileDetail" component={ProfileDetail} />
+            <tab.Screen name="ProfileEdit" component={ProfileEdit} />
+        </tab.Navigator>
+    );
 }
-export default Profile;
+
+export default ProfileTab;

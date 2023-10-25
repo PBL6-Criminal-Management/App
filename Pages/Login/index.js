@@ -15,7 +15,7 @@ import { CustomText } from "../Components/CustomText.js";
 import { AuthContext } from "../../Context/AuthContext.js";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const Main = () => {
+const Login = () => {
     const { isLoading, login } = useContext(AuthContext);
 
     const [username, SetUsername] = useState("");
@@ -193,4 +193,4 @@ const Main = () => {
         </View>
     );
 };
-export default Main;
+export default Login;

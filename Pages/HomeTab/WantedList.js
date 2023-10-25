@@ -9,6 +9,7 @@ import {
     Pressable,
     Image,
     Modal,
+    TouchableWithoutFeedback,
 } from "react-native";
 import styles from "./style.js";
 import WantedElement from "../Components/WantedElement.js";
@@ -177,61 +178,71 @@ const WantedList = ({ navigation }) => {
                         SetModalVisible(!modalVisible);
                     }}
                 >
-                    <View style={styles.modalContainer}>
-                        <View style={styles.modalView}>
-                            <View style={styles.modalHead}>
-                                <TouchableOpacity
-                                    style={styles.btnCancel}
-                                    onPress={() => SetModalVisible(false)}
-                                >
-                                    <Image
-                                        source={require("../../Public/darkCancel.png")}
+                    <TouchableWithoutFeedback
+                        onPressOut={() => SetModalVisible(false)}
+                    >
+                        <View style={styles.modalContainer}>
+                            <TouchableWithoutFeedback>
+                                <View style={styles.modalView}>
+                                    <View style={styles.modalHead}>
+                                        <TouchableOpacity
+                                            style={styles.btnCancel}
+                                            onPress={() =>
+                                                SetModalVisible(false)
+                                            }
+                                        >
+                                            <Image
+                                                source={require("../../Public/darkCancel.png")}
+                                            />
+                                        </TouchableOpacity>
+                                        <CustomText style={styles.modalTitle}>
+                                            Bộ lọc
+                                        </CustomText>
+                                        <TouchableOpacity onPress={resetFilter}>
+                                            <CustomText
+                                                style={{
+                                                    color: "#53B6ED",
+                                                }}
+                                            >
+                                                Cài lại
+                                            </CustomText>
+                                        </TouchableOpacity>
+                                    </View>
+                                    <FilterFields
+                                        title="Mức độ nguy hiểm"
+                                        listItems={dangerousLevels}
+                                        listChecked={dangerousLevelsChecked}
+                                        setListChecked={
+                                            SetDangerousLevelsChecked
+                                        }
                                     />
-                                </TouchableOpacity>
-                                <CustomText style={styles.modalTitle}>
-                                    Bộ lọc
-                                </CustomText>
-                                <TouchableOpacity onPress={resetFilter}>
-                                    <CustomText
-                                        style={{
-                                            color: "#53B6ED",
-                                        }}
+                                    <DropDown
+                                        title="Năm sinh"
+                                        placeholder="Chọn năm sinh"
+                                        value={value}
+                                        items={items}
+                                        setValue={SetValue}
+                                        setItems={SetItems}
+                                    />
+                                    <TouchableOpacity
+                                        // onPress={() =>
+                                        //     handleConfirmWrong(props.item._id)
+                                        // }
+                                        style={styles.btnAgree}
                                     >
-                                        Cài lại
-                                    </CustomText>
-                                </TouchableOpacity>
-                            </View>
-                            <FilterFields
-                                title="Mức độ nguy hiểm"
-                                listItems={dangerousLevels}
-                                listChecked={dangerousLevelsChecked}
-                                setListChecked={SetDangerousLevelsChecked}
-                            />
-                            <DropDown
-                                title="Năm sinh"
-                                placeholder="Chọn năm sinh"
-                                value={value}
-                                items={items}
-                                setValue={SetValue}
-                                setItems={SetItems}
-                            />
-                            <TouchableOpacity
-                                // onPress={() =>
-                                //     handleConfirmWrong(props.item._id)
-                                // }
-                                style={styles.btnAgree}
-                            >
-                                <CustomText
-                                    style={{
-                                        color: "white",
-                                        fontFamily: "Be Vietnam bold",
-                                    }}
-                                >
-                                    Chấp nhận
-                                </CustomText>
-                            </TouchableOpacity>
+                                        <CustomText
+                                            style={{
+                                                color: "white",
+                                                fontFamily: "Be Vietnam bold",
+                                            }}
+                                        >
+                                            Chấp nhận
+                                        </CustomText>
+                                    </TouchableOpacity>
+                                </View>
+                            </TouchableWithoutFeedback>
                         </View>
-                    </View>
+                    </TouchableWithoutFeedback>
                 </Modal>
                 <View style={styles.body}>
                     <ScrollView
