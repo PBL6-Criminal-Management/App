@@ -165,21 +165,6 @@ const WantedDetail = ({ navigation, route }) => {
                             title="Thông tin truy nã"
                             listItems={wantedInformation}
                         />
-                        <TouchableOpacity
-                            // onPress={() =>
-                            //     handleConfirmWrong(props.item._id)
-                            // }
-                            style={[styles.btnAgree, { width: "100%" }]}
-                        >
-                            <CustomText
-                                style={{
-                                    color: "white",
-                                    fontFamily: "Be Vietnam bold",
-                                }}
-                            >
-                                Báo cáo tội phạm
-                            </CustomText>
-                        </TouchableOpacity>
                     </ScrollView>
                 </View>
             </View>

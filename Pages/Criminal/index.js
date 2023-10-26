@@ -1,39 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { StyleSheet, View, Button } from "react-native";
-import { LocalAuthentication } from "expo";
+import React, { useContext } from "react";
+import { View } from "react-native";
+import styles from "./style.js";
+import { roleEnum } from "../../Utils/constants.js";
 
-// Toggle flashlight
-const toggleFlashlight = async () => {
-    try {
-        const brightness = await LocalAuthentication.getSystemBrightnessAsync();
+const Criminal = ({ navigation }) => {
+    const checkLogic = () => {};
 
-        if (brightness !== 1) {
-            LocalAuthentication.setSystemBrightnessAsync(1);
-        } else {
-            LocalAuthentication.setSystemBrightnessAsync(0);
-        }
-    } catch (error) {
-        console.log(error);
-    }
+    return <View style={styles.container}></View>;
 };
-
-export default function App() {
-    return (
-        <View style={styles.container}>
-            <Button
-                title={"Turn On"}
-                onPress={toggleFlashlight}
-                // color={flashlightOn ? "red" : "green"}
-            />
-        </View>
-    );
-}
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#fff",
-        alignItems: "center",
-        justifyContent: "center",
-    },
-});
+export default Criminal;

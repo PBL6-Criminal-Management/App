@@ -23,9 +23,7 @@ const styles = StyleSheet.create({
         width: 180,
         height: 180,
         marginBottom: 20,
-        borderWidth: 2,
         borderRadius: 100,
-        borderColor: "white",
     },
     content: {
         position: "absolute",
