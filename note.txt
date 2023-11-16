@@ -1,0 +1,11 @@
+- phóng to chữ trên ảnh
+
+- tăng max size upload ảnh
+
+- tạo pr
+
+- hiệu ứng scan
+
+- refactor code bên profile lại (dùng component)
+
+- căn giữa waiting circle trong face detect

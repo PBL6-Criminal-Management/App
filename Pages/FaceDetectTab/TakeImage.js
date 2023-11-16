@@ -154,7 +154,11 @@ const TakeImage = ({ navigation, route }) => {
             (params = {
                 type: type,
                 flashMode: flashMode,
-                image: image,
+                image: {
+                    uri: image,
+                    type: "image/jpeg",
+                    name: "photo.jpg",
+                },
             })
         );
     };

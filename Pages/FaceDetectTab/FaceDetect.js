@@ -1,11 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { Image, TouchableOpacity, View } from "react-native";
+import React, { useContext, useState, useEffect } from "react";
+import { Image, TouchableOpacity, View, ActivityIndicator } from "react-native";
 import { Camera, CameraType, FlashMode } from "expo-camera";
+import Toast from "react-native-toast-message";
+import { AuthContext } from "../../Context/AuthContext.js";
 import { CustomText } from "../Components/CustomText.js";
 import { API_URL } from "../../Utils/constants.js";
 import styles from "./style.js";
 
 const FaceDetect = ({ navigation, route }) => {
+    const { userInfo } = useContext(AuthContext);
+
     useEffect(() => {
         if (route.params?.type) {
             SetType(route.params?.type);
@@ -18,6 +22,7 @@ const FaceDetect = ({ navigation, route }) => {
         }
     }, [route.params]);
 
+    const [isLoading, SetIsLoading] = useState(false);
     const [type, SetType] = useState(CameraType.back);
     const [flashMode, SetFlashMode] = useState(FlashMode.off);
     const [image, SetImage] = useState(null);
@@ -146,7 +151,7 @@ const FaceDetect = ({ navigation, route }) => {
                         width: "100%",
                         height: "100%",
                     }}
-                    source={{ uri: image }}
+                    source={{ uri: image?.uri }}
                 />
             </View>
             <View style={[styles.foot, { justifyContent: "center" }]}>
@@ -199,6 +204,7 @@ const FaceDetect = ({ navigation, route }) => {
                     </TouchableOpacity>
                 </View>
             </View>
+            <Toast />
         </View>
     );
 };
