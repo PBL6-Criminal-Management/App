@@ -16,7 +16,7 @@ const Navigation = () => {
             <Stack.Navigator screenOptions={{ headerShown: false }}>
                 {splashLoading ? (
                     <Stack.Screen name="Splash" component={Splash} />
-                ) : userInfo.token ? (
+                ) : userInfo != null && userInfo.token ? (
                     <Stack.Screen name="Bottom" component={BottomTab} />
                 ) : (
                     <>

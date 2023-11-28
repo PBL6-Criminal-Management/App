@@ -1,28 +1,37 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useContext } from "react";
 import {
     TextInput,
     View,
     ScrollView,
-    RefreshControl,
     StatusBar,
     TouchableOpacity,
     Pressable,
     Image,
     Modal,
     TouchableWithoutFeedback,
+    ActivityIndicator,
+    RefreshControl,
 } from "react-native";
 import styles from "./style.js";
 import WantedElement from "../Components/WantedElement.js";
 import FilterFields from "../Components/FilterFields.js";
+import { AuthContext } from "../../Context/AuthContext.js";
 import { CustomText } from "../Components/CustomText.js";
+import Toast from "react-native-toast-message";
+import { API_URL } from "../../Utils/constants.js";
 import DropDown from "../Components/DropDown.js";
 
 const WantedList = ({ navigation }) => {
     const [txtSearch, SetTxtSearch] = useState("");
-    const [refresh, SetRefresh] = useState(true);
+    const [refresh, SetRefresh] = useState(false);
     const [modalVisible, SetModalVisible] = useState(false);
+    const [wantedList, SetWantedList] = useState(null);
+    const [dangerousLevelId, setDangerousLevelId] = useState(null);
+    const { userInfo, refreshToken } = useContext(AuthContext);
 
     const [value, SetValue] = useState([]);
+    const [isSubmit, SetIsSubmit] = useState(false);
+    const [isLoading, SetIsLoading] = useState(false);
 
     //now - 200 -> now (0 years old - 200 years old)
     const [items, SetItems] = useState(
@@ -34,81 +43,6 @@ const WantedList = ({ navigation }) => {
         })
     );
 
-    const wantedList = [
-        {
-            criminalName: "Đăng Hoan",
-            image: require("../../Public/Hoan.jpg"),
-            birthday: "2002",
-            charge: "Trộm cắp tài sản",
-            characteristic: "Có nốt ruồi ở mặt cách mũi 3cm",
-            murderWeapon: "Dao",
-            wantedType: "Bình thường",
-        },
-        {
-            criminalName: "Khắc Luận",
-            image: require("../../Public/Luan.png"),
-            birthday: "2002",
-            charge: "Trộm cắp tài sản",
-            characteristic: "Có nốt ruồi ở mặt cách mũi 3cm",
-            murderWeapon: "Dao",
-            wantedType: "Nguy hiểm",
-        },
-        {
-            criminalName: "Thục Nhi",
-            image: require("../../Public/Nhi.jpg"),
-            birthday: "2002",
-            charge: "Trộm cắp tài sản",
-            characteristic: "Có nốt ruồi ở mặt cách mũi 3cm",
-            murderWeapon: "Dao",
-            wantedType: "Đặc biệt",
-        },
-        {
-            criminalName: "Thanh Nhàn",
-            image: require("../../Public/chi_Nhan.png"),
-            birthday: "2001",
-            charge: "Trộm cắp tài sản",
-            characteristic: "Có nốt ruồi ở mặt cách mũi 3cm",
-            murderWeapon: "Dao",
-            wantedType: "Nguy hiểm",
-        },
-        {
-            criminalName: "Đăng Hoan",
-            image: require("../../Public/Hoan.jpg"),
-            birthday: "2002",
-            charge: "Trộm cắp tài sản",
-            characteristic: "Có nốt ruồi ở mặt cách mũi 3cm",
-            murderWeapon: "Dao",
-            wantedType: "Bình thường",
-        },
-        {
-            criminalName: "Khắc Luận",
-            image: require("../../Public/Luan.png"),
-            birthday: "2002",
-            charge: "Trộm cắp tài sản",
-            characteristic: "Có nốt ruồi ở mặt cách mũi 3cm",
-            murderWeapon: "Dao",
-            wantedType: "Nguy hiểm",
-        },
-        {
-            criminalName: "Thục Nhi",
-            image: require("../../Public/Nhi.jpg"),
-            birthday: "2002",
-            charge: "Trộm cắp tài sản",
-            characteristic: "Có nốt ruồi ở mặt cách mũi 3cm",
-            murderWeapon: "Dao",
-            wantedType: "Đặc biệt",
-        },
-        {
-            criminalName: "Thanh Nhàn",
-            image: require("../../Public/chi_Nhan.png"),
-            birthday: "2001",
-            charge: "Trộm cắp tài sản",
-            characteristic: "Có nốt ruồi ở mặt cách mũi 3cm",
-            murderWeapon: "Dao",
-            wantedType: "Nguy hiểm",
-        },
-    ];
-
     const dangerousLevels = ["Bình thường", "Nguy hiểm", "Đặc biệt"];
     const [dangerousLevelsChecked, SetDangerousLevelsChecked] = useState(
         Array.from({ length: dangerousLevels.length }, (_, i) => false)
@@ -117,6 +51,86 @@ const WantedList = ({ navigation }) => {
     // useEffect(() => {
     //     console.log(dangerousLevelsChecked);
     // }, [dangerousLevelsChecked]);
+
+    useEffect(() => {
+        getAllWantedCriminalsFromAPI();
+    }, []);
+
+    useEffect(() => {
+        getAllWantedCriminalsFromAPI();
+    }, [txtSearch]);
+
+    useEffect(() => {
+        if (refresh) {
+            getAllWantedCriminalsFromAPI();
+            SetRefresh(false);
+        }
+    }, [refresh]);
+
+    useEffect(() => {
+        if (isSubmit) {
+            getAllWantedCriminalsFromAPI();
+            SetIsSubmit(false);
+        }
+    }, [isSubmit]);
+
+    const getAllWantedCriminalsFromAPI = async () => {
+        SetIsLoading(!refresh);
+        let refreshResult = await refreshToken();
+        if (refreshResult != null) {
+            Toast.show({
+                type: "error",
+                text1: refreshResult,
+            });
+            return;
+        }
+
+        fetch(
+            //&PageNumber=1&PageSize=10
+            API_URL +
+                "v1/WantedCriminal" +
+                `?WantedType=${
+                    dangerousLevelId != null && dangerousLevelId.length > 0
+                        ? dangerousLevelId[0]
+                        : ""
+                }&&YearOfBirth=${
+                    value != null && value.length > 0 ? value[0] : ""
+                }&&Keyword=${txtSearch}`,
+            {
+                method: "GET", // *GET, POST, PUT, DELETE, etc.
+                mode: "cors", // no-cors, cors, *same-origin
+                cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+                credentials: "same-origin", // include, *same-origin, omit
+                headers: {
+                    Accept: "application/json",
+                    Authorization: `Bearer ${userInfo.token}`,
+                },
+                redirect: "follow", // manual, *follow, error
+                referrer: "no-referrer", // no-referrer, *client
+                // body: {}, // body data type must match "Content-Type" header
+            }
+        )
+            .then((res) => res.json())
+            .then((res) => {
+                if (res.succeeded) {
+                    SetWantedList(res.data);
+                } else {
+                    Toast.show({
+                        type: "info",
+                        text1: res.messages != null ? res.messages : res,
+                    });
+                }
+                SetIsLoading(false);
+            })
+            .catch((e) => {
+                console.log(`login error: ${e}`);
+                Toast.show({
+                    type: "error",
+                    text1: "Có lỗi xảy ra (lỗi server)",
+                });
+                SetIsLoading(false);
+            });
+    };
 
     const resetFilter = () => {
         SetDangerousLevelsChecked(
@@ -225,9 +239,20 @@ const WantedList = ({ navigation }) => {
                                         setItems={SetItems}
                                     />
                                     <TouchableOpacity
-                                        // onPress={() =>
-                                        //     handleConfirmWrong(props.item._id)
-                                        // }
+                                        onPress={() => {
+                                            SetModalVisible(false);
+                                            setDangerousLevelId(
+                                                dangerousLevelsChecked
+                                                    .map((x, index) =>
+                                                        x ? index : undefined
+                                                    )
+                                                    .filter(
+                                                        (index) =>
+                                                            index !== undefined
+                                                    )
+                                            );
+                                            SetIsSubmit(true);
+                                        }}
                                         style={styles.btnAgree}
                                     >
                                         <CustomText
@@ -245,18 +270,24 @@ const WantedList = ({ navigation }) => {
                     </TouchableWithoutFeedback>
                 </Modal>
                 <View style={styles.body}>
-                    <ScrollView
-                        style={styles.scroll}
-                        // refreshControl={
-                        //     <RefreshControl
-                        //         refreshing={refresh}
-                        //         onRefresh={() => pullMe()}
-                        //     />
-                        // }
-                    >
-                        {wantedList.map((item, index) => {
-                            const Max_Image_Number = 20;
-                            if (index < Max_Image_Number)
+                    {isLoading && (
+                        <View style={styles.waitingCircle}>
+                            <ActivityIndicator size="large" color="black" />
+                        </View>
+                    )}
+                    {wantedList && (
+                        <ScrollView
+                            style={styles.scroll}
+                            refreshControl={
+                                <RefreshControl
+                                    refreshing={refresh}
+                                    onRefresh={() => SetRefresh(true)}
+                                />
+                            }
+                        >
+                            {wantedList.map((item, index) => {
+                                // const Max_Image_Number = 20;
+                                // if (index < Max_Image_Number)
                                 return (
                                     <WantedElement
                                         key={index}
@@ -264,10 +295,12 @@ const WantedList = ({ navigation }) => {
                                         onPress={goToWantedDetail}
                                     />
                                 );
-                        })}
-                    </ScrollView>
+                            })}
+                        </ScrollView>
+                    )}
                 </View>
             </View>
+            <Toast />
         </View>
     );
 };

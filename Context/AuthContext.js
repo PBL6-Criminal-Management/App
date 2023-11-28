@@ -1,4 +1,5 @@
 import React, { createContext, useEffect, useState } from "react";
+import moment from "moment";
 import axios from "axios";
 import { API_URL } from "../Utils/constants.js";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -6,10 +7,34 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    const [username, SetUsername] = useState("");
-    const [userInfo, SetUserInfo] = useState({});
+    const [isFirst, SetIsFirst] = useState(true);
+    const [username, SetUsername] = useState(null);
+    const [userInfo, SetUserInfo] = useState(null);
     const [isLoading, SetIsLoading] = useState(false);
     const [splashLoading, SetSplashLoading] = useState(false);
+
+    useEffect(() => {
+        const setItem = async () => {
+            if (isFirst) return;
+            if (username != null)
+                await AsyncStorage.setItem("username", username);
+            else await AsyncStorage.removeItem("username");
+        };
+        setItem();
+    }, [username]);
+
+    useEffect(() => {
+        const setItem = async () => {
+            if (isFirst) return;
+            if (userInfo != null)
+                await AsyncStorage.setItem(
+                    "userInfo",
+                    JSON.stringify(userInfo)
+                );
+            else await AsyncStorage.removeItem("userInfo");
+        };
+        setItem();
+    }, [userInfo]);
 
     const register = (username, password) => {
         SetIsLoading(true);
@@ -22,8 +47,6 @@ export const AuthProvider = ({ children }) => {
                 let userInfo = res.data;
                 SetUsername(username);
                 SetUserInfo(userInfo);
-                AsyncStorage.setItem("username", username);
-                AsyncStorage.setItem("userInfo", JSON.stringify(userInfo));
                 SetIsLoading(false);
                 console.log(userInfo);
             })
@@ -45,7 +68,6 @@ export const AuthProvider = ({ children }) => {
         //         let userInfo = res.data
         //         console.log(userInfo)
         //         SetUserInfo(userInfo)
-        //         AsyncStorage.setItem('userInfo', JSON.stringify(userInfo))
         //         SetIsLoading(false)
         //     })
         //     .catch(e => {
@@ -77,8 +99,6 @@ export const AuthProvider = ({ children }) => {
                     message = "Đăng nhập thành công!";
                     SetUsername(username);
                     SetUserInfo(userInfo);
-                    AsyncStorage.setItem("username", username);
-                    AsyncStorage.setItem("userInfo", JSON.stringify(userInfo));
                     AsyncStorage.setItem(
                         "isRememberLogin",
                         isRememberLogin.toString()
@@ -105,13 +125,12 @@ export const AuthProvider = ({ children }) => {
         ) {
             SetIsLoading(true);
 
-            AsyncStorage.removeItem("username");
+            SetUsername(null);
 
             SetIsLoading(false);
         }
-        AsyncStorage.removeItem("userInfo");
-        SetUsername("");
-        SetUserInfo({});
+        SetUsername(null);
+        SetUserInfo(null);
         // axios.post(API_URL + '/logout',
         // {},
         // {
@@ -119,8 +138,7 @@ export const AuthProvider = ({ children }) => {
         // }
         // ).then(res => {
         //     console(res.data)
-        //     AsyncStorage.removeItem('userInfo')
-        //     SetUserInfo({})
+        //     SetUserInfo(null)
         //     SetIsLoading(false)
         // }).cacht(e => {
         //     console.log(`logout error: ${e}`)
@@ -144,9 +162,23 @@ export const AuthProvider = ({ children }) => {
             }
 
             let userInfo = await AsyncStorage.getItem("userInfo");
+
+            SetIsFirst(false);
+
             if (userInfo == null) {
                 SetSplashLoading(false);
                 return;
+            } else {
+                let refreshTokenExpiryTime = moment(
+                    userInfo.refreshTokenExpiryTime,
+                    "DD/MM/YYYY HH:mm:ss"
+                );
+                if (
+                    refreshTokenExpiryTime !== undefined &&
+                    refreshTokenExpiryTime !== null &&
+                    refreshTokenExpiryTime.isSameOrBefore(new Date())
+                )
+                    return;
             }
             userInfo = JSON.parse(userInfo);
             if (userInfo) {
@@ -157,6 +189,57 @@ export const AuthProvider = ({ children }) => {
         } catch (e) {
             SetSplashLoading(false);
             console.log("check logged in error: ", e);
+        }
+    };
+
+    const refreshToken = async () => {
+        try {
+            let tokenExpiryTime = moment(
+                userInfo.tokenExpiryTime,
+                "DD/MM/YYYY HH:mm:ss"
+            );
+            if (
+                tokenExpiryTime != null &&
+                tokenExpiryTime.isSameOrBefore(new Date())
+            ) {
+                let refreshTokenExpiryTime = moment(
+                    userInfo.refreshTokenExpiryTime,
+                    "DD/MM/YYYY HH:mm:ss"
+                );
+                if (
+                    refreshTokenExpiryTime != null &&
+                    refreshTokenExpiryTime.isAfter(new Date())
+                ) {
+                    const response = await fetch(
+                        API_URL + "identity/token/refresh",
+                        {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({
+                                token: userInfo.token,
+                                refreshToken: userInfo.refreshToken,
+                            }),
+                        }
+                    );
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        SetUserInfo(data);
+                        return null;
+                    } else {
+                        console.log("Fail", response.messages);
+                        return `Refresh token thất bại: ${response}`;
+                    }
+                } else {
+                    console.log("Refresh token hết hạn");
+                    return "Refresh token hết hạn";
+                }
+            }
+        } catch (error) {
+            console.error("Lỗi khi refresh token:", error);
+            return `Lỗi khi refresh token: ${error}`;
         }
     };
 
@@ -174,6 +257,7 @@ export const AuthProvider = ({ children }) => {
                 register,
                 login,
                 logout,
+                refreshToken,
             }}
         >
             {children}

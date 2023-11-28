@@ -14,6 +14,16 @@ const styles = StyleSheet.create({
         gap: 40,
         backgroundColor: "black",
     },
+    waitingCircle: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: 1,
+    },
     btnLight: {
         padding: 5,
     },
@@ -66,6 +76,51 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         gap: 5,
         alignItems: "center",
+    },
+    backContainer: {
+        position: "absolute",
+        left: 5,
+        paddingRight: 5,
+        paddingVertical: 5,
+    },
+    backBtn: {
+        width: 25,
+        height: 25,
+    },
+    content: {
+        position: "absolute",
+        top: 50,
+        width: "100%",
+        paddingHorizontal: 15,
+    },
+    avatar: {
+        width: 260,
+        height: 270,
+        marginBottom: 20,
+        borderRadius: 34,
+    },
+    name: {
+        color: "red",
+        fontFamily: "Be Vietnam bold",
+    },
+    note: {
+        // color: "red",
+        fontFamily: "Be Vietnam italic",
+    },
+    body: {
+        width: "100%",
+        backgroundColor: "white",
+        borderRadius: 10,
+        borderColor: "#BDBDBD",
+        paddingTop: 20,
+        paddingBottom: 10,
+        paddingHorizontal: 30,
+        marginTop: 20,
+        borderWidth: 1,
+    },
+    informationTitle: {
+        alignItems: "center",
+        justifyContent: "center",
     },
 });
 
