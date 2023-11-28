@@ -40,10 +40,6 @@ const ProfileEdit = ({ navigation, route }) => {
         SetSelectedTime(newTime);
     };
 
-    const getRoleName = (roleId) => {
-        return roleEnum.find((role) => role.value === roleId).name;
-    };
-
     const checkLogic = () => {};
 
     useEffect(() => {
@@ -186,7 +182,7 @@ const ProfileEdit = ({ navigation, route }) => {
                             {userInfo.fullName}
                         </CustomText>
                         <CustomText style={styles.note}>
-                            {getRoleName(userInfo.position)}
+                            {roleEnum[userInfo.position]}
                         </CustomText>
                         <View style={styles.body}>
                             <View style={styles.title}>
@@ -224,7 +220,7 @@ const ProfileEdit = ({ navigation, route }) => {
                                         Chức vụ
                                     </CustomText>
                                     <TextInput>
-                                        {getRoleName(userInfo.position)}
+                                        {roleEnum[userInfo.position]}
                                     </TextInput>
                                     <View
                                         style={{

@@ -12,6 +12,7 @@ import styles from "./style.js";
 import { AuthContext } from "../../Context/AuthContext.js";
 import { roleEnum } from "../../Utils/constants.js";
 import { CustomText } from "../Components/CustomText.js";
+import InformationFlat from "../Components/InformationFlat.js";
 
 const Profile = ({ navigation }) => {
     const { logout } = useContext(AuthContext);
@@ -20,7 +21,7 @@ const Profile = ({ navigation }) => {
     // Lấy từ API (get by id)
     const userInfo = {
         fullName: "Nguyễn Thế Đăng Hoan",
-        position: 1,
+        position: 0,
         birthday: "2002-02-03",
         gender: true,
         phoneNumber: "0852556258",
@@ -28,8 +29,13 @@ const Profile = ({ navigation }) => {
         image: require("../../Public/Hoan.jpg"),
     };
 
-    const getRoleName = (roleId) => {
-        return roleEnum.find((role) => role.value === roleId).name;
+    const userInformation = {
+        "Họ và tên": userInfo.fullName,
+        "Chức vụ": roleEnum[userInfo.position],
+        "Ngày sinh": userInfo.birthday,
+        "Giới tính": userInfo.gender ? "Nam" : "Nữ",
+        "Số điện thoại": userInfo.phoneNumber,
+        Email: userInfo.email,
     };
 
     const checkLogic = () => {};
@@ -136,7 +142,7 @@ const Profile = ({ navigation }) => {
                 <Image style={styles.avatar} source={userInfo.image}></Image>
                 <CustomText style={styles.name}>{userInfo.fullName}</CustomText>
                 <CustomText style={styles.note}>
-                    {getRoleName(userInfo.position)}
+                    {roleEnum[userInfo.position]}
                 </CustomText>
                 <View style={styles.body}>
                     <View style={styles.title}>
@@ -145,77 +151,11 @@ const Profile = ({ navigation }) => {
                         ></Image>
                         <CustomText>Thông tin cơ bản</CustomText>
                     </View>
-                    <ScrollView>
-                        <View>
-                            <CustomText
-                                style={{
-                                    fontFamily: "Be Vietnam bold",
-                                    color: "#08354F",
-                                }}
-                            >
-                                Họ và tên
-                            </CustomText>
-                            <CustomText>{userInfo.fullName}</CustomText>
-                        </View>
-                        <View style={{ marginTop: 15 }}>
-                            <CustomText
-                                style={{
-                                    fontFamily: "Be Vietnam bold",
-                                    color: "#08354F",
-                                }}
-                            >
-                                Chức vụ
-                            </CustomText>
-                            <CustomText>
-                                {getRoleName(userInfo.position)}
-                            </CustomText>
-                        </View>
-                        <View style={{ marginTop: 15 }}>
-                            <CustomText
-                                style={{
-                                    fontFamily: "Be Vietnam bold",
-                                    color: "#08354F",
-                                }}
-                            >
-                                Ngày sinh
-                            </CustomText>
-                            <CustomText>{userInfo.birthday}</CustomText>
-                        </View>
-                        <View style={{ marginTop: 15 }}>
-                            <CustomText
-                                style={{
-                                    fontFamily: "Be Vietnam bold",
-                                    color: "#08354F",
-                                }}
-                            >
-                                Giới tính
-                            </CustomText>
-                            <CustomText>
-                                {userInfo.gender ? "Nam" : "Nữ"}
-                            </CustomText>
-                        </View>
-                        <View style={{ marginTop: 15 }}>
-                            <CustomText
-                                style={{
-                                    fontFamily: "Be Vietnam bold",
-                                    color: "#08354F",
-                                }}
-                            >
-                                Số điện thoại
-                            </CustomText>
-                            <CustomText>{userInfo.phoneNumber}</CustomText>
-                        </View>
-                        <View style={{ marginTop: 15 }}>
-                            <CustomText
-                                style={{
-                                    fontFamily: "Be Vietnam bold",
-                                    color: "#08354F",
-                                }}
-                            >
-                                Email
-                            </CustomText>
-                            <CustomText>{userInfo.email}</CustomText>
-                        </View>
+                    <ScrollView
+                        showsVerticalScrollIndicator={true}
+                        persistentScrollbar={true}
+                    >
+                        <InformationFlat listItems={userInformation} />
                     </ScrollView>
                 </View>
                 <TouchableOpacity

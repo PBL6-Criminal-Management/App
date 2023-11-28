@@ -3,12 +3,13 @@ import { View, StyleSheet, Image } from "react-native";
 
 import { CustomText } from "../Components/CustomText.js";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { wantedType } from "../../Utils/constants.js";
 
 const WantedElement = (props) => {
     const colorList = {
-        "Bình thường": "#FBC778",
-        "Nguy hiểm": "#FC0808",
-        "Đặc biệt": "#63036C",
+        0: "#FBC778",
+        1: "#FC0808",
+        2: "#63036C",
     };
     const BASE_PATH = "../../Public/";
 
@@ -26,10 +27,13 @@ const WantedElement = (props) => {
                     { backgroundColor: colorList[props.item.wantedType] },
                 ]}
             >
-                {props.item.wantedType}
+                {wantedType[props.item.wantedType]}
             </CustomText>
             <View style={styles.body}>
-                <Image style={styles.image} source={props.item.image} />
+                <Image
+                    style={styles.image}
+                    source={{ uri: props.item.avatar }}
+                />
                 <View style={styles.textContainer}>
                     <CustomText
                         style={{
@@ -37,14 +41,16 @@ const WantedElement = (props) => {
                             color: "black",
                         }}
                     >
-                        {props.item.criminalName}
+                        {props.item.name}
                     </CustomText>
 
                     <View style={styles.content}>
-                        <CustomText>Năm sinh: {props.item.birthday}</CustomText>
+                        <CustomText>
+                            Năm sinh: {props.item.yearOfBirth}
+                        </CustomText>
                         <CustomText>Tội danh: {props.item.charge}</CustomText>
                         <CustomText>
-                            Đặc điểm: {props.item.characteristic}
+                            Đặc điểm: {props.item.characteristics}
                         </CustomText>
                         <CustomText>
                             Vũ khí: {props.item.murderWeapon}

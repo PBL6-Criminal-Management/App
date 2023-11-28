@@ -28,7 +28,77 @@ const FaceDetect = ({ navigation, route }) => {
         );
     };
 
-    const detectImage = () => {};
+    const detectImage = () => {
+        SetIsLoading(true);
+        const formData = new FormData();
+        formData.append("CriminalImage", image);
+
+        if (userInfo != null)
+            fetch(API_URL + "v1/facedetect/detect", {
+                method: "POST", // *GET, POST, PUT, DELETE, etc.
+                mode: "cors", // no-cors, cors, *same-origin
+                cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+                credentials: "same-origin", // include, *same-origin, omit
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "multipart/form-data",
+                    Authorization: `Bearer ${userInfo.token}`,
+                },
+                redirect: "follow", // manual, *follow, error
+                referrer: "no-referrer", // no-referrer, *client
+                body: formData, // body data type must match "Content-Type" header
+            })
+                .then((res) => res.json())
+                .then((res) => {
+                    if (res.succeeded) {
+                        if (res.messages !== null && res.messages.length > 0) {
+                            res.messages.forEach((message) => {
+                                Toast.show({
+                                    type: "info",
+                                    text1: message,
+                                });
+                            });
+                            SetIsLoading(false);
+                            return;
+                        }
+                        if (res.data.canPredict)
+                            navigation.navigate(
+                                "SuccessDetect",
+                                (params = {
+                                    result: res.data,
+                                })
+                            );
+                        else
+                            navigation.navigate(
+                                "FailDetect",
+                                (params = {
+                                    result: res.data,
+                                })
+                            );
+                    } else {
+                        Toast.show({
+                            type: "info",
+                            text1: res.messages != null ? res.messages : res,
+                        });
+                    }
+                    SetIsLoading(false);
+                })
+                .catch((e) => {
+                    console.log(`login error: ${e}`);
+                    SetIsLoading(false);
+                    Toast.show({
+                        type: "error",
+                        text1: "Có lỗi xảy ra (lỗi server)",
+                    });
+                });
+        else {
+            Toast.show({
+                type: "error",
+                text1: "Không có quyền truy cập",
+            });
+            SetIsLoading(false);
+        }
+    };
 
     // fetch(API_URL+'getImage')
     //     .then(response => response.blob())
@@ -66,6 +136,11 @@ const FaceDetect = ({ navigation, route }) => {
                 </TouchableOpacity>
             </View>
             <View style={styles.centerImage}>
+                {isLoading && (
+                    <View style={styles.waitingCircle}>
+                        <ActivityIndicator size="large" color="white" />
+                    </View>
+                )}
                 <Image
                     style={{
                         width: "100%",
