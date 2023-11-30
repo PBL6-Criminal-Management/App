@@ -10,7 +10,7 @@ const Splash = () => {
                 backgroundColor: "#06bcee",
             }}
         >
-            <ActivityIndicator size="large" color="gray" />
+            <ActivityIndicator size="large" color="green" />
         </View>
     );
 };

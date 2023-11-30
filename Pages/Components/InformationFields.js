@@ -1,10 +1,21 @@
-import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Image, Pressable } from "react-native";
+import React, { useState } from "react";
+import {
+    View,
+    StyleSheet,
+    Image,
+    Pressable,
+    ScrollView,
+    Modal,
+} from "react-native";
+import ImageViewer from "react-native-image-zoom-viewer";
 
 import { CustomText } from "./CustomText.js";
 
 const InformationFields = (props) => {
     const [isDropDown, SetIsDropDown] = useState(true);
+    const [isModalVisible, SetIsModalVisible] = useState(false);
+    const [imageIndex, SetImageIndex] = useState(0);
+
     const onHeadPressed = () => {
         SetIsDropDown(!isDropDown);
     };
@@ -73,6 +84,66 @@ const InformationFields = (props) => {
                         )
                     );
                 })}
+                {props.haveImages && (
+                    <View style={{}}>
+                        <CustomText
+                            style={{
+                                fontFamily: "Be Vietnam bold",
+                                color: "#08354F",
+                            }}
+                        >
+                            {props.imagesFieldName}
+                        </CustomText>
+                        <View
+                            style={{
+                                marginTop: 5,
+                                paddingBottom: 20,
+                            }}
+                        >
+                            <ScrollView
+                                snapToInterval={200}
+                                decelerationRate={"fast"}
+                                alwaysBounceHorizontal={true}
+                                horizontal
+                                contentContainerStyle={{
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                }}
+                            >
+                                {props.images.map((image, index) => (
+                                    <Pressable
+                                        key={index}
+                                        onPress={() => {
+                                            SetImageIndex(index);
+                                            SetIsModalVisible(true);
+                                        }}
+                                    >
+                                        <Image
+                                            source={{ uri: image.url }}
+                                            style={styles.image}
+                                        />
+                                    </Pressable>
+                                ))}
+                            </ScrollView>
+                        </View>
+                        <Modal
+                            visible={isModalVisible}
+                            transparent={true}
+                            onRequestClose={() => {
+                                SetIsModalVisible(!isModalVisible);
+                            }}
+                            onBackdropPress={() => SetIsModalVisible(false)}
+                        >
+                            <ImageViewer
+                                index={imageIndex}
+                                imageUrls={props.images}
+                                onClick={() => SetIsModalVisible(false)}
+                                enableSwipeDown={true}
+                                onSwipeDown={() => SetIsModalVisible(false)}
+                            />
+                        </Modal>
+                    </View>
+                )}
             </View>
         </View>
     );
@@ -88,10 +159,16 @@ const styles = StyleSheet.create({
     body: {
         flexDirection: "column",
         width: "100%",
-        paddingStart: 32,
+        paddingHorizontal: 32,
         backgroundColor: "white",
         borderBottomLeftRadius: 5,
         borderBottomRightRadius: 5,
+    },
+    image: {
+        width: 200,
+        height: 200,
+        marginRight: 10,
+        resizeMode: "contain",
     },
 });
 

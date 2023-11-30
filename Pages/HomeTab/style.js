@@ -24,6 +24,8 @@ const styles = StyleSheet.create({
         height: 180,
         marginBottom: 20,
         borderRadius: 100,
+        alignSelf: "center",
+        resizeMode: "stretch",
     },
     content: {
         position: "absolute",

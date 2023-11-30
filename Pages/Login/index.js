@@ -61,7 +61,7 @@ const Login = () => {
                 <StatusBar barStyle="light-content" />
                 {isLoading && (
                     <View style={styles.waitingCircle}>
-                        <ActivityIndicator size="large" color="black" />
+                        <ActivityIndicator size="large" color="green" />
                     </View>
                 )}
                 <View style={styles.head}>
