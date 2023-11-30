@@ -143,7 +143,7 @@ const FaceDetect = ({ navigation, route }) => {
             <View style={styles.centerImage}>
                 {isLoading && (
                     <View style={styles.waitingCircle}>
-                        <ActivityIndicator size="large" color="white" />
+                        <ActivityIndicator size="large" color="green" />
                     </View>
                 )}
                 <Image

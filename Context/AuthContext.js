@@ -145,6 +145,7 @@ export const AuthProvider = ({ children }) => {
         //     SetIsLoading(false)
         // })
     };
+
     const isLoggedIn = async () => {
         try {
             let isRememberLogin = await AsyncStorage.getItem("isRememberLogin");
@@ -177,8 +178,11 @@ export const AuthProvider = ({ children }) => {
                     refreshTokenExpiryTime !== undefined &&
                     refreshTokenExpiryTime !== null &&
                     refreshTokenExpiryTime.isSameOrBefore(new Date())
-                )
+                ) {
+                    // SetUsername(null);
+                    // SetUserInfo(null);
                     return;
+                }
             }
             userInfo = JSON.parse(userInfo);
             if (userInfo) {
@@ -200,7 +204,9 @@ export const AuthProvider = ({ children }) => {
             );
             if (
                 tokenExpiryTime != null &&
-                tokenExpiryTime.isSameOrBefore(new Date())
+                tokenExpiryTime.isSameOrBefore(
+                    moment(new Date()).add(1, "minute")
+                )
             ) {
                 let refreshTokenExpiryTime = moment(
                     userInfo.refreshTokenExpiryTime,
@@ -210,36 +216,56 @@ export const AuthProvider = ({ children }) => {
                     refreshTokenExpiryTime != null &&
                     refreshTokenExpiryTime.isAfter(new Date())
                 ) {
-                    const response = await fetch(
-                        API_URL + "identity/token/refresh",
-                        {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                            body: JSON.stringify({
-                                token: userInfo.token,
-                                refreshToken: userInfo.refreshToken,
-                            }),
-                        }
-                    );
-
-                    if (response.ok) {
-                        const data = await response.json();
-                        SetUserInfo(data);
-                        return null;
-                    } else {
-                        console.log("Fail", response.messages);
-                        return `Refresh token thất bại: ${response}`;
-                    }
+                    return await fetch(API_URL + "identity/token/refresh", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                            token: userInfo.token,
+                            refreshToken: userInfo.refreshToken,
+                        }),
+                    })
+                        .then((res) => res.json())
+                        .then((res) => {
+                            if (res.succeeded) {
+                                console.log(res);
+                                const data = res.data;
+                                SetUserInfo(data);
+                                return {
+                                    isSuccessfully: true,
+                                    data: data.token,
+                                };
+                            } else {
+                                console.log("Fail", res);
+                                return {
+                                    isSuccessfully: false,
+                                    data: `Refresh token thất bại: ${res.messages}`,
+                                };
+                            }
+                        })
+                        .catch((error) => {
+                            console.error("Lỗi khi refresh token:", error);
+                            return {
+                                isSuccessfully: false,
+                                data: `Lỗi khi refresh token: ${error}`,
+                            };
+                        });
                 } else {
                     console.log("Refresh token hết hạn");
-                    return "Refresh token hết hạn";
+                    return {
+                        isSuccessfully: false,
+                        data: "Refresh token hết hạn! Vui lòng đăng nhập lại!",
+                    };
                 }
             }
+            return { isSuccessfully: true, data: userInfo.token };
         } catch (error) {
             console.error("Lỗi khi refresh token:", error);
-            return `Lỗi khi refresh token: ${error}`;
+            return {
+                isSuccessfully: false,
+                data: `Lỗi khi refresh token: ${error}`,
+            };
         }
     };
 

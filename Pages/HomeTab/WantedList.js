@@ -20,14 +20,15 @@ import { CustomText } from "../Components/CustomText.js";
 import Toast from "react-native-toast-message";
 import { API_URL } from "../../Utils/constants.js";
 import DropDown from "../Components/DropDown.js";
+import { toastConfig } from "../Components/ToastConfig.js";
 
 const WantedList = ({ navigation }) => {
-    const [txtSearch, SetTxtSearch] = useState("");
+    const [txtSearch, SetTxtSearch] = useState(null);
     const [refresh, SetRefresh] = useState(false);
     const [modalVisible, SetModalVisible] = useState(false);
     const [wantedList, SetWantedList] = useState(null);
     const [dangerousLevelId, setDangerousLevelId] = useState(null);
-    const { userInfo, refreshToken } = useContext(AuthContext);
+    const { refreshToken } = useContext(AuthContext);
 
     const [value, SetValue] = useState([]);
     const [isSubmit, SetIsSubmit] = useState(false);
@@ -57,7 +58,7 @@ const WantedList = ({ navigation }) => {
     }, []);
 
     useEffect(() => {
-        getAllWantedCriminalsFromAPI();
+        if (txtSearch != null) getAllWantedCriminalsFromAPI();
     }, [txtSearch]);
 
     useEffect(() => {
@@ -76,12 +77,13 @@ const WantedList = ({ navigation }) => {
 
     const getAllWantedCriminalsFromAPI = async () => {
         SetIsLoading(!refresh);
-        let refreshResult = await refreshToken();
-        if (refreshResult != null) {
+        let result = await refreshToken();
+        if (!result.isSuccessfully) {
             Toast.show({
                 type: "error",
-                text1: refreshResult,
+                text1: result.data,
             });
+            SetIsLoading(false);
             return;
         }
 
@@ -95,7 +97,7 @@ const WantedList = ({ navigation }) => {
                         : ""
                 }&&YearOfBirth=${
                     value != null && value.length > 0 ? value[0] : ""
-                }&&Keyword=${txtSearch}`,
+                }&&Keyword=${txtSearch == null ? "" : txtSearch}`,
             {
                 method: "GET", // *GET, POST, PUT, DELETE, etc.
                 mode: "cors", // no-cors, cors, *same-origin
@@ -103,11 +105,10 @@ const WantedList = ({ navigation }) => {
                 credentials: "same-origin", // include, *same-origin, omit
                 headers: {
                     Accept: "application/json",
-                    Authorization: `Bearer ${userInfo.token}`,
+                    Authorization: `Bearer ${result.data}`,
                 },
                 redirect: "follow", // manual, *follow, error
                 referrer: "no-referrer", // no-referrer, *client
-                // body: {}, // body data type must match "Content-Type" header
             }
         )
             .then((res) => res.json())
@@ -138,8 +139,8 @@ const WantedList = ({ navigation }) => {
         );
         SetValue([]);
     };
-    const goToWantedDetail = () => {
-        navigation.navigate("WantedDetail", (params = { criminalId: 1 }));
+    const goToWantedDetail = (id) => {
+        navigation.navigate("WantedDetail", (params = { criminalId: id }));
     };
 
     const inputRef = useRef(null);
@@ -272,7 +273,7 @@ const WantedList = ({ navigation }) => {
                 <View style={styles.body}>
                     {isLoading && (
                         <View style={styles.waitingCircle}>
-                            <ActivityIndicator size="large" color="black" />
+                            <ActivityIndicator size="large" color="green" />
                         </View>
                     )}
                     {wantedList && (
@@ -292,7 +293,9 @@ const WantedList = ({ navigation }) => {
                                     <WantedElement
                                         key={index}
                                         item={item}
-                                        onPress={goToWantedDetail}
+                                        onPress={() =>
+                                            goToWantedDetail(item.id)
+                                        }
                                     />
                                 );
                             })}
@@ -300,9 +303,8 @@ const WantedList = ({ navigation }) => {
                     )}
                 </View>
             </View>
-            <Toast />
+            <Toast config={toastConfig} />
         </View>
     );
 };
 export default WantedList;
-// họ tên, đơn vị ra quyết định, hktt, tội danh đặc điêm
