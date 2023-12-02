@@ -1,10 +1,15 @@
-import React, { useContext } from "react";
-import { View } from "react-native";
-import styles from "./style.js";
+import CriminalList from "./CriminalList";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-const Criminal = ({ navigation }) => {
-    const checkLogic = () => {};
+const tab = createNativeStackNavigator();
 
-    return <View style={styles.container}></View>;
-};
+function Criminal() {
+    return (
+        <tab.Navigator screenOptions={{ headerShown: false }}>
+            <tab.Screen name="CriminalList" component={CriminalList} />
+            {/* <tab.Screen name="CriminalDetail" component={CriminalDetail} /> */}
+        </tab.Navigator>
+    );
+}
+
 export default Criminal;

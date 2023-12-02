@@ -11,30 +11,42 @@ import {
     TouchableWithoutFeedback,
     ActivityIndicator,
     RefreshControl,
+    KeyboardAvoidingView,
 } from "react-native";
 import styles from "./style.js";
-import WantedElement from "../Components/WantedElement.js";
+import CriminalElement from "../Components/CriminalElement.js";
 import FilterFields from "../Components/FilterFields.js";
 import { AuthContext } from "../../Context/AuthContext.js";
 import { CustomText } from "../Components/CustomText.js";
 import Toast from "react-native-toast-message";
-import { API_URL, wantedType } from "../../Utils/constants.js";
+import {
+    API_URL,
+    criminalStatus,
+    gender,
+    typeOfViolation,
+} from "../../Utils/constants.js";
 import DropDown from "../Components/DropDown.js";
 import { toastConfig } from "../Components/ToastConfig.js";
+import TextBox from "../Components/TextBox.js";
 
-const WantedList = ({ navigation }) => {
+const CriminalList = ({ navigation }) => {
     const [txtSearch, SetTxtSearch] = useState(null);
     const [refresh, SetRefresh] = useState(false);
     const [modalVisible, SetModalVisible] = useState(false);
-    const [wantedList, SetWantedList] = useState(null);
+    const [criminalList, SetcriminalList] = useState([
+        { a: 1 },
+        { a: 2 },
+        { a: 3 },
+    ]);
     const { refreshToken } = useContext(AuthContext);
 
-    const [value, SetValue] = useState([]);
+    const [selectedYearOfBirth, SetSelectedYearOfBirth] = useState([]);
+    const [selectedArea, SetSelectedArea] = useState([]);
     const [isSubmit, SetIsSubmit] = useState(false);
     const [isLoading, SetIsLoading] = useState(false);
 
     //now - 200 -> now (0 years old - 200 years old)
-    const [items, SetItems] = useState(
+    const [yearOfBirthItems, SetYearOfBirthItems] = useState(
         Array.from({ length: 201 }, (_, i) => {
             return {
                 label: i + (new Date().getFullYear() - 200),
@@ -43,15 +55,65 @@ const WantedList = ({ navigation }) => {
         })
     );
 
-    const [dangerousLevelsChecked, SetDangerousLevelsChecked] = useState([]);
+    //area
+    const [areaItems, SetAreaItems] = useState([]);
+
+    const [statusChecked, SetStatusChecked] = useState([]);
+
+    const [typeOfViolationChecked, SetTypeOfViolationChecked] = useState([]);
+
+    const [genderChecked, SetGenderChecked] = useState([]);
+
+    const [charge, SetCharge] = useState(null);
+
+    const [characteristics, SetCharacteristics] = useState(null);
+
+    useEffect(() => {
+        const fetchArea = () =>
+            fetch("https://provinces.open-api.vn/api/?depth=1", {
+                method: "GET", // *GET, POST, PUT, DELETE, etc.
+                mode: "cors", // no-cors, cors, *same-origin
+                cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+                credentials: "same-origin", // include, *same-origin, omit
+                headers: {
+                    Accept: "application/json",
+                },
+                redirect: "follow", // manual, *follow, error
+                referrer: "no-referrer", // no-referrer, *client
+            })
+                .then((res) => res.json())
+                .then((res) => {
+                    if (res) {
+                        SetAreaItems(
+                            res.map((r) => ({
+                                label: r.name,
+                                value: r.name,
+                            }))
+                        );
+                    } else {
+                        Toast.show({
+                            type: "info",
+                            text1: res.messages != null ? res.messages : res,
+                        });
+                    }
+                })
+                .catch((e) => {
+                    console.log(`login error: ${e}`);
+                    Toast.show({
+                        type: "error",
+                        text1: "Có lỗi xảy ra (lỗi server), lỗi khi lấy dữ liệu tỉnh thành cho tìm kiếm",
+                    });
+                });
+        fetchArea();
+    }, []);
 
     // useEffect(() => {
     //     console.log(dangerousLevelsChecked);
     // }, [dangerousLevelsChecked]);
 
-    useEffect(() => {
-        getAllWantedCriminalsFromAPI();
-    }, []);
+    // useEffect(() => {
+    //     getAllWantedCriminalsFromAPI();
+    // }, []);
 
     useEffect(() => {
         if (txtSearch != null) getAllWantedCriminalsFromAPI();
@@ -88,11 +150,14 @@ const WantedList = ({ navigation }) => {
             API_URL +
                 "v1/WantedCriminal" +
                 `?WantedType=${
-                    dangerousLevelsChecked.length > 0
-                        ? dangerousLevelsChecked[0]
+                    dangerousLevelId != null && dangerousLevelId.length > 0
+                        ? dangerousLevelId[0]
                         : ""
                 }&&YearOfBirth=${
-                    value != null && value.length > 0 ? value[0] : ""
+                    selectedYearOfBirth != null &&
+                    selectedYearOfBirth.length > 0
+                        ? selectedYearOfBirth[0]
+                        : ""
                 }&&Keyword=${txtSearch == null ? "" : txtSearch}`,
             {
                 method: "GET", // *GET, POST, PUT, DELETE, etc.
@@ -110,7 +175,7 @@ const WantedList = ({ navigation }) => {
             .then((res) => res.json())
             .then((res) => {
                 if (res.succeeded) {
-                    SetWantedList(res.data);
+                    SetcriminalList(res.data);
                 } else {
                     Toast.show({
                         type: "info",
@@ -130,8 +195,13 @@ const WantedList = ({ navigation }) => {
     };
 
     const resetFilter = () => {
-        SetDangerousLevelsChecked([]);
-        SetValue([]);
+        SetGenderChecked([]);
+        SetStatusChecked([]);
+        SetTypeOfViolationChecked([]);
+        SetSelectedYearOfBirth([]);
+        SetSelectedArea([]);
+        SetCharge(null);
+        SetCharacteristics(null);
     };
     const goToWantedDetail = (id) => {
         navigation.navigate("WantedDetail", (params = { criminalId: id }));
@@ -146,7 +216,7 @@ const WantedList = ({ navigation }) => {
             <StatusBar barStyle="light-content" />
             <View style={[styles.head, { height: 240 }]}></View>
             <View style={[styles.content, { bottom: 250 }]}>
-                <CustomText style={styles.title}>Danh sách truy nã</CustomText>
+                <CustomText style={styles.title}>Danh sách tội phạm</CustomText>
                 <View style={styles.search}>
                     <Pressable
                         onPress={() => inputRef.current.focus()}
@@ -191,7 +261,10 @@ const WantedList = ({ navigation }) => {
                     <TouchableWithoutFeedback
                         onPressOut={() => SetModalVisible(false)}
                     >
-                        <View style={styles.modalContainer}>
+                        <KeyboardAvoidingView
+                            behavior="padding"
+                            style={styles.modalContainer}
+                        >
                             <TouchableWithoutFeedback>
                                 <View style={styles.modalView}>
                                     <View style={styles.modalHead}>
@@ -218,22 +291,61 @@ const WantedList = ({ navigation }) => {
                                             </CustomText>
                                         </TouchableOpacity>
                                     </View>
-                                    <FilterFields
-                                        title="Mức độ nguy hiểm"
-                                        listItems={wantedType}
-                                        listChecked={dangerousLevelsChecked}
-                                        setListChecked={
-                                            SetDangerousLevelsChecked
-                                        }
-                                    />
-                                    <DropDown
-                                        title="Năm sinh"
-                                        placeholder="Chọn năm sinh"
-                                        value={value}
-                                        items={items}
-                                        setValue={SetValue}
-                                        setItems={SetItems}
-                                    />
+                                    <ScrollView
+                                        contentContainerStyle={{
+                                            alignItems: "center",
+                                            width: "100%",
+                                        }}
+                                    >
+                                        <FilterFields
+                                            title="Trạng thái"
+                                            listItems={criminalStatus}
+                                            listChecked={statusChecked}
+                                            setListChecked={SetStatusChecked}
+                                        />
+                                        <DropDown
+                                            title="Năm sinh"
+                                            placeholder="Chọn năm sinh"
+                                            value={selectedYearOfBirth}
+                                            items={yearOfBirthItems}
+                                            setValue={SetSelectedYearOfBirth}
+                                            setItems={SetYearOfBirthItems}
+                                        />
+                                        <FilterFields
+                                            title="Loại vi phạm"
+                                            listItems={typeOfViolation}
+                                            listChecked={typeOfViolationChecked}
+                                            setListChecked={
+                                                SetTypeOfViolationChecked
+                                            }
+                                        />
+                                        <DropDown
+                                            title="Khu vực"
+                                            placeholder="Chọn khu vực"
+                                            value={selectedArea}
+                                            items={areaItems}
+                                            setValue={SetSelectedArea}
+                                            setItems={SetAreaItems}
+                                        />
+                                        <FilterFields
+                                            title="Giới tính"
+                                            listItems={gender}
+                                            listChecked={genderChecked}
+                                            setListChecked={SetGenderChecked}
+                                        />
+                                        <TextBox
+                                            title="Tội danh"
+                                            value={charge}
+                                            setValue={SetCharge}
+                                        />
+                                        <TextBox
+                                            title="Đặc điểm nhận dạng"
+                                            height={120}
+                                            value={characteristics}
+                                            setValue={SetCharacteristics}
+                                            multiline
+                                        />
+                                    </ScrollView>
                                     <TouchableOpacity
                                         onPress={() => {
                                             SetModalVisible(false);
@@ -252,7 +364,7 @@ const WantedList = ({ navigation }) => {
                                     </TouchableOpacity>
                                 </View>
                             </TouchableWithoutFeedback>
-                        </View>
+                        </KeyboardAvoidingView>
                     </TouchableWithoutFeedback>
                 </Modal>
                 <View style={styles.body}>
@@ -261,7 +373,7 @@ const WantedList = ({ navigation }) => {
                             <ActivityIndicator size="large" color="green" />
                         </View>
                     )}
-                    {wantedList && (
+                    {criminalList && (
                         <ScrollView
                             style={styles.scroll}
                             refreshControl={
@@ -271,16 +383,16 @@ const WantedList = ({ navigation }) => {
                                 />
                             }
                         >
-                            {wantedList.map((item, index) => {
+                            {criminalList.map((item, index) => {
                                 // const Max_Image_Number = 20;
                                 // if (index < Max_Image_Number)
                                 return (
-                                    <WantedElement
+                                    <CriminalElement
                                         key={index}
                                         item={item}
-                                        onPress={() =>
-                                            goToWantedDetail(item.id)
-                                        }
+                                        // onPress={() =>
+                                        //     goToWantedDetail(item.id)
+                                        // }
                                     />
                                 );
                             })}
@@ -292,4 +404,4 @@ const WantedList = ({ navigation }) => {
         </View>
     );
 };
-export default WantedList;
+export default CriminalList;
