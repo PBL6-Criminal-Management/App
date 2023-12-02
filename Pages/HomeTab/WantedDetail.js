@@ -122,9 +122,16 @@ const WantedDetail = ({ navigation, route }) => {
                     }
                     if (res.data.criminalImages.length > 0) {
                         SetCriminalImages(
-                            res.data.criminalImages.map((ci) => ({
-                                url: ci.fileUrl,
-                            }))
+                            res.data.criminalImages
+                                .filter(
+                                    (ci) =>
+                                        ci.fileUrl != "" &&
+                                        ci.fileUrl != null &&
+                                        ci.fileUrl != undefined
+                                )
+                                .map((ci) => ({
+                                    url: ci.fileUrl,
+                                }))
                         );
                     }
                 } else {

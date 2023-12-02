@@ -45,19 +45,28 @@ const FilterFields = (props) => {
                     }}
                 ></View>
             </Pressable>
-            {props.listItems.map((item, index) => {
-                const onPress = (index) => {
-                    const updatedArray = props.listChecked.slice();
-                    updatedArray[index] = !updatedArray[index];
-                    props.setListChecked(updatedArray);
+            {Object.entries(props.listItems).map(([key, value]) => {
+                const [count, SetCount] = useState(0);
+                const onPress = () => {
+                    SetCount((prevCount) => {
+                        if (prevCount === 0) {
+                            props.setListChecked([...props.listChecked, key]);
+                            return 1;
+                        } else {
+                            props.setListChecked(
+                                props.listChecked.filter((s) => s !== key)
+                            );
+                            return 0;
+                        }
+                    });
                 };
 
                 return (
                     isDropDown && (
                         <Pressable
-                            key={index}
+                            key={key}
                             style={styles.item}
-                            onPress={() => onPress(index)}
+                            onPress={() => onPress()}
                         >
                             <View
                                 style={{
@@ -71,13 +80,13 @@ const FilterFields = (props) => {
                                         fontFamily: "Be Vietnam bold",
                                     }}
                                 >
-                                    {item}
+                                    {value}
                                 </CustomText>
                                 <Checkbox
-                                    value={props.listChecked[index]}
-                                    onValueChange={() => onPress(index)}
+                                    value={props.listChecked.includes(key)}
+                                    onValueChange={() => onPress()}
                                     color={
-                                        props.listChecked[index]
+                                        props.listChecked.includes(key)
                                             ? "#53B6ED"
                                             : "#DFE0E2"
                                     }
