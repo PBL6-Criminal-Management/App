@@ -35,6 +35,6 @@ export const typeOfViolation = {
 };
 
 export const gender = {
-    0: "Nam",
-    1: "Nữ",
+    0: "Nữ",
+    1: "Nam",
 };

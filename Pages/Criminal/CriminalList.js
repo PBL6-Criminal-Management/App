@@ -30,22 +30,19 @@ import { toastConfig } from "../Components/ToastConfig.js";
 import TextBox from "../Components/TextBox.js";
 
 const CriminalList = ({ navigation }) => {
-    const [txtSearch, SetTxtSearch] = useState(null);
     const [refresh, SetRefresh] = useState(false);
     const [modalVisible, SetModalVisible] = useState(false);
-    const [criminalList, SetcriminalList] = useState([
-        { a: 1 },
-        { a: 2 },
-        { a: 3 },
-    ]);
     const { refreshToken } = useContext(AuthContext);
 
-    const [selectedYearOfBirth, SetSelectedYearOfBirth] = useState([]);
-    const [selectedArea, SetSelectedArea] = useState([]);
-    const [isSubmit, SetIsSubmit] = useState(false);
     const [isLoading, SetIsLoading] = useState(false);
+    const [isSubmit, SetIsSubmit] = useState(false);
 
-    //now - 200 -> now (0 years old - 200 years old)
+    //search & filter
+    const [txtSearch, SetTxtSearch] = useState(null);
+
+    //combobox
+    const [selectedYearOfBirth, SetSelectedYearOfBirth] = useState([]);
+    //value: now - 200 -> now (0 years old - 200 years old)
     const [yearOfBirthItems, SetYearOfBirthItems] = useState(
         Array.from({ length: 201 }, (_, i) => {
             return {
@@ -56,17 +53,20 @@ const CriminalList = ({ navigation }) => {
     );
 
     //area
+    const [selectedArea, SetSelectedArea] = useState([]);
     const [areaItems, SetAreaItems] = useState([]);
 
+    //checkbox
     const [statusChecked, SetStatusChecked] = useState([]);
-
     const [typeOfViolationChecked, SetTypeOfViolationChecked] = useState([]);
-
     const [genderChecked, SetGenderChecked] = useState([]);
 
+    //textbox
     const [charge, SetCharge] = useState(null);
-
     const [characteristics, SetCharacteristics] = useState(null);
+
+    //data to show
+    const [criminalList, SetCriminalList] = useState([]);
 
     useEffect(() => {
         const fetchArea = () =>
@@ -87,7 +87,7 @@ const CriminalList = ({ navigation }) => {
                         SetAreaItems(
                             res.map((r) => ({
                                 label: r.name,
-                                value: r.name,
+                                value: extractPrefixInProvice(r.name),
                             }))
                         );
                     } else {
@@ -107,33 +107,43 @@ const CriminalList = ({ navigation }) => {
         fetchArea();
     }, []);
 
+    const extractPrefixInProvice = (province) => {
+        if (province.startsWith("Tỉnh Thừa Thiên "))
+            return province.substring("Tỉnh Thừa Thiên ".length);
+        if (province.startsWith("Tỉnh "))
+            return province.substring("Tỉnh ".length);
+        if (province.startsWith("Thành phố "))
+            return province.substring("Thành phố ".length);
+        return province;
+    };
+
     // useEffect(() => {
     //     console.log(dangerousLevelsChecked);
     // }, [dangerousLevelsChecked]);
 
-    // useEffect(() => {
-    //     getAllWantedCriminalsFromAPI();
-    // }, []);
+    useEffect(() => {
+        getAllCriminalsFromAPI();
+    }, []);
 
     useEffect(() => {
-        if (txtSearch != null) getAllWantedCriminalsFromAPI();
+        if (txtSearch != null) getAllCriminalsFromAPI();
     }, [txtSearch]);
 
     useEffect(() => {
         if (refresh) {
-            getAllWantedCriminalsFromAPI();
+            getAllCriminalsFromAPI();
             SetRefresh(false);
         }
     }, [refresh]);
 
     useEffect(() => {
         if (isSubmit) {
-            getAllWantedCriminalsFromAPI();
+            getAllCriminalsFromAPI();
             SetIsSubmit(false);
         }
     }, [isSubmit]);
 
-    const getAllWantedCriminalsFromAPI = async () => {
+    const getAllCriminalsFromAPI = async () => {
         SetIsLoading(!refresh);
         let result = await refreshToken();
         if (!result.isSuccessfully) {
@@ -148,17 +158,23 @@ const CriminalList = ({ navigation }) => {
         fetch(
             //&PageNumber=1&PageSize=10
             API_URL +
-                "v1/WantedCriminal" +
-                `?WantedType=${
-                    dangerousLevelId != null && dangerousLevelId.length > 0
-                        ? dangerousLevelId[0]
+                "v1/criminal" +
+                `?Status=${statusChecked.length > 0 ? statusChecked[0] : ""}
+                &YearOfBirth=${
+                    selectedYearOfBirth.length > 0 ? selectedYearOfBirth[0] : ""
+                }&Gender=${
+                    genderChecked.length > 0 ? genderChecked[0] == 1 : ""
+                }&Characteristics=${
+                    characteristics == null ? "" : characteristics
+                }&TypeOfViolation=${
+                    typeOfViolationChecked.length > 0
+                        ? typeOfViolationChecked[0]
                         : ""
-                }&&YearOfBirth=${
-                    selectedYearOfBirth != null &&
-                    selectedYearOfBirth.length > 0
-                        ? selectedYearOfBirth[0]
-                        : ""
-                }&&Keyword=${txtSearch == null ? "" : txtSearch}`,
+                }&Area=${
+                    selectedArea.length > 0 ? selectedArea[0] : ""
+                }&Charge=${charge == null ? "" : charge}&Keyword=${
+                    txtSearch == null ? "" : txtSearch
+                }`,
             {
                 method: "GET", // *GET, POST, PUT, DELETE, etc.
                 mode: "cors", // no-cors, cors, *same-origin
@@ -175,7 +191,7 @@ const CriminalList = ({ navigation }) => {
             .then((res) => res.json())
             .then((res) => {
                 if (res.succeeded) {
-                    SetcriminalList(res.data);
+                    SetCriminalList(res.data);
                 } else {
                     Toast.show({
                         type: "info",
@@ -203,8 +219,9 @@ const CriminalList = ({ navigation }) => {
         SetCharge(null);
         SetCharacteristics(null);
     };
-    const goToWantedDetail = (id) => {
-        navigation.navigate("WantedDetail", (params = { criminalId: id }));
+
+    const goToCriminalDetail = (id) => {
+        navigation.navigate("CriminalDetail", (params = { criminalId: id }));
     };
 
     const inputRef = useRef(null);
@@ -391,7 +408,7 @@ const CriminalList = ({ navigation }) => {
                                         key={index}
                                         item={item}
                                         // onPress={() =>
-                                        //     goToWantedDetail(item.id)
+                                        //     goToCriminalDetail(item.id)
                                         // }
                                     />
                                 );
