@@ -7,39 +7,37 @@ import { criminalStatus } from "../../Utils/constants.js";
 
 const CriminalElement = (props) => {
     const colorList = {
-        0: "#FBC778",
-        1: "#FC0808",
-        2: "#63036C",
+        0: "#648c11",
+        1: "#FBC778",
+        2: "#FC0808",
+        3: "#d2691e",
+        4: "#63036C",
+        5: "green",
     };
     const BASE_PATH = "../../Public/";
 
     return (
         <TouchableOpacity
-            style={[
-                styles.container,
-                // { borderTopColor: colorList[props.item.criminalStatus] },
-            ]}
+            style={[styles.container]}
             // onPress={props.onPress}
         >
             <View style={styles.body}>
-                <View style={styles.row}>
+                <View style={[styles.row, { alignItems: "center" }]}>
                     <CustomText style={styles.title}>
-                        {/* {criminalStatus[props.item.name]} */}
-                        Nguyễn Thế Đăng Hoan
+                        {props.item.name}
                     </CustomText>
-                    <CustomText
+                    <View
                         style={[
                             styles.criminalStatus,
                             {
-                                backgroundColor:
-                                    // colorList[props.item.criminalStatus],
-                                    "#FBC778",
+                                backgroundColor: colorList[props.item.status],
                             },
                         ]}
                     >
-                        {/* {criminalStatus[props.item.criminalStatus]} */}
-                        Đang ngồi tù
-                    </CustomText>
+                        <CustomText style={{ color: "white" }}>
+                            {criminalStatus[props.item.status]}
+                        </CustomText>
+                    </View>
                 </View>
                 <View
                     style={{
@@ -50,32 +48,28 @@ const CriminalElement = (props) => {
                 ></View>
                 <View style={styles.row}>
                     <View style={styles.field}>
-                        <CustomText style={styles.title}>Ngày sinh:</CustomText>
-                        <CustomText>03/02/2002</CustomText>
+                        <CustomText style={styles.title}>Năm sinh:</CustomText>
+                        <CustomText>{props.item.yearOfBirth}</CustomText>
                     </View>
                     <View style={styles.field}>
                         <CustomText style={styles.title}>
                             Hộ khẩu thường trú:
                         </CustomText>
-                        <CustomText>
-                            K123 đườn
-                            {/* g Tôn Đản, Hoà Phát, Cẩm Lệ, TP Đà Nẵng */}
-                        </CustomText>
+                        <CustomText>{props.item.permanentResidence}</CustomText>
                     </View>
                 </View>
                 <View style={styles.row}>
                     <View style={styles.field}>
                         <CustomText style={styles.title}>Tội danh:</CustomText>
-                        <CustomText>
-                            Tội cướp giật
-                            {/* tài sản và buôn bán hàng cấm */}
-                        </CustomText>
+                        <CustomText>{props.item.charge}</CustomText>
                     </View>
                     <View style={styles.field}>
                         <CustomText style={styles.title}>
                             Phạm tội gần nhất:
                         </CustomText>
-                        <CustomText>24/11/2022</CustomText>
+                        <CustomText>
+                            {props.item.dateOfMostRecentCrime}
+                        </CustomText>
                     </View>
                 </View>
             </View>
@@ -90,59 +84,47 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         marginBottom: 20,
-        // borderStyle: 'dashed',
-        borderColor: "gray",
-        borderWidth: 0.2,
-        borderRadius: 17,
         padding: 8,
+        borderRadius: 17,
+        // borderColor: "gray",
+        // borderWidth: 0.5,
+        width: "98%",
+        alignSelf: "center",
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 0,
+        },
+        shadowOpacity: 0.2,
     },
     criminalStatus: {
-        // position: "absolute",
-        // top: 10,
-        // right: 10,
+        height: 40,
         borderRadius: 5,
         color: "white",
         padding: 5,
+        paddingHorizontal: 10,
         overflow: "hidden",
+        justifyContent: "center",
     },
     body: {
         flex: 1,
         flexDirection: "column",
         gap: 10,
+        paddingVertical: 5,
+        paddingHorizontal: 10,
     },
     row: {
         flexDirection: "row",
-        gap: 30,
         justifyContent: "space-between",
-        alignItems: "center",
+        gap: 5,
     },
     field: {
         flexDirection: "column",
-        paddingBottom: 15,
+        width: "50%",
     },
     title: {
         fontFamily: "Be Vietnam bold",
         color: "#08354F",
-    },
-    image: {
-        width: 90,
-        height: 90,
-        borderWidth: 1,
-        borderRadius: 100,
-        alignSelf: "center",
-        resizeMode: "stretch",
-    },
-    textContainer: {
-        flex: 1,
-    },
-    content: {
-        paddingLeft: 20,
-    },
-    foot: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
-        height: 50,
     },
 });
 
