@@ -48,7 +48,9 @@ const WantedElement = (props) => {
                         <CustomText>
                             Năm sinh: {props.item.yearOfBirth}
                         </CustomText>
-                        <CustomText>Tội danh: {props.item.charge}</CustomText>
+                        <CustomText>
+                            Tội danh truy nã: {props.item.charge}
+                        </CustomText>
                         <CustomText>
                             Đặc điểm: {props.item.characteristics}
                         </CustomText>

@@ -93,7 +93,7 @@ const FaceDetect = ({ navigation, route }) => {
                     SetIsLoading(false);
                     Toast.show({
                         type: "error",
-                        text1: "Có lỗi xảy ra (lỗi server)",
+                        text1: "Có lỗi xảy ra: " + e,
                     });
                 });
         else {

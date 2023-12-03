@@ -20,132 +20,143 @@ const InformationFields = (props) => {
         SetIsDropDown(!isDropDown);
     };
 
+    const convertToArrayOfObjects = (input) => {
+        if (Array.isArray(input)) {
+            return input;
+        } else {
+            return [input];
+        }
+    };
+
     return (
-        <View style={styles.container}>
-            <Pressable onPress={onHeadPressed} style={{ width: "100%" }}>
-                <View
-                    style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        backgroundColor: "#384664",
-                        height: 56,
-                        padding: 20,
-                        borderTopLeftRadius: 5,
-                        borderTopRightRadius: 5,
-                        borderBottomLeftRadius: !isDropDown ? 5 : 0,
-                        borderBottomRightRadius: !isDropDown ? 5 : 0,
-                    }}
-                >
-                    <CustomText
+        Object.keys(props.listItems).length > 0 && (
+            <View style={styles.container}>
+                <Pressable onPress={onHeadPressed} style={{ width: "100%" }}>
+                    <View
                         style={{
-                            fontFamily: "Be Vietnam bold",
-                            color: "white",
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                            alignItems: "center",
                             backgroundColor: "#384664",
-                            height: 20,
+                            height: 56,
+                            padding: 20,
+                            borderTopLeftRadius: 5,
+                            borderTopRightRadius: 5,
+                            borderBottomLeftRadius: !isDropDown ? 5 : 0,
+                            borderBottomRightRadius: !isDropDown ? 5 : 0,
                         }}
                     >
-                        {props.title}
-                    </CustomText>
-                    <Image
-                        source={
-                            isDropDown
-                                ? require("../../Public/upArrow.png")
-                                : require("../../Public/downArrow.png")
-                        }
-                        style={{ tintColor: "white" }}
-                    />
-                </View>
-            </Pressable>
-            <View style={styles.body}>
-                {Object.keys(props.listItems).map((_, index) => {
-                    return (
-                        isDropDown && (
-                            <View
-                                key={index}
-                                style={{
-                                    flexDirection: "column",
-                                    paddingBottom: 20,
-                                    paddingTop: index == 0 ? 18 : 0,
-                                }}
-                            >
-                                <CustomText
-                                    style={{
-                                        fontFamily: "Be Vietnam bold",
-                                        color: "#08354F",
-                                    }}
-                                >
-                                    {Object.keys(props.listItems)[index]}:{" "}
-                                </CustomText>
-                                <CustomText style={{}}>
-                                    {Object.values(props.listItems)[index]}
-                                </CustomText>
-                            </View>
-                        )
-                    );
-                })}
-                {props.haveImages && (
-                    <View style={{}}>
                         <CustomText
                             style={{
                                 fontFamily: "Be Vietnam bold",
-                                color: "#08354F",
+                                color: "white",
+                                backgroundColor: "#384664",
+                                height: 20,
                             }}
                         >
-                            {props.imagesFieldName}
+                            {props.title}
                         </CustomText>
-                        <View
-                            style={{
-                                marginTop: 5,
-                                paddingBottom: 20,
-                            }}
-                        >
-                            <ScrollView
-                                snapToInterval={200}
-                                decelerationRate={"fast"}
-                                alwaysBounceHorizontal={true}
-                                horizontal
-                                contentContainerStyle={{
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                }}
-                            >
-                                {props.images.map((image, index) => (
-                                    <Pressable
+                        <Image
+                            source={
+                                isDropDown
+                                    ? require("../../Public/upArrow.png")
+                                    : require("../../Public/downArrow.png")
+                            }
+                            style={{ tintColor: "white" }}
+                        />
+                    </View>
+                </Pressable>
+                <View style={styles.body}>
+                    {isDropDown &&
+                        convertToArrayOfObjects(props.listItems).map((item) =>
+                            Object.keys(item).map((_, index) => {
+                                return (
+                                    <View
                                         key={index}
-                                        onPress={() => {
-                                            SetImageIndex(index);
-                                            SetIsModalVisible(true);
+                                        style={{
+                                            flexDirection: "column",
+                                            paddingBottom: 20,
+                                            paddingTop: index == 0 ? 18 : 0,
                                         }}
                                     >
-                                        <Image
-                                            source={{ uri: image.url }}
-                                            style={styles.image}
-                                        />
-                                    </Pressable>
-                                ))}
-                            </ScrollView>
+                                        <CustomText
+                                            style={{
+                                                fontFamily: "Be Vietnam bold",
+                                                color: "#08354F",
+                                            }}
+                                        >
+                                            {Object.keys(item)[index]}:{" "}
+                                        </CustomText>
+                                        <CustomText style={{}}>
+                                            {Object.values(item)[index]}
+                                        </CustomText>
+                                    </View>
+                                );
+                            })
+                        )}
+                    {props.haveImages && isDropDown && (
+                        <View style={{}}>
+                            <CustomText
+                                style={{
+                                    fontFamily: "Be Vietnam bold",
+                                    color: "#08354F",
+                                }}
+                            >
+                                {props.imagesFieldName}
+                            </CustomText>
+                            <View
+                                style={{
+                                    marginTop: 5,
+                                    paddingBottom: 20,
+                                }}
+                            >
+                                <ScrollView
+                                    snapToInterval={200}
+                                    decelerationRate={"fast"}
+                                    alwaysBounceHorizontal={true}
+                                    horizontal
+                                    contentContainerStyle={{
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                    }}
+                                >
+                                    {props.images.map((image, index) => (
+                                        <Pressable
+                                            key={index}
+                                            onPress={() => {
+                                                SetImageIndex(index);
+                                                SetIsModalVisible(true);
+                                            }}
+                                        >
+                                            <Image
+                                                source={{ uri: image.url }}
+                                                style={styles.image}
+                                            />
+                                        </Pressable>
+                                    ))}
+                                </ScrollView>
+                            </View>
+                            <Modal
+                                visible={isModalVisible}
+                                transparent={true}
+                                onRequestClose={() => {
+                                    SetIsModalVisible(!isModalVisible);
+                                }}
+                                onBackdropPress={() => SetIsModalVisible(false)}
+                            >
+                                <ImageViewer
+                                    index={imageIndex}
+                                    imageUrls={props.images}
+                                    onClick={() => SetIsModalVisible(false)}
+                                    enableSwipeDown={true}
+                                    onSwipeDown={() => SetIsModalVisible(false)}
+                                />
+                            </Modal>
                         </View>
-                        <Modal
-                            visible={isModalVisible}
-                            transparent={true}
-                            onRequestClose={() => {
-                                SetIsModalVisible(!isModalVisible);
-                            }}
-                            onBackdropPress={() => SetIsModalVisible(false)}
-                        >
-                            <ImageViewer
-                                index={imageIndex}
-                                imageUrls={props.images}
-                                onClick={() => SetIsModalVisible(false)}
-                                enableSwipeDown={true}
-                                onSwipeDown={() => SetIsModalVisible(false)}
-                            />
-                        </Modal>
-                    </View>
-                )}
+                    )}
+                </View>
             </View>
-        </View>
+        )
     );
 };
 

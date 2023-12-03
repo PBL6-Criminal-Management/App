@@ -9,3 +9,9 @@
 - refactor code bên profile lại (dùng component)
 
 - căn giữa waiting circle trong face detect
+
+- thêm link đến case trong các vụ án liên quan
+
+- train model bằng colab
+
+- xoá ảnh trong tất cả api delete liên quan tới ảnh

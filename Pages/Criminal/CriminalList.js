@@ -101,7 +101,9 @@ const CriminalList = ({ navigation }) => {
                     console.log(`login error: ${e}`);
                     Toast.show({
                         type: "error",
-                        text1: "Có lỗi xảy ra (lỗi server), lỗi khi lấy dữ liệu tỉnh thành cho tìm kiếm",
+                        text1:
+                            "Có lỗi xảy ra khi lấy dữ liệu tỉnh thành cho tìm kiếm: " +
+                            e,
                     });
                 });
         fetchArea();
@@ -193,6 +195,7 @@ const CriminalList = ({ navigation }) => {
                 if (res.succeeded) {
                     SetCriminalList(res.data);
                 } else {
+                    console.log(res);
                     Toast.show({
                         type: "info",
                         text1: res.messages != null ? res.messages : res,
@@ -204,7 +207,7 @@ const CriminalList = ({ navigation }) => {
                 console.log(`login error: ${e}`);
                 Toast.show({
                     type: "error",
-                    text1: "Có lỗi xảy ra (lỗi server)",
+                    text1: "Có lỗi xảy ra: " + e,
                 });
                 SetIsLoading(false);
             });
@@ -407,9 +410,9 @@ const CriminalList = ({ navigation }) => {
                                     <CriminalElement
                                         key={index}
                                         item={item}
-                                        // onPress={() =>
-                                        //     goToCriminalDetail(item.id)
-                                        // }
+                                        onPress={() =>
+                                            goToCriminalDetail(item.id)
+                                        }
                                     />
                                 );
                             })}
