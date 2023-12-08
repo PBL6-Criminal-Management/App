@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
     View,
     TouchableOpacity,
@@ -8,35 +8,83 @@ import {
     Modal,
     TouchableWithoutFeedback,
 } from "react-native";
+import Toast from "react-native-toast-message";
 import styles from "./style.js";
 import { AuthContext } from "../../Context/AuthContext.js";
-import { roleEnum } from "../../Utils/constants.js";
+import { API_URL, roleEnum } from "../../Utils/constants.js";
 import { CustomText } from "../Components/CustomText.js";
 import InformationFlat from "../Components/InformationFlat.js";
+import { toastConfig } from "../Components/ToastConfig.js";
 
 const Profile = ({ navigation }) => {
-    const { logout } = useContext(AuthContext);
+    const { logout, userInfo, refreshToken } = useContext(AuthContext);
     const [isWarningShow, SetIsWarningShow] = useState(false);
+    const [profile, SetProfile] = useState([]);
+    const [userInformation, SetUserInformation] = useState([]);
+    const [, SetIsLoading] = useState(false);
 
-    // Lấy từ API (get by id)
-    const userInfo = {
-        fullName: "Nguyễn Thế Đăng Hoan",
-        position: 0,
-        birthday: "2002-02-03",
-        gender: true,
-        phoneNumber: "0852556258",
-        email: "nguyenthedanghoan@gmail.com",
-        image: require("../../Public/Hoan.jpg"),
+    const getProfileFromAPI = async () => {
+        SetIsLoading(true);
+        let result = await refreshToken();
+        if (!result.isSuccessfully) {
+            Toast.show({
+                type: "error",
+                text1: result.data,
+            });
+            SetIsLoading(false);
+            return;
+        }
+
+        fetch(
+            //&PageNumber=1&PageSize=10
+            API_URL + `v1/account/${userInfo.userId}`,
+            {
+                method: "GET", // *GET, POST, PUT, DELETE, etc.
+                mode: "cors", // no-cors, cors, *same-origin
+                cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+                credentials: "same-origin", // include, *same-origin, omit
+                headers: {
+                    Accept: "application/json",
+                    Authorization: `Bearer ${result.data}`,
+                },
+                redirect: "follow", // manual, *follow, error
+                referrer: "no-referrer", // no-referrer, *client
+            }
+        )
+            .then((res) => res.json())
+            .then((res) => {
+                if (res.succeeded) {
+                    SetProfile(res.data);
+                    SetUserInformation({
+                        "Họ và tên": res.data.name,
+                        "Chức vụ": roleEnum[res.data.role],
+                        "Ngày sinh": res.data.birthday,
+                        "Giới tính": res.data.gender ? "Nam" : "Nữ",
+                        "Số điện thoại": res.data.phoneNumber,
+                        Email: res.data.email,
+                    });
+                } else {
+                    console.log(res);
+                    Toast.show({
+                        type: "info",
+                        text1: res.messages != null ? res.messages : res,
+                    });
+                }
+                SetIsLoading(false);
+            })
+            .catch((e) => {
+                console.log(`login error: ${e}`);
+                Toast.show({
+                    type: "error",
+                    text1: "Có lỗi xảy ra: " + e,
+                });
+                SetIsLoading(false);
+            });
     };
 
-    const userInformation = {
-        "Họ và tên": userInfo.fullName,
-        "Chức vụ": roleEnum[userInfo.position],
-        "Ngày sinh": userInfo.birthday,
-        "Giới tính": userInfo.gender ? "Nam" : "Nữ",
-        "Số điện thoại": userInfo.phoneNumber,
-        Email: userInfo.email,
-    };
+    useEffect(() => {
+        getProfileFromAPI();
+    }, []);
 
     const checkLogic = () => {};
 
@@ -139,10 +187,13 @@ const Profile = ({ navigation }) => {
                         </View>
                     </TouchableWithoutFeedback>
                 </Modal>
-                <Image style={styles.avatar} source={userInfo.image}></Image>
-                <CustomText style={styles.name}>{userInfo.fullName}</CustomText>
+                <Image
+                    style={styles.avatar}
+                    source={{ uri: profile.imageLink }}
+                ></Image>
+                <CustomText style={styles.name}>{profile.name}</CustomText>
                 <CustomText style={styles.note}>
-                    {roleEnum[userInfo.position]}
+                    {roleEnum[profile.role]}
                 </CustomText>
                 <View style={styles.body}>
                     <View style={styles.title}>
@@ -162,7 +213,7 @@ const Profile = ({ navigation }) => {
                     onPress={() =>
                         navigation.navigate(
                             "ProfileEdit",
-                            (params = { userInfo: userInfo })
+                            (params = { userInfo: profile })
                         )
                     }
                     style={[styles.btnAgree, { width: "100%" }]}
@@ -177,6 +228,7 @@ const Profile = ({ navigation }) => {
                     </CustomText>
                 </TouchableOpacity>
             </View>
+            <Toast config={toastConfig} />
         </View>
     );
 };

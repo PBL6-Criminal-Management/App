@@ -1,17 +1,19 @@
-- phóng to chữ trên ảnh
+v phóng to chữ trên ảnh
 
-- tăng max size upload ảnh
+v tăng max size upload ảnh
 
 - tạo pr
 
 - hiệu ứng scan
 
-- refactor code bên profile lại (dùng component)
+v refactor code bên profile lại (dùng component)
 
-- căn giữa waiting circle trong face detect
+v căn giữa waiting circle trong face detect
 
 - thêm link đến case trong các vụ án liên quan
 
-- train model bằng colab
+v train model bằng colab
 
 - xoá ảnh trong tất cả api delete liên quan tới ảnh
+
+v yearOfbirth start with txtSearch
