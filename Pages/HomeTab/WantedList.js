@@ -112,6 +112,7 @@ const WantedList = ({ navigation }) => {
                 if (res.succeeded) {
                     SetWantedList(res.data);
                 } else {
+                    console.log(res);
                     Toast.show({
                         type: "info",
                         text1: res.messages != null ? res.messages : res,
@@ -123,7 +124,7 @@ const WantedList = ({ navigation }) => {
                 console.log(`login error: ${e}`);
                 Toast.show({
                     type: "error",
-                    text1: "Có lỗi xảy ra (lỗi server)",
+                    text1: "Có lỗi xảy ra: " + e,
                 });
                 SetIsLoading(false);
             });

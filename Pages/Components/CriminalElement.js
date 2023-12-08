@@ -17,10 +17,7 @@ const CriminalElement = (props) => {
     const BASE_PATH = "../../Public/";
 
     return (
-        <TouchableOpacity
-            style={[styles.container]}
-            // onPress={props.onPress}
-        >
+        <TouchableOpacity style={[styles.container]} onPress={props.onPress}>
             <View style={styles.body}>
                 <View style={[styles.row, { alignItems: "center" }]}>
                     <CustomText style={styles.title}>

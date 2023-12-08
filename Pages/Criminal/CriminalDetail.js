@@ -14,7 +14,7 @@ import { API_URL, criminalStatus, wantedType } from "../../Utils/constants.js";
 import InformationFields from "../Components/InformationFields.js";
 import { toastConfig } from "../Components/ToastConfig.js";
 
-const WantedDetail = ({ navigation, route }) => {
+const CriminalDetail = ({ navigation, route }) => {
     const { refreshToken } = useContext(AuthContext);
 
     const [basicInformation, SetBasicInformation] = useState({});
@@ -110,18 +110,38 @@ const WantedDetail = ({ navigation, route }) => {
                         "Thông tin khác": res.data.otherInformation,
                     });
                     if (res.data.wantedCriminals.length > 0) {
-                        wantedInfor =
-                            res.data.wantedCriminals[
-                                res.data.wantedCriminals.length - 1
-                            ];
-                        SetWantedInformation({
-                            "Tội danh truy nã": wantedInfor.charge,
-                            "Loại truy nã": wantedType[wantedInfor.wantedType],
-                            "Số ra quyết định": wantedInfor.wantedDecisionNo,
-                            "Ngày ra quyết định": wantedInfor.wantedDecisionDay,
-                            "Đơn vị ra quyết định":
-                                wantedInfor.decisionMakingUnit,
-                        });
+                        var wantedInfor;
+                        if (res.data.wantedCriminals.length > 1) {
+                            wantedCount = {
+                                "Số lần truy nã":
+                                    res.data.wantedCriminals.length,
+                            };
+                            wantedInfor = [wantedCount].concat(
+                                res.data.wantedCriminals.map((w, index) => ({
+                                    [`Lần ${index + 1}:\nTội danh truy nã`]:
+                                        w.charge,
+                                    "Vụ án": w.caseId,
+                                    "Hoạt động hiện tại": w.currentActivity,
+                                    "Loại truy nã": wantedType[w.wantedType],
+                                    "Số ra quyết định": w.wantedDecisionNo,
+                                    "Ngày ra quyết định": w.wantedDecisionDay,
+                                    "Đơn vị ra quyết định":
+                                        w.decisionMakingUnit,
+                                }))
+                            );
+                        } else {
+                            var w = res.data.wantedCriminals[0];
+                            wantedInfor = {
+                                "Tội danh truy nã": w.charge,
+                                "Vụ án": w.caseId,
+                                "Hoạt động hiện tại": w.currentActivity,
+                                "Loại truy nã": wantedType[w.wantedType],
+                                "Số ra quyết định": w.wantedDecisionNo,
+                                "Ngày ra quyết định": w.wantedDecisionDay,
+                                "Đơn vị ra quyết định": w.decisionMakingUnit,
+                            };
+                        }
+                        SetWantedInformation(wantedInfor);
                     }
                     if (res.data.criminalImages.length > 0) {
                         SetCriminalImages(
@@ -202,7 +222,7 @@ const WantedDetail = ({ navigation, route }) => {
                             listItems={criminalInformation}
                         />
                         <InformationFields
-                            title="Thông tin truy nã"
+                            title="Lịch sử truy nã"
                             listItems={wantedInformation}
                         />
                     </ScrollView>
@@ -212,4 +232,4 @@ const WantedDetail = ({ navigation, route }) => {
         </View>
     );
 };
-export default WantedDetail;
+export default CriminalDetail;

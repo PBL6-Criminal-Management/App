@@ -113,7 +113,7 @@ export const AuthProvider = ({ children }) => {
             .catch((e) => {
                 console.log(`login error: ${e}`);
                 SetIsLoading(false);
-                return "Có lỗi xảy ra (lỗi server)";
+                return "Có lỗi xảy ra: " + e;
             });
     };
 
