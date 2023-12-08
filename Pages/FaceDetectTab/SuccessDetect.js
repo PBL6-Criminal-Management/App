@@ -9,6 +9,7 @@ import {
 import styles from "./style.js";
 import { CustomText } from "../Components/CustomText.js";
 import InformationFlat from "../Components/InformationFlat.js";
+import { criminalStatus, wantedType } from "../../Utils/constants.js";
 
 const SuccessDetect = ({ navigation, route }) => {
     const [SeeMore, SetSeeMore] = useState(false);
@@ -16,6 +17,8 @@ const SuccessDetect = ({ navigation, route }) => {
     const [criminalInfo, SetCriminalInfo] = useState(null);
     const [basicInformation, SetBasicInformation] = useState(null);
     const [moreInformation, SetMoreInformation] = useState(null);
+    const [wantedInformation, SetWantedInformation] = useState({});
+    const [criminalImages, SetCriminalImages] = useState(null);
 
     useEffect(() => {
         if (route.params?.result) {
@@ -28,28 +31,99 @@ const SuccessDetect = ({ navigation, route }) => {
         if (criminalInfo != null && criminalInfo.foundCriminal != null) {
             SetBasicInformation({
                 "Họ và tên": criminalInfo.foundCriminal.name,
+                "Tên khác": criminalInfo.foundCriminal.anotherName,
                 "Ngày sinh": criminalInfo.foundCriminal.birthday,
                 "Giới tính": criminalInfo.foundCriminal.gender ? "Nam" : "Nữ",
-                "Nghề nghiệp, nơi làm việc":
-                    criminalInfo.foundCriminal.careerAndWorkplace,
-                "Nơi ĐKTT": criminalInfo.foundCriminal.permanentResidence,
-                "Tình trạng": criminalInfo.foundCriminal.status,
-                "Mức độ nguy hiểm": criminalInfo.foundCriminal.dangerousLevel,
-                "Tội danh": criminalInfo.foundCriminal.charge,
-            });
-            SetMoreInformation({
                 "Số điện thoại": criminalInfo.foundCriminal.phoneNumber,
                 "Quê quán": criminalInfo.foundCriminal.homeTown,
                 "Quốc tịch": criminalInfo.foundCriminal.nationality,
                 "Dân tộc": criminalInfo.foundCriminal.ethnicity,
                 "Tôn giáo": criminalInfo.foundCriminal.religion,
-                "CMND/CCCD": criminalInfo.foundCriminal.cmnd_cccd,
-                "Nơi cư trú hiện tại":
+                "CCCD/CMND": criminalInfo.foundCriminal.citizenId,
+                "Nghề nghiệp, nơi làm việc":
+                    criminalInfo.foundCriminal.careerAndWorkplace,
+                "Nơi ĐKTT": criminalInfo.foundCriminal.permanentResidence,
+                "Chỗ ở hiện tại":
                     criminalInfo.foundCriminal.currentAccommodation,
-                "Vụ án liên quan": criminalInfo.foundCriminal.relatedCases,
-                "Hoạt động hiện tại":
-                    criminalInfo.foundCriminal.currentActivity,
+                "Họ và tên cha": criminalInfo.foundCriminal.fatherName,
+                "Ngày sinh cha": criminalInfo.foundCriminal.fatherBirthday,
+                "CCCD/CMND cha": criminalInfo.foundCriminal.fatherCitizenId,
+                "Họ và tên mẹ": criminalInfo.foundCriminal.motherName,
+                "Ngày sinh mẹ": criminalInfo.foundCriminal.motherBirthday,
+                "CCCD/CMND mẹ": criminalInfo.foundCriminal.motherCitizenId,
+                "Đặc điểm nhận dạng":
+                    criminalInfo.foundCriminal.characteristics,
             });
+            SetMoreInformation({
+                "Tình trạng": criminalStatus[criminalInfo.foundCriminal.status],
+                "Mức độ nguy hiểm": criminalInfo.foundCriminal.dangerousLevel,
+                "Vụ án liên quan": criminalInfo.foundCriminal.relatedCases,
+                "Tội danh gần nhất": criminalInfo.foundCriminal.charge,
+                "Ngày phạm tội gần nhất":
+                    criminalInfo.foundCriminal.dateOfMostRecentCrime,
+                "Ngày được thả": criminalInfo.foundCriminal.releaseDate,
+                "Thông tin xuất, nhập cảnh":
+                    criminalInfo.foundCriminal.entryAndExitInformation,
+                "Tài khoản ngân hàng": criminalInfo.foundCriminal.bankAccount,
+                "Tài khoản game": criminalInfo.foundCriminal.gameAccount,
+                Facebook: criminalInfo.foundCriminal.facebook,
+                Zalo: criminalInfo.foundCriminal.zalo,
+                "Mạng xã hội khác":
+                    criminalInfo.foundCriminal.otherSocialNetworks,
+                "Model điện thoại": criminalInfo.foundCriminal.phoneModel,
+                "Nghiên cứu": criminalInfo.foundCriminal.research,
+                "Bố trí tiếp cận": criminalInfo.foundCriminal.approachArrange,
+                "Thông tin khác": criminalInfo.foundCriminal.otherInformation,
+            });
+            if (criminalInfo.foundCriminal.wantedCriminals.length > 0) {
+                wantedCount = {
+                    "Số lần truy nã":
+                        criminalInfo.foundCriminal.wantedCriminals.length,
+                };
+                if (criminalInfo.foundCriminal.wantedCriminals.length > 1) {
+                    wantedInfor = [wantedCount].concat(
+                        criminalInfo.foundCriminal.wantedCriminals.map(
+                            (w, index) => ({
+                                [`Lần ${index + 1}:\nTội danh truy nã`]:
+                                    w.charge,
+                                "Vụ án": w.caseId,
+                                "Hoạt động hiện tại": w.currentActivity,
+                                "Loại truy nã": wantedType[w.wantedType],
+                                "Số ra quyết định": w.wantedDecisionNo,
+                                "Ngày ra quyết định": w.wantedDecisionDay,
+                                "Đơn vị ra quyết định": w.decisionMakingUnit,
+                            })
+                        )
+                    );
+                } else {
+                    var w = criminalInfo.foundCriminal.wantedCriminals[0];
+                    wantedInfor = {
+                        ...wantedCount,
+                        "Tội danh truy nã": w.charge,
+                        "Vụ án": w.caseId,
+                        "Hoạt động hiện tại": w.currentActivity,
+                        "Loại truy nã": wantedType[w.wantedType],
+                        "Số ra quyết định": w.wantedDecisionNo,
+                        "Ngày ra quyết định": w.wantedDecisionDay,
+                        "Đơn vị ra quyết định": w.decisionMakingUnit,
+                    };
+                }
+                SetWantedInformation(wantedInfor);
+            }
+            if (criminalInfo.foundCriminal.criminalImages.length > 0) {
+                SetCriminalImages(
+                    criminalInfo.foundCriminal.criminalImages
+                        .filter(
+                            (ci) =>
+                                ci.fileUrl != "" &&
+                                ci.fileUrl != null &&
+                                ci.fileUrl != undefined
+                        )
+                        .map((ci) => ({
+                            url: ci.fileUrl,
+                        }))
+                );
+            }
         }
     }, [criminalInfo]);
 
@@ -124,7 +198,16 @@ const SuccessDetect = ({ navigation, route }) => {
                             showsVerticalScrollIndicator={true}
                             persistentScrollbar={true}
                         >
-                            <InformationFlat listItems={basicInformation} />
+                            {criminalImages != null ? (
+                                <InformationFlat
+                                    listItems={basicInformation}
+                                    haveImages={true}
+                                    images={criminalImages}
+                                    imagesFieldName={"Hình ảnh tội phạm"}
+                                />
+                            ) : (
+                                <InformationFlat listItems={basicInformation} />
+                            )}
                             {!SeeMore && (
                                 <CustomText
                                     style={{
@@ -137,8 +220,15 @@ const SuccessDetect = ({ navigation, route }) => {
                                     Xem thêm
                                 </CustomText>
                             )}
-                            {SeeMore && moreInformation != null && (
-                                <InformationFlat listItems={moreInformation} />
+                            {SeeMore && (
+                                <>
+                                    <InformationFlat
+                                        listItems={moreInformation}
+                                    />
+                                    <InformationFlat
+                                        listItems={wantedInformation}
+                                    />
+                                </>
                             )}
                         </ScrollView>
                     ) : (

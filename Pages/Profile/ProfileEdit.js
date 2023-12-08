@@ -10,17 +10,22 @@ import {
     Modal,
     TouchableWithoutFeedback,
 } from "react-native";
+import Toast from "react-native-toast-message";
+import { toastConfig } from "../Components/ToastConfig.js";
 import DropDownPicker from "react-native-dropdown-picker";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { API_URL, roleEnum } from "../../Utils/constants.js";
 import Moment from "moment";
 import styles from "./style.js";
 import { AuthContext } from "../../Context/AuthContext.js";
-import { roleEnum } from "../../Utils/constants.js";
 import { CustomText } from "../Components/CustomText.js";
 
 const ProfileEdit = ({ navigation, route }) => {
+    const { logout, refreshToken } = useContext(AuthContext);
+    const [, SetIsLoading] = useState(false);
     const [userInfo, SetUserInfo] = useState(null);
-    const { logout } = useContext(AuthContext);
+
+    //value
     const [open, setOpen] = useState(false);
     const [value, SetValue] = useState();
     const [selectedTime, SetSelectedTime] = useState();
@@ -40,8 +45,6 @@ const ProfileEdit = ({ navigation, route }) => {
         SetSelectedTime(newTime);
     };
 
-    const checkLogic = () => {};
-
     useEffect(() => {
         if (route.params?.userInfo) {
             SetUserInfo(route.params?.userInfo);
@@ -51,9 +54,58 @@ const ProfileEdit = ({ navigation, route }) => {
     useEffect(() => {
         if (userInfo != null) {
             SetValue(userInfo.gender);
-            setTime(Moment(userInfo.birthday, "YYYY-MM-DD").toDate());
+            setTime(Moment(userInfo.birthday, "DD/MM/YYYY").toDate());
         }
     }, [userInfo]);
+
+    const submitUserInfo = async () => {
+        SetIsLoading(true);
+        let result = await refreshToken();
+        if (!result.isSuccessfully) {
+            Toast.show({
+                type: "error",
+                text1: result.data,
+            });
+            SetIsLoading(false);
+            return;
+        }
+
+        fetch(API_URL + `v1/account`, {
+            method: "PUT", // *GET, POST, PUT, DELETE, etc.
+            mode: "cors", // no-cors, cors, *same-origin
+            cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+            credentials: "same-origin", // include, *same-origin, omit
+            headers: {
+                Accept: "application/json",
+                Authorization: `Bearer ${result.data}`,
+            },
+            redirect: "follow", // manual, *follow, error
+            referrer: "no-referrer", // no-referrer, *client
+            body: { userInfo },
+        })
+            .then((res) => res.json())
+            .then((res) => {
+                if (res.succeeded) {
+                } else {
+                    console.log(res);
+                    Toast.show({
+                        type: "info",
+                        text1: res.messages != null ? res.messages : res,
+                    });
+                }
+                SetIsLoading(false);
+            })
+            .catch((e) => {
+                console.log(`login error: ${e}`);
+                Toast.show({
+                    type: "error",
+                    text1: "Có lỗi xảy ra: " + e,
+                });
+                SetIsLoading(false);
+            });
+    };
+
+    const checkLogic = () => {};
 
     return (
         <Pressable onPress={() => setOpen(false)} style={{ flex: 1 }}>
@@ -176,13 +228,13 @@ const ProfileEdit = ({ navigation, route }) => {
                         </Modal>
                         <Image
                             style={styles.avatar}
-                            source={userInfo.image}
+                            source={{ uri: userInfo.imageLink }}
                         ></Image>
                         <CustomText style={styles.name}>
-                            {userInfo.fullName}
+                            {userInfo.name}
                         </CustomText>
                         <CustomText style={styles.note}>
-                            {roleEnum[userInfo.position]}
+                            {roleEnum[userInfo.role]}
                         </CustomText>
                         <View style={styles.body}>
                             <View style={styles.title}>
@@ -201,7 +253,7 @@ const ProfileEdit = ({ navigation, route }) => {
                                     >
                                         Họ và tên
                                     </CustomText>
-                                    <TextInput>{userInfo.fullName}</TextInput>
+                                    <TextInput>{userInfo.name}</TextInput>
                                     <View
                                         style={{
                                             height: 1,
@@ -219,16 +271,14 @@ const ProfileEdit = ({ navigation, route }) => {
                                     >
                                         Chức vụ
                                     </CustomText>
-                                    <TextInput>
-                                        {roleEnum[userInfo.position]}
-                                    </TextInput>
-                                    <View
+                                    <CustomText
                                         style={{
-                                            height: 1,
-                                            borderWidth: 1,
-                                            borderColor: "#DFE0E2",
+                                            fontSize: 14,
+                                            color: "black",
                                         }}
-                                    ></View>
+                                    >
+                                        {roleEnum[userInfo.role]}
+                                    </CustomText>
                                 </View>
                                 <View
                                     style={{
@@ -437,9 +487,7 @@ const ProfileEdit = ({ navigation, route }) => {
                             </ScrollView>
                         </View>
                         <TouchableOpacity
-                            // onPress={() =>
-                            //     handleConfirmWrong(props.item._id)
-                            // }
+                            onPress={() => submitUserInfo()}
                             style={[styles.btnAgree, { width: "100%" }]}
                         >
                             <CustomText
@@ -454,6 +502,7 @@ const ProfileEdit = ({ navigation, route }) => {
                     </View>
                 )}
             </View>
+            <Toast config={toastConfig} />
         </Pressable>
     );
 };

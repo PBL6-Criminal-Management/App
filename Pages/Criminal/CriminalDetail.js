@@ -110,12 +110,10 @@ const CriminalDetail = ({ navigation, route }) => {
                         "Thông tin khác": res.data.otherInformation,
                     });
                     if (res.data.wantedCriminals.length > 0) {
-                        var wantedInfor;
+                        wantedCount = {
+                            "Số lần truy nã": res.data.wantedCriminals.length,
+                        };
                         if (res.data.wantedCriminals.length > 1) {
-                            wantedCount = {
-                                "Số lần truy nã":
-                                    res.data.wantedCriminals.length,
-                            };
                             wantedInfor = [wantedCount].concat(
                                 res.data.wantedCriminals.map((w, index) => ({
                                     [`Lần ${index + 1}:\nTội danh truy nã`]:
@@ -132,6 +130,7 @@ const CriminalDetail = ({ navigation, route }) => {
                         } else {
                             var w = res.data.wantedCriminals[0];
                             wantedInfor = {
+                                ...wantedCount,
                                 "Tội danh truy nã": w.charge,
                                 "Vụ án": w.caseId,
                                 "Hoạt động hiện tại": w.currentActivity,

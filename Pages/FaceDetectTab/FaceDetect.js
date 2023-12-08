@@ -3,6 +3,7 @@ import { Image, TouchableOpacity, View, ActivityIndicator } from "react-native";
 import { Camera, CameraType, FlashMode } from "expo-camera";
 import Toast from "react-native-toast-message";
 import { AuthContext } from "../../Context/AuthContext.js";
+import { toastConfig } from "../Components/ToastConfig.js";
 import { CustomText } from "../Components/CustomText.js";
 import { API_URL } from "../../Utils/constants.js";
 import styles from "./style.js";
@@ -204,7 +205,7 @@ const FaceDetect = ({ navigation, route }) => {
                     </TouchableOpacity>
                 </View>
             </View>
-            <Toast />
+            <Toast config={toastConfig} />
         </View>
     );
 };

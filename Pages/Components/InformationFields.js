@@ -1,31 +1,14 @@
 import React, { useState } from "react";
-import {
-    View,
-    StyleSheet,
-    Image,
-    Pressable,
-    ScrollView,
-    Modal,
-} from "react-native";
-import ImageViewer from "react-native-image-zoom-viewer";
+import { View, StyleSheet, Image, Pressable } from "react-native";
 
 import { CustomText } from "./CustomText.js";
+import InformationFlat from "./InformationFlat.js";
 
 const InformationFields = (props) => {
     const [isDropDown, SetIsDropDown] = useState(true);
-    const [isModalVisible, SetIsModalVisible] = useState(false);
-    const [imageIndex, SetImageIndex] = useState(0);
 
     const onHeadPressed = () => {
         SetIsDropDown(!isDropDown);
-    };
-
-    const convertToArrayOfObjects = (input) => {
-        if (Array.isArray(input)) {
-            return input;
-        } else {
-            return [input];
-        }
     };
 
     return (
@@ -66,95 +49,15 @@ const InformationFields = (props) => {
                         />
                     </View>
                 </Pressable>
-                <View style={styles.body}>
-                    {isDropDown &&
-                        convertToArrayOfObjects(props.listItems).map((item) =>
-                            Object.keys(item).map((_, index) => {
-                                return (
-                                    <View
-                                        key={index}
-                                        style={{
-                                            flexDirection: "column",
-                                            paddingBottom: 20,
-                                            paddingTop: index == 0 ? 18 : 0,
-                                        }}
-                                    >
-                                        <CustomText
-                                            style={{
-                                                fontFamily: "Be Vietnam bold",
-                                                color: "#08354F",
-                                            }}
-                                        >
-                                            {Object.keys(item)[index]}:{" "}
-                                        </CustomText>
-                                        <CustomText style={{}}>
-                                            {Object.values(item)[index]}
-                                        </CustomText>
-                                    </View>
-                                );
-                            })
-                        )}
-                    {props.haveImages && isDropDown && (
-                        <View style={{}}>
-                            <CustomText
-                                style={{
-                                    fontFamily: "Be Vietnam bold",
-                                    color: "#08354F",
-                                }}
-                            >
-                                {props.imagesFieldName}
-                            </CustomText>
-                            <View
-                                style={{
-                                    marginTop: 5,
-                                    paddingBottom: 20,
-                                }}
-                            >
-                                <ScrollView
-                                    snapToInterval={200}
-                                    decelerationRate={"fast"}
-                                    alwaysBounceHorizontal={true}
-                                    horizontal
-                                    contentContainerStyle={{
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                    }}
-                                >
-                                    {props.images.map((image, index) => (
-                                        <Pressable
-                                            key={index}
-                                            onPress={() => {
-                                                SetImageIndex(index);
-                                                SetIsModalVisible(true);
-                                            }}
-                                        >
-                                            <Image
-                                                source={{ uri: image.url }}
-                                                style={styles.image}
-                                            />
-                                        </Pressable>
-                                    ))}
-                                </ScrollView>
-                            </View>
-                            <Modal
-                                visible={isModalVisible}
-                                transparent={true}
-                                onRequestClose={() => {
-                                    SetIsModalVisible(!isModalVisible);
-                                }}
-                                onBackdropPress={() => SetIsModalVisible(false)}
-                            >
-                                <ImageViewer
-                                    index={imageIndex}
-                                    imageUrls={props.images}
-                                    onClick={() => SetIsModalVisible(false)}
-                                    enableSwipeDown={true}
-                                    onSwipeDown={() => SetIsModalVisible(false)}
-                                />
-                            </Modal>
-                        </View>
-                    )}
-                </View>
+                {isDropDown && (
+                    <InformationFlat
+                        listItems={props.listItems}
+                        haveImages={props.haveImages}
+                        imagesFieldName={props.imagesFieldName}
+                        images={props.images}
+                        paddingLeft={32}
+                    />
+                )}
             </View>
         )
     );
@@ -166,20 +69,6 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         marginBottom: 10,
-    },
-    body: {
-        flexDirection: "column",
-        width: "100%",
-        paddingHorizontal: 32,
-        backgroundColor: "white",
-        borderBottomLeftRadius: 5,
-        borderBottomRightRadius: 5,
-    },
-    image: {
-        width: 200,
-        height: 200,
-        marginRight: 10,
-        resizeMode: "contain",
     },
 });
 

@@ -4,7 +4,7 @@ export const API_URL = "https://criminalmanagementapi.azurewebsites.net/api/";
 //in launchSettings.json file of aspnet to your wifi ip on computer (only http (not https) that working at localhost)
 //(keep port 5678)
 //else aspnet deployed then change API_URL to your server url
-//https://criminalmanagementapi.azurewebsites.net/
+//https://criminalmanagementapi.azurewebsites.net/api/
 
 export const ACCESS_TOKEN_NAME = "accessToken";
 
@@ -30,8 +30,8 @@ export const criminalStatus = {
 };
 
 export const typeOfViolation = {
-    0: "Hình sự",
-    1: "Dân sự",
+    0: "Dân sự",
+    1: "Hình sự",
 };
 
 export const gender = {
@@ -41,5 +41,5 @@ export const gender = {
 export const caseStatus = {
     0: "Chưa xét xử",
     1: "Đang điều tra",
-    2: "Đã xét xử"
-}
+    2: "Đã xét xử",
+};
