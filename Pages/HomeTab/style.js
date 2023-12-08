@@ -3,7 +3,7 @@ import color from "../../Contains/color";
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "white",
+        backgroundColor: "#f1f2f2",
     },
     head: {
         backgroundColor: "#152259",
