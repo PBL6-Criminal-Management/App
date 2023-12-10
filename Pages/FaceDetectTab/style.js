@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { scale } from "../../Utils/constants";
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -30,7 +31,7 @@ const styles = StyleSheet.create({
     title: {
         fontFamily: "Be Vietnam bold",
         color: "white",
-        fontSize: 20,
+        fontSize: 20 * scale,
         opacity: 1,
     },
     btnCancel: {

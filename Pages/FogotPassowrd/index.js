@@ -58,7 +58,11 @@ const Login = () => {
         <View style={styles.container}>
             <View style={styles.form}>
                 {/*statusbar to set wifi, battery... to white*/}
-                <StatusBar barStyle="light-content" />
+                <StatusBar
+                    barStyle="light-content"
+                    translucent
+                    backgroundColor="transparent"
+                />
                 {isLoading && (
                     <View style={styles.waitingCircle}>
                         <ActivityIndicator size="large" color="green" />

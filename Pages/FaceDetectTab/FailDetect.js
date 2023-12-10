@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Image, StatusBar, TouchableOpacity } from "react-native";
 import styles from "./style.js";
 import { CustomText } from "../Components/CustomText.js";
+import { scale } from "../../Utils/constants";
 
 const FailDetect = ({ navigation, route }) => {
     const [criminalInfo, SetCriminalInfo] = useState(null);
@@ -17,7 +18,11 @@ const FailDetect = ({ navigation, route }) => {
     return (
         <View style={styles.container}>
             {/*statusbar to set wifi, battery... to white*/}
-            <StatusBar barStyle="light-content" />
+            <StatusBar
+                barStyle="light-content"
+                translucent
+                backgroundColor="transparent"
+            />
             <View
                 style={[styles.content, { bottom: 440, alignItems: "center" }]}
             >
@@ -42,7 +47,7 @@ const FailDetect = ({ navigation, route }) => {
                         style={{
                             fontFamily: "Be Vietnam bold",
                             color: "black",
-                            fontSize: 20,
+                            fontSize: 20 * scale,
                         }}
                     >
                         Kết quả

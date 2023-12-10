@@ -1,9 +1,8 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 
 import { CustomText } from "../Components/CustomText.js";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { caseStatus, criminalStatus, typeOfViolation } from "../../Utils/constants.js";
+import { caseStatus, typeOfViolation } from "../../Utils/constants.js";
 
 const CaseElement = (props) => {
     const colorBackgroundStatusList = {
@@ -15,13 +14,13 @@ const CaseElement = (props) => {
         0: "#6D1008",
         1: "#3f5af4",
         2: "#0d6630",
-    }
+    };
     const BASE_PATH = "../../Public/";
 
     return (
         <TouchableOpacity
             style={[styles.container]}
-        // onPress={props.onPress}
+            // onPress={props.onPress}
         >
             <View style={styles.body}>
                 <View style={[styles.row, { alignItems: "center" }]}>
@@ -32,11 +31,18 @@ const CaseElement = (props) => {
                         style={[
                             styles.caseStatus,
                             {
-                                backgroundColor: colorBackgroundStatusList[props.item.status],
+                                backgroundColor:
+                                    colorBackgroundStatusList[
+                                        props.item.status
+                                    ],
                             },
                         ]}
                     >
-                        <CustomText style={{ color: colorStatusList[props.item.status] }}>
+                        <CustomText
+                            style={{
+                                color: colorStatusList[props.item.status],
+                            }}
+                        >
                             {caseStatus[props.item.status]}
                         </CustomText>
                     </View>
@@ -50,8 +56,12 @@ const CaseElement = (props) => {
                 ></View>
                 <View style={styles.row}>
                     <View style={styles.field}>
-                        <CustomText style={styles.title}>Loại vi phạm:</CustomText>
-                        <CustomText>{typeOfViolation[props.item.typeOfViolation]}</CustomText>
+                        <CustomText style={styles.title}>
+                            Loại vi phạm:
+                        </CustomText>
+                        <CustomText>
+                            {typeOfViolation[props.item.typeOfViolation]}
+                        </CustomText>
                     </View>
                     <View style={styles.field}>
                         <CustomText style={styles.title}>
@@ -66,12 +76,8 @@ const CaseElement = (props) => {
                         <CustomText>{props.item.charge}</CustomText>
                     </View>
                     <View style={styles.field}>
-                        <CustomText style={styles.title}>
-                            Khu vực:
-                        </CustomText>
-                        <CustomText>
-                            {props.item.area}
-                        </CustomText>
+                        <CustomText style={styles.title}>Khu vực:</CustomText>
+                        <CustomText>{props.item.area}</CustomText>
                     </View>
                 </View>
             </View>

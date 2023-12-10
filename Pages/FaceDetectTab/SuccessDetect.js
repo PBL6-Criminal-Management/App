@@ -10,6 +10,7 @@ import styles from "./style.js";
 import { CustomText } from "../Components/CustomText.js";
 import InformationFlat from "../Components/InformationFlat.js";
 import { criminalStatus, wantedType } from "../../Utils/constants.js";
+import { scale } from "../../Utils/constants";
 
 const SuccessDetect = ({ navigation, route }) => {
     const [SeeMore, SetSeeMore] = useState(false);
@@ -132,7 +133,11 @@ const SuccessDetect = ({ navigation, route }) => {
     return (
         <View style={styles.container}>
             {/*statusbar to set wifi, battery... to white*/}
-            <StatusBar barStyle="light-content" />
+            <StatusBar
+                barStyle="light-content"
+                translucent
+                backgroundColor="transparent"
+            />
             <View
                 style={[styles.content, { bottom: 440, alignItems: "center" }]}
             >
@@ -157,7 +162,7 @@ const SuccessDetect = ({ navigation, route }) => {
                         style={{
                             fontFamily: "Be Vietnam bold",
                             color: "black",
-                            fontSize: 20,
+                            fontSize: 20 * scale,
                         }}
                     >
                         Kết quả

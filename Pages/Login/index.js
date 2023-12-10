@@ -8,6 +8,7 @@ import {
     Image,
     Pressable,
     StatusBar,
+    useWindowDimensions,
 } from "react-native";
 import Checkbox from "expo-checkbox";
 import styles from "./style.js";
@@ -55,10 +56,19 @@ const Login = () => {
     };
 
     return (
-        <View style={styles.container}>
+        <View
+            style={[
+                styles.container,
+                { minHeight: useWindowDimensions().height },
+            ]}
+        >
             <View style={styles.form}>
                 {/*statusbar to set wifi, battery... to white*/}
-                <StatusBar barStyle="light-content" />
+                <StatusBar
+                    barStyle="light-content"
+                    translucent
+                    backgroundColor="transparent"
+                />
                 {isLoading && (
                     <View style={styles.waitingCircle}>
                         <ActivityIndicator size="large" color="green" />

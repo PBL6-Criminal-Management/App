@@ -23,6 +23,8 @@ import {
     API_URL,
     criminalStatus,
     gender,
+    scale,
+    textInputDefaultSize,
     typeOfViolation,
 } from "../../Utils/constants.js";
 import DropDown from "../Components/DropDown.js";
@@ -93,7 +95,12 @@ const CriminalList = ({ navigation }) => {
                     } else {
                         Toast.show({
                             type: "info",
-                            text1: res.messages != null ? res.messages : res,
+                            text1:
+                                res.messages != null
+                                    ? res.messages
+                                    : res.title
+                                    ? res.title
+                                    : res,
                         });
                     }
                 })
@@ -198,7 +205,12 @@ const CriminalList = ({ navigation }) => {
                     console.log(res);
                     Toast.show({
                         type: "info",
-                        text1: res.messages != null ? res.messages : res,
+                        text1:
+                            res.messages != null
+                                ? res.messages
+                                : res.title
+                                ? res.title
+                                : res,
                     });
                 }
                 SetIsLoading(false);
@@ -233,7 +245,11 @@ const CriminalList = ({ navigation }) => {
     return (
         <View style={styles.container}>
             {/*statusbar to set wifi, battery... to white*/}
-            <StatusBar barStyle="light-content" />
+            <StatusBar
+                barStyle="light-content"
+                translucent
+                backgroundColor="transparent"
+            />
             <View style={[styles.head, { height: 240 }]}></View>
             <View style={[styles.content, { bottom: 250 }]}>
                 <CustomText style={styles.title}>Danh sách tội phạm</CustomText>
@@ -250,10 +266,16 @@ const CriminalList = ({ navigation }) => {
                             ref={inputRef}
                             placeholder="Tìm kiếm"
                             placeholderTextColor="black"
-                            underlineColorAndroid="black"
                             value={txtSearch}
                             onChangeText={SetTxtSearch}
-                            style={{ width: "81%" }}
+                            style={{
+                                width: "81%",
+                                fontSize: textInputDefaultSize * scale,
+                                borderBottomColor: "#c9c3c3",
+                                borderBottomWidth: 1,
+                                paddingBottom: 0,
+                                width: "70%",
+                            }}
                         ></TextInput>
                     </Pressable>
                     <TouchableOpacity

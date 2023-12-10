@@ -1,5 +1,6 @@
 import { StyleSheet } from "react-native";
 import color from "../../Contains/color";
+import { scale } from "../../Utils/constants";
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -41,12 +42,12 @@ const styles = StyleSheet.create({
     },
     name: {
         fontFamily: "Be Vietnam bold",
-        fontSize: 22,
+        fontSize: 20 * scale,
         opacity: 1,
         color: "white",
     },
     note: {
-        fontSize: 17,
+        fontSize: 15 * scale,
         opacity: 1,
         color: "white",
     },
@@ -56,7 +57,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         paddingHorizontal: 30,
         marginTop: 20,
-        marginBottom: 20,
+        marginBottom: 10,
         paddingBottom: 20,
     },
     title: {
@@ -98,12 +99,12 @@ const styles = StyleSheet.create({
         padding: 5,
     },
     modalTitle: {
-        fontSize: 15,
+        fontSize: 15 * scale,
     },
     modalText: {
         marginBottom: 15,
         textAlign: "center",
-        fontSize: 15,
+        fontSize: 15 * scale,
     },
     modalContent: {
         height: 100,

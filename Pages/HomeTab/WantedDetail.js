@@ -5,6 +5,7 @@ import {
     StatusBar,
     Image,
     TouchableOpacity,
+    ActivityIndicator,
 } from "react-native";
 import { AuthContext } from "../../Context/AuthContext.js";
 import styles from "./style.js";
@@ -22,7 +23,7 @@ const WantedDetail = ({ navigation, route }) => {
     const [wantedInformation, SetWantedInformation] = useState({});
     const [criminalImages, SetCriminalImages] = useState(null);
     const [titleInfo, SetTitleInfo] = useState(null);
-    const [, SetIsLoading] = useState(false);
+    const [isLoading, SetIsLoading] = useState(false);
 
     useEffect(() => {
         if (route.params?.criminalId) {
@@ -141,7 +142,12 @@ const WantedDetail = ({ navigation, route }) => {
                     console.log(res);
                     Toast.show({
                         type: "info",
-                        text1: res.messages != null ? res.messages : res,
+                        text1:
+                            res.messages != null
+                                ? res.messages
+                                : res.title
+                                ? res.title
+                                : res,
                     });
                 }
                 SetIsLoading(false);
@@ -159,7 +165,11 @@ const WantedDetail = ({ navigation, route }) => {
     return (
         <View style={[styles.container, { backgroundColor: "#F1F2F2" }]}>
             {/*statusbar to set wifi, battery... to white*/}
-            <StatusBar barStyle="light-content" />
+            <StatusBar
+                barStyle="light-content"
+                translucent
+                backgroundColor="transparent"
+            />
             <View style={[styles.head, { height: 350 }]}></View>
             <View
                 style={[styles.content, { bottom: 400, alignItems: "center" }]}
@@ -181,6 +191,11 @@ const WantedDetail = ({ navigation, route }) => {
                 <CustomText style={styles.note}>
                     Tội danh gần nhất: {titleInfo?.charge}
                 </CustomText>
+                {isLoading && (
+                    <View style={styles.waitingCircle}>
+                        <ActivityIndicator size="large" color="green" />
+                    </View>
+                )}
                 <View style={{ marginTop: 26, width: "100%" }}>
                     <ScrollView style={styles.scroll}>
                         {criminalImages != null ? (

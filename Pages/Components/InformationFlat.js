@@ -39,7 +39,11 @@ const InformationFlat = (props) => {
                                 style={{
                                     flexDirection: "column",
                                     paddingBottom: 20,
-                                    paddingTop: index == 0 ? 18 : 0,
+                                    paddingTop:
+                                        props.firstTopMargin != undefined &&
+                                        index == 0
+                                            ? props.firstTopMargin
+                                            : 0,
                                 }}
                             >
                                 <CustomText

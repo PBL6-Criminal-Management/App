@@ -160,7 +160,12 @@ const CriminalDetail = ({ navigation, route }) => {
                     console.log(res);
                     Toast.show({
                         type: "info",
-                        text1: res.messages != null ? res.messages : res,
+                        text1:
+                            res.messages != null
+                                ? res.messages
+                                : res.title
+                                ? res.title
+                                : res,
                     });
                 }
                 SetIsLoading(false);
@@ -178,7 +183,11 @@ const CriminalDetail = ({ navigation, route }) => {
     return (
         <View style={[styles.container, { backgroundColor: "#F1F2F2" }]}>
             {/*statusbar to set wifi, battery... to white*/}
-            <StatusBar barStyle="light-content" />
+            <StatusBar
+                barStyle="light-content"
+                translucent
+                backgroundColor="transparent"
+            />
             <View style={[styles.head, { height: 350 }]}></View>
             <View
                 style={[styles.content, { bottom: 400, alignItems: "center" }]}
