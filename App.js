@@ -19,7 +19,6 @@ function App() {
 
     return (
         <AuthProvider>
-            <StatusBar backgroundColor="#06bcee" />
             <Navigation />
         </AuthProvider>
     );

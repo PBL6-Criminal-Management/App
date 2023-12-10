@@ -22,7 +22,8 @@ import Toast from "react-native-toast-message";
 import {
     API_URL,
     caseStatus,
-    gender,
+    scale,
+    textInputDefaultSize,
     typeOfViolation,
 } from "../../Utils/constants.js";
 import DropDown from "../Components/DropDown.js";
@@ -88,7 +89,12 @@ const CaseList = ({ navigation }) => {
                     } else {
                         Toast.show({
                             type: "info",
-                            text1: res.messages != null ? res.messages : res,
+                            text1:
+                                res.messages != null
+                                    ? res.messages
+                                    : res.title
+                                    ? res.title
+                                    : res,
                         });
                     }
                 })
@@ -149,14 +155,15 @@ const CaseList = ({ navigation }) => {
         fetch(
             //&PageNumber=1&PageSize=10
             API_URL +
-            "v1/case" +
-            `?Status=${statusChecked.length > 0 ? statusChecked[0] : ""}
-            &TypeOfViolation=${typeOfViolationChecked.length > 0
-                ? typeOfViolationChecked[0]
-                : ""
-            }&Area=${selectedArea.length > 0 ? selectedArea[0] : ""
-            }&Keyword=${txtSearch == null ? "" : txtSearch
-            }`,
+                "v1/case" +
+                `?Status=${statusChecked.length > 0 ? statusChecked[0] : ""}
+            &TypeOfViolation=${
+                typeOfViolationChecked.length > 0
+                    ? typeOfViolationChecked[0]
+                    : ""
+            }&Area=${selectedArea.length > 0 ? selectedArea[0] : ""}&Keyword=${
+                    txtSearch == null ? "" : txtSearch
+                }`,
             {
                 method: "GET", // *GET, POST, PUT, DELETE, etc.
                 mode: "cors", // no-cors, cors, *same-origin
@@ -177,7 +184,12 @@ const CaseList = ({ navigation }) => {
                 } else {
                     Toast.show({
                         type: "info",
-                        text1: res.messages != null ? res.messages : res,
+                        text1:
+                            res.messages != null
+                                ? res.messages
+                                : res.title
+                                ? res.title
+                                : res,
                     });
                 }
                 SetIsLoading(false);
@@ -207,12 +219,16 @@ const CaseList = ({ navigation }) => {
     };
 
     const inputRef = useRef(null);
-    const checkLogic = () => { };
+    const checkLogic = () => {};
 
     return (
         <View style={styles.container}>
             {/*statusbar to set wifi, battery... to white*/}
-            <StatusBar barStyle="light-content" />
+            <StatusBar
+                barStyle="light-content"
+                translucent
+                backgroundColor="transparent"
+            />
             <View style={[styles.head, { height: 240 }]}></View>
             <View style={[styles.content, { bottom: 250 }]}>
                 <CustomText style={styles.title}>Danh sách vụ án</CustomText>
@@ -229,10 +245,16 @@ const CaseList = ({ navigation }) => {
                             ref={inputRef}
                             placeholder="Tìm kiếm"
                             placeholderTextColor="black"
-                            underlineColorAndroid="black"
                             value={txtSearch}
                             onChangeText={SetTxtSearch}
-                            style={{ width: "81%" }}
+                            style={{
+                                width: "81%",
+                                fontSize: textInputDefaultSize * scale,
+                                borderBottomColor: "#c9c3c3",
+                                borderBottomWidth: 1,
+                                paddingBottom: 0,
+                                width: "70%",
+                            }}
                         ></TextInput>
                     </Pressable>
                     <TouchableOpacity
@@ -363,9 +385,9 @@ const CaseList = ({ navigation }) => {
                                     <CaseElement
                                         key={index}
                                         item={item}
-                                    // onPress={() =>
-                                    //     goToCriminalDetail(item.id)
-                                    // }
+                                        // onPress={() =>
+                                        //     goToCriminalDetail(item.id)
+                                        // }
                                     />
                                 );
                             })}

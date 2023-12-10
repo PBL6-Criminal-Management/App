@@ -3,6 +3,7 @@ import { View, StyleSheet } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 
 import { CustomText } from "./CustomText.js";
+import { scale, textInputDefaultSize } from "../../Utils/constants.js";
 
 const DropDown = (props) => {
     const [open, setOpen] = useState(false);
@@ -23,19 +24,19 @@ const DropDown = (props) => {
             <CustomText
                 style={{
                     fontFamily: "Be Vietnam bold",
-                    color: "#53B6ED",
+                    color: props.titleColor ? props.titleColor : "#53B6ED",
                 }}
             >
                 {props.title}
             </CustomText>
             <DropDownPicker
+                multiple={props.multiple != undefined ? props.multiple : true}
                 open={open}
                 value={props.value}
                 items={props.items}
                 setOpen={setOpen}
                 setValue={props.setValue}
                 setItems={props.setItems}
-                multiple={true}
                 mode="BADGE"
                 badgeDotColors={[
                     "#e76f51",
@@ -52,6 +53,9 @@ const DropDown = (props) => {
                 }}
                 containerStyle={{ width: "67%" /*width: 300*/ }}
                 listMode="SCROLLVIEW"
+                textStyle={{
+                    fontSize: textInputDefaultSize * scale,
+                }}
             />
         </View>
     );

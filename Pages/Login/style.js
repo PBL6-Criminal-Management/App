@@ -1,4 +1,5 @@
 import { StyleSheet } from "react-native";
+import { textInputDefaultSize, scale } from "../../Utils/constants";
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -29,7 +30,7 @@ const styles = StyleSheet.create({
         marginBottom: 55,
     },
     title: {
-        fontSize: 45,
+        fontSize: 45 * scale,
         fontFamily: "Inter",
         fontStyle: "normal",
         color: "#152259",
@@ -39,7 +40,7 @@ const styles = StyleSheet.create({
     },
     subtitle: {
         fontFamily: "Be Vietnam italic",
-        fontSize: 15,
+        fontSize: 15 * scale,
         height: 20,
         alignSelf: "flex-end",
     },
@@ -63,6 +64,7 @@ const styles = StyleSheet.create({
         padding: 10,
         paddingRight: 38,
         marginLeft: 10,
+        fontSize: textInputDefaultSize * scale,
     },
     icon: {
         position: "absolute",
@@ -79,7 +81,7 @@ const styles = StyleSheet.create({
     },
     txtLogin: {
         color: "white",
-        fontSize: 18,
+        fontSize: 18 * scale,
         fontWeight: "bold",
     },
     foot: {

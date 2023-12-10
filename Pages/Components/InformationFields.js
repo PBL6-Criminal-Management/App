@@ -56,6 +56,7 @@ const InformationFields = (props) => {
                         imagesFieldName={props.imagesFieldName}
                         images={props.images}
                         paddingLeft={32}
+                        firstTopMargin={20}
                     />
                 )}
             </View>

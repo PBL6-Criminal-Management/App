@@ -17,3 +17,11 @@ v train model bằng colab
 - xoá ảnh trong tất cả api delete liên quan tới ảnh
 
 v yearOfbirth start with txtSearch
+
+- thêm waiting circle cho các màn hình có isloading
+
+- thêm edit ảnh account
+
+- nghiên cứu để có thể detect vs ảnh dc chụp
+
+- pull down scroll trong profile

@@ -18,7 +18,12 @@ import FilterFields from "../Components/FilterFields.js";
 import { AuthContext } from "../../Context/AuthContext.js";
 import { CustomText } from "../Components/CustomText.js";
 import Toast from "react-native-toast-message";
-import { API_URL, wantedType } from "../../Utils/constants.js";
+import {
+    API_URL,
+    scale,
+    wantedType,
+    textInputDefaultSize,
+} from "../../Utils/constants.js";
 import DropDown from "../Components/DropDown.js";
 import { toastConfig } from "../Components/ToastConfig.js";
 
@@ -115,7 +120,12 @@ const WantedList = ({ navigation }) => {
                     console.log(res);
                     Toast.show({
                         type: "info",
-                        text1: res.messages != null ? res.messages : res,
+                        text1:
+                            res.messages != null
+                                ? res.messages
+                                : res.title
+                                ? res.title
+                                : res,
                     });
                 }
                 SetIsLoading(false);
@@ -144,7 +154,11 @@ const WantedList = ({ navigation }) => {
     return (
         <View style={styles.container}>
             {/*statusbar to set wifi, battery... to white*/}
-            <StatusBar barStyle="light-content" />
+            <StatusBar
+                barStyle="light-content"
+                translucent
+                backgroundColor="transparent"
+            />
             <View style={[styles.head, { height: 240 }]}></View>
             <View style={[styles.content, { bottom: 250 }]}>
                 <CustomText style={styles.title}>Danh sách truy nã</CustomText>
@@ -161,10 +175,16 @@ const WantedList = ({ navigation }) => {
                             ref={inputRef}
                             placeholder="Tìm kiếm"
                             placeholderTextColor="black"
-                            underlineColorAndroid="black"
                             value={txtSearch}
                             onChangeText={SetTxtSearch}
-                            style={{ width: "81%" }}
+                            style={{
+                                width: "81%",
+                                fontSize: textInputDefaultSize * scale,
+                                borderBottomColor: "#c9c3c3",
+                                borderBottomWidth: 1,
+                                paddingBottom: 0,
+                                width: "70%",
+                            }}
                         ></TextInput>
                     </Pressable>
                     <TouchableOpacity

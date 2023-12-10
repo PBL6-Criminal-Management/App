@@ -84,7 +84,12 @@ const FaceDetect = ({ navigation, route }) => {
                     } else {
                         Toast.show({
                             type: "info",
-                            text1: res.messages != null ? res.messages : res,
+                            text1:
+                                res.messages != null
+                                    ? res.messages
+                                    : res.title
+                                    ? res.title
+                                    : res,
                         });
                     }
                     SetIsLoading(false);

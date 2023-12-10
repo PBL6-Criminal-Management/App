@@ -15,13 +15,25 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "Cho phép $(PRODUCT_NAME) để truy cập ảnh của bạn",
+        "NSPhotoLibraryAddUsageDescription": "Cho phép $(PRODUCT_NAME) để lưu ảnh của bạn"
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.ACCESS_MEDIA_LOCATION"
+      ],
+      "package": "com.anonymous.Criminalmanagementapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -30,14 +42,14 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera."
+          "cameraPermission": "Cho phép $(PRODUCT_NAME) để truy cập camera của bạn"
         }
       ],
       [
         "expo-media-library",
         {
-          "photosPermission": "Allow $(PRODUCT_NAME) to access your photos.",
-          "savePhotosPermission": "Allow $(PRODUCT_NAME) to save photos.",
+          "photosPermission": "Cho phép $(PRODUCT_NAME) để truy cập ảnh của bạn",
+          "savePhotosPermission": "Cho phép $(PRODUCT_NAME) để lưu ảnh của bạn",
           "isAccessMediaLocationEnabled": true
         }
       ]

@@ -1,8 +1,7 @@
 import React from "react";
-import { View, StyleSheet, Image } from "react-native";
+import { View, StyleSheet, Image, TouchableOpacity } from "react-native";
 
 import { CustomText } from "../Components/CustomText.js";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import { wantedType } from "../../Utils/constants.js";
 
 const WantedElement = (props) => {

@@ -1,8 +1,7 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, TouchableOpacity } from "react-native";
 
 import { CustomText } from "../Components/CustomText.js";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import { criminalStatus } from "../../Utils/constants.js";
 
 const CriminalElement = (props) => {

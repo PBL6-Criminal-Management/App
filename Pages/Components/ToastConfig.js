@@ -5,6 +5,7 @@ import { View, Text, Pressable, StyleSheet, Dimensions } from "react-native";
 const HEIGHT = 60;
 const WIDTH = "90%";
 const BORDER_RADIUS = 5;
+import { scale } from "../../Utils/constants";
 
 const styles = StyleSheet.create({
     base: {
@@ -29,14 +30,14 @@ const styles = StyleSheet.create({
         alignItems: "flex-start",
     },
     text1: {
-        fontSize: 12,
+        fontSize: 12 * scale,
         fontWeight: "bold",
         marginBottom: 2,
         color: "#000",
         width: "100%",
     },
     text2: {
-        fontSize: 10,
+        fontSize: 10 * scale,
         color: "#979797",
         width: "100%",
     },

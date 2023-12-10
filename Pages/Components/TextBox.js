@@ -2,6 +2,7 @@ import React from "react";
 import { View, StyleSheet, TextInput } from "react-native";
 
 import { CustomText } from "./CustomText.js";
+import { scale, textInputDefaultSize } from "../../Utils/constants.js";
 
 const TextBox = (props) => {
     const handleKeyPress = (e) => {
@@ -61,6 +62,7 @@ const styles = StyleSheet.create({
         padding: 10,
         width: 250,
         paddingTop: 10,
+        fontSize: textInputDefaultSize * scale,
     },
 });
 

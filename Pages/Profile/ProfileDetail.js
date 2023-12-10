@@ -15,8 +15,9 @@ import { API_URL, roleEnum } from "../../Utils/constants.js";
 import { CustomText } from "../Components/CustomText.js";
 import InformationFlat from "../Components/InformationFlat.js";
 import { toastConfig } from "../Components/ToastConfig.js";
+import { scale } from "../../Utils/constants";
 
-const Profile = ({ navigation }) => {
+const Profile = ({ navigation, route }) => {
     const { logout, userInfo, refreshToken } = useContext(AuthContext);
     const [isWarningShow, SetIsWarningShow] = useState(false);
     const [profile, SetProfile] = useState([]);
@@ -67,7 +68,12 @@ const Profile = ({ navigation }) => {
                     console.log(res);
                     Toast.show({
                         type: "info",
-                        text1: res.messages != null ? res.messages : res,
+                        text1:
+                            res.messages != null
+                                ? res.messages
+                                : res.title
+                                ? res.title
+                                : res,
                     });
                 }
                 SetIsLoading(false);
@@ -86,12 +92,35 @@ const Profile = ({ navigation }) => {
         getProfileFromAPI();
     }, []);
 
+    useEffect(() => {
+        if (route.params?.updateSuccess != undefined)
+            if (route.params?.updateSuccess)
+                Toast.show({
+                    type: "info",
+                    text1: "Cập nhật thông tin thành công!",
+                });
+            else
+                Toast.show({
+                    type: "error",
+                    text1: "Cập nhật thông tin thất bại!",
+                });
+
+        if (route.params?.forceFetch) {
+            // Call your API to fetch new profile
+            getProfileFromAPI();
+        }
+    }, [route.params]);
+
     const checkLogic = () => {};
 
     return (
         <View style={styles.container}>
             {/*statusbar to set wifi, battery... to white*/}
-            <StatusBar barStyle="light-content" />
+            <StatusBar
+                barStyle="light-content"
+                translucent
+                backgroundColor="transparent"
+            />
             <View style={[styles.head, { height: 350 }]}></View>
             <View
                 style={[styles.content, { bottom: 510, alignItems: "center" }]}
@@ -134,7 +163,7 @@ const Profile = ({ navigation }) => {
                                     <View style={styles.modalContent}>
                                         <CustomText
                                             style={{
-                                                fontSize: 14,
+                                                fontSize: 14 * scale,
                                                 width: 270,
                                             }}
                                         >
@@ -210,12 +239,7 @@ const Profile = ({ navigation }) => {
                     </ScrollView>
                 </View>
                 <TouchableOpacity
-                    onPress={() =>
-                        navigation.navigate(
-                            "ProfileEdit",
-                            (params = { userInfo: profile })
-                        )
-                    }
+                    onPress={() => navigation.navigate("ProfileEdit")}
                     style={[styles.btnAgree, { width: "100%" }]}
                 >
                     <CustomText
