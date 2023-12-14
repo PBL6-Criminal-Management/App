@@ -91,7 +91,7 @@ const WantedList = ({ navigation }) => {
         fetch(
             //&PageNumber=1&PageSize=10
             API_URL +
-                "v1/WantedCriminal" +
+                "v1/wanted-criminal" +
                 `?WantedType=${
                     dangerousLevelsChecked.length > 0
                         ? dangerousLevelsChecked[0]

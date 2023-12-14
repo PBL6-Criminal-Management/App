@@ -24,4 +24,6 @@ v yearOfbirth start with txtSearch
 
 - nghiên cứu để có thể detect vs ảnh dc chụp
 
-- pull down scroll trong profile
+- kéo scroll xún 1 chút trong profile
+
+- thêm refresh page circle trên các màn hình k có refresh scroll

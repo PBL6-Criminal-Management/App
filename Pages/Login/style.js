@@ -25,8 +25,6 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         alignSelf: "center",
-        width: 260,
-        // borderWidth: 1,
         marginBottom: 55,
     },
     title: {
