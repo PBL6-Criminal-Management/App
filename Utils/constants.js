@@ -8,8 +8,8 @@ export const API_URL = "https://criminalmanagementapi.azurewebsites.net/api/";
 
 export const ACCESS_TOKEN_NAME = "accessToken";
 
-export const scale = 0.6;
-export const textInputDefaultSize = 14;
+export const scale = 1;
+export const textInputDefaultSize = 13;
 
 export const roleEnum = {
     0: "Quản trị viên",

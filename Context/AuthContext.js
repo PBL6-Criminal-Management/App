@@ -170,6 +170,7 @@ export const AuthProvider = ({ children }) => {
                 SetSplashLoading(false);
                 return;
             } else {
+                userInfo = JSON.parse(userInfo);
                 let refreshTokenExpiryTime = moment(
                     userInfo.refreshTokenExpiryTime,
                     "DD/MM/YYYY HH:mm:ss"
@@ -179,12 +180,13 @@ export const AuthProvider = ({ children }) => {
                     refreshTokenExpiryTime !== null &&
                     refreshTokenExpiryTime.isSameOrBefore(new Date())
                 ) {
-                    // SetUsername(null);
-                    // SetUserInfo(null);
+                    SetSplashLoading(false);
+                    SetUsername(null);
+                    SetUserInfo(null);
                     return;
                 }
             }
-            userInfo = JSON.parse(userInfo);
+
             if (userInfo) {
                 SetUserInfo(userInfo);
             }
