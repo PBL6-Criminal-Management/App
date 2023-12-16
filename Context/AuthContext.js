@@ -173,7 +173,7 @@ export const AuthProvider = ({ children }) => {
                 userInfo = JSON.parse(userInfo);
                 let refreshTokenExpiryTime = moment(
                     userInfo.refreshTokenExpiryTime,
-                    "DD/MM/YYYY HH:mm:ss"
+                    "HH:mm DD/MM/YYYY"
                 );
                 if (
                     refreshTokenExpiryTime !== undefined &&
@@ -202,7 +202,7 @@ export const AuthProvider = ({ children }) => {
         try {
             let tokenExpiryTime = moment(
                 userInfo.tokenExpiryTime,
-                "DD/MM/YYYY HH:mm:ss"
+                "HH:mm DD/MM/YYYY"
             );
             if (
                 tokenExpiryTime != null &&
@@ -212,7 +212,7 @@ export const AuthProvider = ({ children }) => {
             ) {
                 let refreshTokenExpiryTime = moment(
                     userInfo.refreshTokenExpiryTime,
-                    "DD/MM/YYYY HH:mm:ss"
+                    "HH:mm DD/MM/YYYY"
                 );
                 if (
                     refreshTokenExpiryTime != null &&

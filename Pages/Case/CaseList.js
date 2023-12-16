@@ -40,18 +40,6 @@ const CaseList = ({ navigation }) => {
     //search & filter
     const [txtSearch, SetTxtSearch] = useState(null);
 
-    //combobox
-    const [selectedYearOfBirth, SetSelectedYearOfBirth] = useState([]);
-    //value: now - 200 -> now (0 years old - 200 years old)
-    const [yearOfBirthItems, SetYearOfBirthItems] = useState(
-        Array.from({ length: 201 }, (_, i) => {
-            return {
-                label: i + (new Date().getFullYear() - 200),
-                value: i + (new Date().getFullYear() - 200),
-            };
-        })
-    );
-
     //area
     const [selectedArea, SetSelectedArea] = useState([]);
     const [areaItems, SetAreaItems] = useState([]);
@@ -59,7 +47,6 @@ const CaseList = ({ navigation }) => {
     //checkbox
     const [statusChecked, SetStatusChecked] = useState([]);
     const [typeOfViolationChecked, SetTypeOfViolationChecked] = useState([]);
-    const [genderChecked, SetGenderChecked] = useState([]);
 
     //data to show
     const [caseList, SetCaseList] = useState([]);
@@ -93,8 +80,8 @@ const CaseList = ({ navigation }) => {
                                 res.messages != null
                                     ? res.messages
                                     : res.title
-                                    ? res.title
-                                    : res,
+                                        ? res.title
+                                        : res,
                         });
                     }
                 })
@@ -155,15 +142,13 @@ const CaseList = ({ navigation }) => {
         fetch(
             //&PageNumber=1&PageSize=10
             API_URL +
-                "v1/case" +
-                `?Status=${statusChecked.length > 0 ? statusChecked[0] : ""}
-            &TypeOfViolation=${
-                typeOfViolationChecked.length > 0
-                    ? typeOfViolationChecked[0]
-                    : ""
-            }&Area=${selectedArea.length > 0 ? selectedArea[0] : ""}&Keyword=${
-                    txtSearch == null ? "" : txtSearch
-                }`,
+            "v1/case" +
+            `?Status=${statusChecked.length > 0 ? statusChecked[0] : ""}
+            &TypeOfViolation=${typeOfViolationChecked.length > 0
+                ? typeOfViolationChecked[0]
+                : ""
+            }&Area=${selectedArea.length > 0 ? selectedArea[0] : ""}&Keyword=${txtSearch == null ? "" : txtSearch
+            }`,
             {
                 method: "GET", // *GET, POST, PUT, DELETE, etc.
                 mode: "cors", // no-cors, cors, *same-origin
@@ -188,8 +173,8 @@ const CaseList = ({ navigation }) => {
                             res.messages != null
                                 ? res.messages
                                 : res.title
-                                ? res.title
-                                : res,
+                                    ? res.title
+                                    : res,
                     });
                 }
                 SetIsLoading(false);
@@ -205,21 +190,18 @@ const CaseList = ({ navigation }) => {
     };
 
     const resetFilter = () => {
-        SetGenderChecked([]);
         SetStatusChecked([]);
         SetTypeOfViolationChecked([]);
-        SetSelectedYearOfBirth([]);
         SetSelectedArea([]);
-        SetCharge(null);
-        SetCharacteristics(null);
     };
 
-    const goToCriminalDetail = (id) => {
-        navigation.navigate("CriminalDetail", (params = { criminalId: id }));
+    const goToCaseDetail = (id, code) => {
+        console.log(code)
+        navigation.navigate("CaseDetail", (params = { caseId: id, code: code }));
     };
 
     const inputRef = useRef(null);
-    const checkLogic = () => {};
+    const checkLogic = () => { };
 
     return (
         <View style={styles.container}>
@@ -385,9 +367,9 @@ const CaseList = ({ navigation }) => {
                                     <CaseElement
                                         key={index}
                                         item={item}
-                                        // onPress={() =>
-                                        //     goToCriminalDetail(item.id)
-                                        // }
+                                        onPress={() =>
+                                            goToCaseDetail(item.id, item.code)
+                                        }
                                     />
                                 );
                             })}
