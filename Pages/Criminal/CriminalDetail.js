@@ -20,7 +20,6 @@ const CriminalDetail = ({ navigation, route }) => {
     const [basicInformation, SetBasicInformation] = useState({});
     const [criminalInformation, SetCriminalInformation] = useState({});
     const [wantedInformation, SetWantedInformation] = useState({});
-    const [criminalImages, SetCriminalImages] = useState(null);
     const [titleInfo, SetTitleInfo] = useState(null);
     const [, SetIsLoading] = useState(false);
 
@@ -66,6 +65,16 @@ const CriminalDetail = ({ navigation, route }) => {
                         name: res.data.name,
                         charge: res.data.charge,
                     });
+                    criminalImages = res.data.criminalImages
+                        .filter(
+                            (ci) =>
+                                ci.fileUrl != "" &&
+                                ci.fileUrl != null &&
+                                ci.fileUrl != undefined
+                        )
+                        .map((ci) => ({
+                            url: ci.fileUrl,
+                        }))
                     SetBasicInformation({
                         "Họ và tên": res.data.name,
                         "Tên khác": res.data.anotherName,
@@ -88,6 +97,10 @@ const CriminalDetail = ({ navigation, route }) => {
                         "Ngày sinh mẹ": res.data.motherBirthday,
                         "CCCD/CMND mẹ": res.data.motherCitizenId,
                         "Đặc điểm nhận dạng": res.data.characteristics,
+                        images: {
+                            items: criminalImages,
+                            title: "Hình ảnh tội phạm"
+                        }
                     });
                     SetCriminalInformation({
                         "Tình trạng": criminalStatus[res.data.status],
@@ -142,20 +155,6 @@ const CriminalDetail = ({ navigation, route }) => {
                         }
                         SetWantedInformation(wantedInfor);
                     }
-                    if (res.data.criminalImages.length > 0) {
-                        SetCriminalImages(
-                            res.data.criminalImages
-                                .filter(
-                                    (ci) =>
-                                        ci.fileUrl != "" &&
-                                        ci.fileUrl != null &&
-                                        ci.fileUrl != undefined
-                                )
-                                .map((ci) => ({
-                                    url: ci.fileUrl,
-                                }))
-                        );
-                    }
                 } else {
                     console.log(res);
                     Toast.show({
@@ -164,8 +163,8 @@ const CriminalDetail = ({ navigation, route }) => {
                             res.messages != null
                                 ? res.messages
                                 : res.title
-                                ? res.title
-                                : res,
+                                    ? res.title
+                                    : res,
                     });
                 }
                 SetIsLoading(false);
@@ -211,20 +210,10 @@ const CriminalDetail = ({ navigation, route }) => {
                 </CustomText>
                 <View style={{ marginTop: 26, width: "100%" }}>
                     <ScrollView style={styles.scroll}>
-                        {criminalImages != null ? (
-                            <InformationFields
-                                title="Thông tin cơ bản"
-                                listItems={basicInformation}
-                                haveImages={true}
-                                images={criminalImages}
-                                imagesFieldName={"Hình ảnh tội phạm"}
-                            />
-                        ) : (
-                            <InformationFields
-                                title="Thông tin cơ bản"
-                                listItems={basicInformation}
-                            />
-                        )}
+                        <InformationFields
+                            title="Thông tin cơ bản"
+                            listItems={basicInformation}
+                        />
                         <InformationFields
                             title="Thông tin tội phạm"
                             listItems={criminalInformation}

@@ -20,7 +20,7 @@ const CaseElement = (props) => {
     return (
         <TouchableOpacity
             style={[styles.container]}
-            // onPress={props.onPress}
+            onPress={props.onPress}
         >
             <View style={styles.body}>
                 <View style={[styles.row, { alignItems: "center" }]}>
@@ -33,7 +33,7 @@ const CaseElement = (props) => {
                             {
                                 backgroundColor:
                                     colorBackgroundStatusList[
-                                        props.item.status
+                                    props.item.status
                                     ],
                             },
                         ]}

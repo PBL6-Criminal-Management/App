@@ -10,7 +10,6 @@ const InformationFields = (props) => {
     const onHeadPressed = () => {
         SetIsDropDown(!isDropDown);
     };
-
     return (
         Object.keys(props.listItems).length > 0 && (
             <View style={styles.container}>
