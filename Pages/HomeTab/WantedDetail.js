@@ -75,7 +75,7 @@ const WantedDetail = ({ navigation, route }) => {
                         )
                         .map((ci) => ({
                             url: ci.fileUrl,
-                        }))
+                        }));
                     SetBasicInformation({
                         "Họ và tên": res.data.name,
                         "Tên khác": res.data.anotherName,
@@ -100,8 +100,8 @@ const WantedDetail = ({ navigation, route }) => {
                         "Đặc điểm nhận dạng": res.data.characteristics,
                         images: {
                             items: criminalImages,
-                            title: "Danh sách ảnh tội phạm"
-                        }
+                            title: "Danh sách ảnh tội phạm",
+                        },
                     });
                     SetCriminalInformation({
                         "Tình trạng": criminalStatus[res.data.status],
@@ -126,7 +126,7 @@ const WantedDetail = ({ navigation, route }) => {
                     if (res.data.wantedCriminals.length > 0) {
                         wantedInfor =
                             res.data.wantedCriminals[
-                            res.data.wantedCriminals.length - 1
+                                res.data.wantedCriminals.length - 1
                             ];
                         SetWantedInformation({
                             "Tội danh truy nã": wantedInfor.charge,
@@ -145,8 +145,8 @@ const WantedDetail = ({ navigation, route }) => {
                             res.messages != null
                                 ? res.messages
                                 : res.title
-                                    ? res.title
-                                    : res,
+                                ? res.title
+                                : res,
                     });
                 }
                 SetIsLoading(false);
@@ -169,6 +169,11 @@ const WantedDetail = ({ navigation, route }) => {
                 translucent
                 backgroundColor="transparent"
             />
+            {isLoading && (
+                <View style={styles.waitingCircle}>
+                    <ActivityIndicator size="large" color="green" />
+                </View>
+            )}
             <View style={[styles.head, { height: 350 }]}></View>
             <View
                 style={[styles.content, { bottom: 400, alignItems: "center" }]}
@@ -182,6 +187,18 @@ const WantedDetail = ({ navigation, route }) => {
                         style={styles.backBtn}
                     />
                 </TouchableOpacity>
+                <TouchableOpacity
+                    style={styles.reloadContainer}
+                    onPress={() => {
+                        if (route.params?.criminalId)
+                            getCriminalByIdFromAPI(route.params?.criminalId);
+                    }}
+                >
+                    <Image
+                        source={require("../../Public/sync.png")}
+                        style={styles.reloadBtn}
+                    />
+                </TouchableOpacity>
                 <Image
                     style={styles.avatar}
                     source={{ uri: titleInfo?.image }}
@@ -190,11 +207,6 @@ const WantedDetail = ({ navigation, route }) => {
                 <CustomText style={styles.note}>
                     Tội danh gần nhất: {titleInfo?.charge}
                 </CustomText>
-                {isLoading && (
-                    <View style={styles.waitingCircle}>
-                        <ActivityIndicator size="large" color="green" />
-                    </View>
-                )}
                 <View style={{ marginTop: 26, width: "100%" }}>
                     <ScrollView style={styles.scroll}>
                         <InformationFields

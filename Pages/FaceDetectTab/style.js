@@ -113,11 +113,10 @@ const styles = StyleSheet.create({
         backgroundColor: "white",
         borderRadius: 10,
         borderColor: "#BDBDBD",
-        paddingTop: 20,
         paddingBottom: 10,
-        paddingHorizontal: 30,
+        paddingHorizontal: 10,
         marginTop: 20,
-        borderWidth: 1,
+        // borderWidth: 1,
     },
     informationTitle: {
         alignItems: "center",

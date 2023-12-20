@@ -9,6 +9,16 @@ const styles = StyleSheet.create({
     head: {
         backgroundColor: "#152259",
     },
+    waitingCircle: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: 1,
+    },
     btnLogout: {
         position: "absolute",
         right: 20,
@@ -25,6 +35,42 @@ const styles = StyleSheet.create({
         width: 25,
         height: 25,
         tintColor: "white",
+    },
+    reloadContainer: {
+        position: "absolute",
+        left: 20,
+        paddingRight: 5,
+        paddingBottom: 5,
+        borderWidth: 1,
+        borderColor: "white",
+        borderRadius: 100,
+        padding: 5,
+    },
+    reloadBtn: {
+        width: 15,
+        height: 15,
+        tintColor: "white",
+    },
+    imageViewContainer: {
+        width: 180,
+        height: 180,
+        backgroundColor: "gray",
+        overflow: "hidden",
+        alignItems: "center",
+        justifyContent: "center",
+        borderRadius: 100,
+        marginBottom: 20,
+        borderWidth: 2,
+        borderColor: "white",
+    },
+    image: {
+        width: 180,
+        height: 180,
+        position: "absolute",
+    },
+    imageOverlay: {
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
+        ...StyleSheet.absoluteFill,
     },
     avatar: {
         width: 180,
@@ -67,6 +113,11 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         marginTop: 20,
         paddingBottom: 20,
+    },
+    error: {
+        color: "red",
+        fontWeight: "bold",
+        marginTop: 5,
     },
     modalContainer: {
         flex: 1,

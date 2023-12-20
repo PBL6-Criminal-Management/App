@@ -80,8 +80,8 @@ const CaseList = ({ navigation }) => {
                                 res.messages != null
                                     ? res.messages
                                     : res.title
-                                        ? res.title
-                                        : res,
+                                    ? res.title
+                                    : res,
                         });
                     }
                 })
@@ -142,13 +142,16 @@ const CaseList = ({ navigation }) => {
         fetch(
             //&PageNumber=1&PageSize=10
             API_URL +
-            "v1/case" +
-            `?Status=${statusChecked.length > 0 ? statusChecked[0] : ""}
-            &TypeOfViolation=${typeOfViolationChecked.length > 0
-                ? typeOfViolationChecked[0]
-                : ""
-            }&Area=${selectedArea.length > 0 ? selectedArea[0] : ""}&Keyword=${txtSearch == null ? "" : txtSearch
-            }`,
+                "v1/case" +
+                `?Status=${statusChecked.length > 0 ? statusChecked[0] : ""}
+            &TypeOfViolation=${
+                typeOfViolationChecked.length > 0
+                    ? typeOfViolationChecked[0]
+                    : ""
+            }&Area=${selectedArea.length > 0 ? selectedArea[0] : ""}&Keyword=${
+                    txtSearch == null ? "" : txtSearch
+                }
+            &OrderBy="Id ASC"`,
             {
                 method: "GET", // *GET, POST, PUT, DELETE, etc.
                 mode: "cors", // no-cors, cors, *same-origin
@@ -173,8 +176,8 @@ const CaseList = ({ navigation }) => {
                             res.messages != null
                                 ? res.messages
                                 : res.title
-                                    ? res.title
-                                    : res,
+                                ? res.title
+                                : res,
                     });
                 }
                 SetIsLoading(false);
@@ -196,12 +199,14 @@ const CaseList = ({ navigation }) => {
     };
 
     const goToCaseDetail = (id, code) => {
-        console.log(code)
-        navigation.navigate("CaseDetail", (params = { caseId: id, code: code }));
+        navigation.navigate(
+            "CaseDetail",
+            (params = { caseId: id, code: code })
+        );
     };
 
     const inputRef = useRef(null);
-    const checkLogic = () => { };
+    const checkLogic = () => {};
 
     return (
         <View style={styles.container}>
@@ -232,6 +237,8 @@ const CaseList = ({ navigation }) => {
                             style={{
                                 width: "81%",
                                 fontSize: textInputDefaultSize * scale,
+                                color: "#5C5D60",
+                                opacity: 1,
                                 borderBottomColor: "#c9c3c3",
                                 borderBottomWidth: 1,
                                 paddingBottom: 0,

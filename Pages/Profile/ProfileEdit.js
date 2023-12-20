@@ -9,11 +9,14 @@ import {
     Pressable,
     Modal,
     TouchableWithoutFeedback,
-    KeyboardAvoidingView,
+    ActivityIndicator,
 } from "react-native";
+import { Formik } from "formik";
+import * as yup from "yup";
 import Toast from "react-native-toast-message";
 import { toastConfig } from "../Components/ToastConfig.js";
-import DateTimePicker from "@react-native-community/datetimepicker";
+import * as ImagePicker from "expo-image-picker";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 import {
     API_URL,
     roleEnum,
@@ -26,14 +29,12 @@ import DropDown from "../Components/DropDown.js";
 import { CustomText } from "../Components/CustomText.js";
 import { scale } from "../../Utils/constants";
 
-const ProfileEdit = ({ navigation, route }) => {
+const ProfileEdit = ({ navigation }) => {
     const { logout, refreshToken, userInfo } = useContext(AuthContext);
-    const [, SetIsLoading] = useState(false);
+    const [isLoading, SetIsLoading] = useState(false);
     const [profile, SetProfile] = useState(null);
 
     //value
-    const [open, setOpen] = useState(false);
-    const [value, SetValue] = useState();
     const [items, SetItems] = useState([
         { label: "Nam", value: true },
         { label: "Nữ", value: false },
@@ -42,17 +43,20 @@ const ProfileEdit = ({ navigation, route }) => {
     // Windows-specific
     const [isShow, SetIsShow] = useState(false);
     const [isWarningShow, SetIsWarningShow] = useState(false);
-    const [time, setTime] = useState();
-    const [interval, setMinInterval] = useState(1);
-    const [is24Hours, set24Hours] = useState(false);
 
-    const onTimeChange = (event, newTime) => {
-        if (Platform.OS === "android") {
-            SetIsShow(false);
+    const [changeAvatar, SetChangeAvatar] = useState(false);
+
+    const chooseImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 1,
+        });
+        if (!result.canceled) {
+            handleInputChange("imageLink", result.assets[0].uri);
+            SetChangeAvatar(true);
         }
-
-        setTime(Moment(newTime, "DD/MM/YYYY").toDate());
-        handleInputChange("birthday", newTime.toLocaleDateString("en-GB"));
     };
 
     const handleInputChange = (fieldName, value) => {
@@ -94,8 +98,6 @@ const ProfileEdit = ({ navigation, route }) => {
             .then((res) => {
                 if (res.succeeded) {
                     SetProfile(res.data);
-                    SetValue(res.data.gender);
-                    setTime(Moment(res.data.birthday, "DD/MM/YYYY").toDate());
                 } else {
                     console.log(res);
                     Toast.show({
@@ -120,9 +122,10 @@ const ProfileEdit = ({ navigation, route }) => {
             });
     };
 
-    const submitProfile = async () => {
+    const submitProfile = async (newProfileData) => {
         SetIsLoading(true);
         let result = await refreshToken();
+
         if (!result.isSuccessfully) {
             Toast.show({
                 type: "error",
@@ -132,7 +135,77 @@ const ProfileEdit = ({ navigation, route }) => {
             return;
         }
 
-        fetch(API_URL + `v1/account`, {
+        if (changeAvatar) {
+            const formData = new FormData();
+            const image = {
+                uri: newProfileData.imageLink,
+                type: "image/jpeg",
+                name: "photo.jpg",
+            };
+            formData.append("Files", image);
+            formData.append("FilePath", "Avatar/" + newProfileData.username);
+
+            fetch(API_URL + `v1/upload`, {
+                method: "POST", // *GET, POST, PUT, DELETE, etc.
+                mode: "cors", // no-cors, cors, *same-origin
+                cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+                credentials: "same-origin", // include, *same-origin, omit
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                    Authorization: `Bearer ${result.data}`,
+                },
+                redirect: "follow", // manual, *follow, error
+                referrer: "no-referrer", // no-referrer, *client
+                body: formData,
+            })
+                .then((res) => res.json())
+                .then(async (res) => {
+                    if (res.succeeded) {
+                        try {
+                            await updateProfileToApi(result.data, {
+                                ...newProfileData,
+                                image: res.data[0].filePath,
+                            });
+                        } catch (e) {
+                            console.log(`login error: ${e}`);
+                            Toast.show({
+                                type: "error",
+                                text1: "Có lỗi xảy ra: " + e,
+                            });
+                            SetIsLoading(false);
+                        }
+                    } else {
+                        console.log(res);
+                        Toast.show({
+                            type: "info",
+                            text1:
+                                res.messages != null
+                                    ? res.messages
+                                    : res.title
+                                    ? res.title
+                                    : res,
+                        });
+                    }
+                    SetIsLoading(false);
+                })
+                .catch((e) => {
+                    console.log(`login error: ${e}`);
+                    Toast.show({
+                        type: "error",
+                        text1: "Có lỗi xảy ra: " + e,
+                    });
+                    SetIsLoading(false);
+                });
+        } else
+            updateProfileToApi(result.data, {
+                ...newProfileData,
+                image: newProfileData.image,
+            });
+    };
+
+    const updateProfileToApi = async (token, newProfileData, image) => {
+        await fetch(API_URL + `v1/account`, {
             method: "PUT", // *GET, POST, PUT, DELETE, etc.
             mode: "cors", // no-cors, cors, *same-origin
             cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
@@ -140,27 +213,16 @@ const ProfileEdit = ({ navigation, route }) => {
             headers: {
                 "Content-Type": "application/json",
                 Accept: "application/json",
-                Authorization: `Bearer ${result.data}`,
+                Authorization: `Bearer ${token}`,
             },
             redirect: "follow", // manual, *follow, error
             referrer: "no-referrer", // no-referrer, *client
-            body: JSON.stringify({
-                id: userInfo.userId,
-                name: profile.name,
-                citizenId: profile.citizenId,
-                birthday: profile.birthday,
-                address: profile.address,
-                email: profile.email,
-                phoneNumber: profile.phoneNumber,
-                role: profile.role,
-                gender: profile.gender,
-                isActive: profile.isActive,
-                image: profile.image,
-            }),
+            body: JSON.stringify(newProfileData),
         })
             .then((res) => res.json())
             .then((res) => {
                 if (res.succeeded) {
+                    SetIsLoading(false);
                     navigation.navigate("ProfileDetail", {
                         forceFetch: true,
                         updateSuccess: true,
@@ -176,8 +238,8 @@ const ProfileEdit = ({ navigation, route }) => {
                                 ? res.title
                                 : res,
                     });
+                    SetIsLoading(false);
                 }
-                SetIsLoading(false);
             })
             .catch((e) => {
                 console.log(`login error: ${e}`);
@@ -195,366 +257,495 @@ const ProfileEdit = ({ navigation, route }) => {
         getProfileFromAPI();
     }, []);
 
-    useEffect(() => {
-        if (value != null) handleInputChange("gender", value);
-    }, [value]);
+    const validationSchema = yup.object().shape({
+        name: yup
+            .string()
+            .max(100, "Tên không được vượt quá 100 ký tự!")
+            .required("Tên là bắt buộc"),
+        email: yup
+            .string()
+            .max(100, "Email không được vượt quá 100 ký tự!")
+            .email("Định dạng email không hợp lệ!")
+            .required("Email là bắt buộc"),
+        phoneNumber: yup
+            .string()
+            .max(15, "Số điện thoại không được vượt quá 15 ký tự!")
+            .matches(
+                /^(?:\+84|84|0)(3|5|7|8|9|1[2689])([0-9]{8,10})\b$/,
+                "Số điện thoại không hợp lệ"
+            )
+            .required("Số điện thoại là bắt buộc"),
+        image: yup
+            .string()
+            .max(500, "Đường dẫn ảnh không được vượt quá 500 ký tự"),
+    });
 
     return (
-        <View style={styles.container}>
-            {/* statusbar to set wifi, battery... to white */}
-            <StatusBar
-                barStyle="light-content"
-                translucent
-                backgroundColor="transparent"
-            />
-            <View style={[styles.head, { height: 350 }]}></View>
-            {profile != null && (
-                <View
-                    style={[
-                        styles.content,
-                        { bottom: 510, alignItems: "center" },
-                    ]}
-                >
-                    <TouchableOpacity
-                        style={styles.backContainer}
-                        onPress={() => navigation.goBack()}
-                    >
-                        <Image
-                            source={require("../../Public/back.png")}
-                            style={styles.backBtn}
-                        />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        onPress={() => SetIsWarningShow(true)}
-                        style={styles.btnLogout}
-                    >
-                        <Image source={require("../../Public/logout.png")} />
-                    </TouchableOpacity>
-                    <Modal
-                        animationType="slide"
-                        transparent={true}
-                        visible={isWarningShow}
-                        onRequestClose={() => {
-                            SetIsWarningShow(!isWarningShow);
-                        }}
-                    >
-                        <TouchableWithoutFeedback
-                            onPressOut={() => SetIsWarningShow(false)}
-                        >
-                            <View style={styles.modalContainer}>
-                                <TouchableWithoutFeedback>
-                                    <View style={styles.modalView}>
-                                        <View style={styles.modalHead}>
-                                            <TouchableOpacity
-                                                style={styles.iconCancel}
-                                                onPress={() =>
-                                                    SetIsWarningShow(false)
-                                                }
-                                            >
-                                                <Image
-                                                    source={require("../../Public/darkCancel.png")}
-                                                />
-                                            </TouchableOpacity>
-                                            <CustomText
-                                                style={styles.modalTitle}
-                                            >
-                                                Cảnh báo
-                                            </CustomText>
-                                        </View>
-                                        <View style={styles.modalContent}>
-                                            <CustomText
-                                                style={{
-                                                    fontSize: 14 * scale,
-                                                    width: 270,
-                                                }}
-                                            >
-                                                Bạn có chắc chắn muốn đăng xuất
-                                                không? Thông tin thay đổi của
-                                                bạn có thể sẽ không được lưu!
-                                            </CustomText>
-                                        </View>
-                                        <View
-                                            style={{
-                                                flexDirection: "row",
-                                                gap: 20,
-                                            }}
-                                        >
-                                            <TouchableOpacity
-                                                onPress={() => {
-                                                    SetIsWarningShow(false);
-                                                    logout();
-                                                }}
-                                                style={styles.btnConfirm}
-                                            >
-                                                <CustomText
-                                                    style={{
-                                                        color: "white",
-                                                        fontFamily:
-                                                            "Be Vietnam bold",
-                                                    }}
-                                                >
-                                                    Đăng xuất
-                                                </CustomText>
-                                            </TouchableOpacity>
-                                            <TouchableOpacity
-                                                onPress={() =>
-                                                    SetIsWarningShow(false)
-                                                }
-                                                style={styles.btnCancel}
-                                            >
-                                                <CustomText
-                                                    style={{
-                                                        color: "#4F4F4F",
-                                                        fontFamily:
-                                                            "Be Vietnam bold",
-                                                    }}
-                                                >
-                                                    Huỷ
-                                                </CustomText>
-                                            </TouchableOpacity>
-                                        </View>
-                                    </View>
-                                </TouchableWithoutFeedback>
-                            </View>
-                        </TouchableWithoutFeedback>
-                    </Modal>
-                    <Image
-                        style={styles.avatar}
-                        source={{ uri: profile.imageLink }}
-                    ></Image>
-                    <CustomText style={styles.name}>{profile.name}</CustomText>
-                    <CustomText style={styles.note}>
-                        {roleEnum[profile.role]}
-                    </CustomText>
-                    <KeyboardAvoidingView
-                        behavior={Platform.OS === "ios" ? "padding" : "height"}
-                        style={styles.body}
-                    >
-                        <View style={styles.title}>
-                            <Image
-                                source={require("../../Public/userInformation.png")}
-                            ></Image>
-                            <CustomText>Thông tin cơ bản</CustomText>
+        <Formik
+            enableReinitialize={true}
+            initialValues={
+                profile
+                    ? {
+                          ...profile,
+                          birthday: Moment(
+                              profile.birthday,
+                              "DD/MM/YYYY"
+                          ).toDate(),
+                      }
+                    : {
+                          name: "",
+                          role: "",
+                          birthday: new Date(),
+                          gender: null,
+                          phoneNumber: "",
+                          email: "",
+                          image: "",
+                          imageLink: undefined,
+                      }
+            }
+            validationSchema={validationSchema}
+            onSubmit={(values) => {
+                // Handle form submission logic here
+                submitProfile({
+                    id: userInfo.userId,
+                    name: values.name,
+                    citizenId: values.citizenId,
+                    address: values.address,
+                    role: values.role,
+                    isActive: values.isActive,
+                    birthday: Moment(values.birthday).format("DD/MM/YYYY"),
+                    email: values.email,
+                    phoneNumber: values.phoneNumber,
+                    gender: values.gender,
+                    image: values.image,
+                    imageLink: values.imageLink,
+                });
+            }}
+        >
+            {({
+                handleChange,
+                handleBlur,
+                handleSubmit,
+                setFieldValue,
+                values,
+                errors,
+                touched,
+            }) => (
+                <View style={styles.container}>
+                    {/* statusbar to set wifi, battery... to white */}
+                    <StatusBar
+                        barStyle="light-content"
+                        translucent
+                        backgroundColor="transparent"
+                    />
+                    {isLoading && (
+                        <View style={styles.waitingCircle}>
+                            <ActivityIndicator size="large" color="green" />
                         </View>
-                        <ScrollView
-                            contentContainerStyle={{ paddingBottom: 50 }}
+                    )}
+                    <View style={[styles.head, { height: 350 }]}></View>
+                    {profile != null && (
+                        <View
+                            style={[
+                                styles.content,
+                                { bottom: 510, alignItems: "center" },
+                            ]}
                         >
-                            <View>
-                                <CustomText
-                                    style={{
-                                        fontFamily: "Be Vietnam bold",
-                                        color: "#08354F",
-                                    }}
-                                >
-                                    Họ và tên
-                                </CustomText>
-                                <TextInput
-                                    style={{
-                                        fontSize: textInputDefaultSize * scale,
-                                    }}
-                                    value={profile.name}
-                                    onChangeText={(name) =>
-                                        handleInputChange("name", name)
-                                    }
-                                ></TextInput>
-                                <View
-                                    style={{
-                                        height: 1,
-                                        borderWidth: 1,
-                                        borderColor: "#DFE0E2",
-                                    }}
-                                ></View>
-                            </View>
-                            <View style={{ marginTop: 15 }}>
-                                <CustomText
-                                    style={{
-                                        fontFamily: "Be Vietnam bold",
-                                        color: "#08354F",
-                                    }}
-                                >
-                                    Chức vụ
-                                </CustomText>
-                                <CustomText
-                                    style={{
-                                        fontSize: 14 * scale,
-                                        color: "black",
-                                    }}
-                                >
-                                    {roleEnum[profile.role]}
-                                </CustomText>
-                            </View>
-                            <View
-                                style={{
-                                    marginTop: 15,
+                            <TouchableOpacity
+                                style={styles.backContainer}
+                                onPress={() => navigation.goBack()}
+                            >
+                                <Image
+                                    source={require("../../Public/back.png")}
+                                    style={styles.backBtn}
+                                />
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() => SetIsWarningShow(true)}
+                                style={styles.btnLogout}
+                            >
+                                <Image
+                                    source={require("../../Public/logout.png")}
+                                />
+                            </TouchableOpacity>
+                            <Modal
+                                animationType="slide"
+                                transparent={true}
+                                visible={isWarningShow}
+                                onRequestClose={() => {
+                                    SetIsWarningShow(!isWarningShow);
                                 }}
                             >
-                                <CustomText
+                                <TouchableWithoutFeedback
+                                    onPressOut={() => SetIsWarningShow(false)}
+                                >
+                                    <View style={styles.modalContainer}>
+                                        <TouchableWithoutFeedback>
+                                            <View style={styles.modalView}>
+                                                <View style={styles.modalHead}>
+                                                    <TouchableOpacity
+                                                        style={
+                                                            styles.iconCancel
+                                                        }
+                                                        onPress={() =>
+                                                            SetIsWarningShow(
+                                                                false
+                                                            )
+                                                        }
+                                                    >
+                                                        <Image
+                                                            source={require("../../Public/darkCancel.png")}
+                                                        />
+                                                    </TouchableOpacity>
+                                                    <CustomText
+                                                        style={
+                                                            styles.modalTitle
+                                                        }
+                                                    >
+                                                        Cảnh báo
+                                                    </CustomText>
+                                                </View>
+                                                <View
+                                                    style={styles.modalContent}
+                                                >
+                                                    <CustomText
+                                                        style={{
+                                                            fontSize:
+                                                                14 * scale,
+                                                            width: 270,
+                                                        }}
+                                                    >
+                                                        Bạn có chắc chắn muốn
+                                                        đăng xuất không? Thông
+                                                        tin thay đổi của bạn có
+                                                        thể sẽ không được lưu!
+                                                    </CustomText>
+                                                </View>
+                                                <View
+                                                    style={{
+                                                        flexDirection: "row",
+                                                        gap: 20,
+                                                    }}
+                                                >
+                                                    <TouchableOpacity
+                                                        onPress={() => {
+                                                            SetIsWarningShow(
+                                                                false
+                                                            );
+                                                            logout();
+                                                        }}
+                                                        style={
+                                                            styles.btnConfirm
+                                                        }
+                                                    >
+                                                        <CustomText
+                                                            style={{
+                                                                color: "white",
+                                                                fontFamily:
+                                                                    "Be Vietnam bold",
+                                                            }}
+                                                        >
+                                                            Đăng xuất
+                                                        </CustomText>
+                                                    </TouchableOpacity>
+                                                    <TouchableOpacity
+                                                        onPress={() =>
+                                                            SetIsWarningShow(
+                                                                false
+                                                            )
+                                                        }
+                                                        style={styles.btnCancel}
+                                                    >
+                                                        <CustomText
+                                                            style={{
+                                                                color: "#4F4F4F",
+                                                                fontFamily:
+                                                                    "Be Vietnam bold",
+                                                            }}
+                                                        >
+                                                            Huỷ
+                                                        </CustomText>
+                                                    </TouchableOpacity>
+                                                </View>
+                                            </View>
+                                        </TouchableWithoutFeedback>
+                                    </View>
+                                </TouchableWithoutFeedback>
+                            </Modal>
+                            <TouchableOpacity
+                                style={styles.imageViewContainer}
+                                onPress={() => chooseImage()}
+                            >
+                                <Image
+                                    style={styles.image}
+                                    source={{ uri: values.imageLink }}
+                                ></Image>
+                                <View style={styles.imageOverlay} />
+                                <Image
                                     style={{
-                                        fontFamily: "Be Vietnam bold",
-                                        color: "#08354F",
+                                        width: 50,
+                                        height: 50,
+                                    }}
+                                    source={require("../../Public/camera.png")}
+                                />
+                            </TouchableOpacity>
+                            <CustomText style={styles.name}>
+                                {values.name}
+                            </CustomText>
+                            <CustomText style={styles.note}>
+                                {roleEnum[values.role]}
+                            </CustomText>
+                            <View
+                                behavior={
+                                    Platform.OS === "ios" ? "padding" : "height"
+                                }
+                                style={styles.body}
+                            >
+                                <View style={styles.title}>
+                                    <Image
+                                        source={require("../../Public/userInformation.png")}
+                                    ></Image>
+                                    <CustomText>Thông tin cơ bản</CustomText>
+                                </View>
+                                <ScrollView
+                                    contentContainerStyle={{
+                                        paddingBottom: 85,
                                     }}
                                 >
-                                    Ngày sinh
-                                </CustomText>
-                                <Pressable
-                                    style={{
-                                        flexDirection: "row",
-                                        gap: 5,
-                                    }}
-                                    onPress={() => SetIsShow(true)}
-                                >
-                                    {/* <TextInput
+                                    <View>
+                                        <CustomText
+                                            style={{
+                                                fontFamily: "Be Vietnam bold",
+                                                color: "#08354F",
+                                            }}
+                                        >
+                                            Họ và tên
+                                        </CustomText>
+                                        <TextInput
                                             style={{
                                                 fontSize:
                                                     textInputDefaultSize *
                                                     scale,
+                                                color: "#5C5D60",
+                                                opacity: 1,
                                             }}
-                                            pointerEvents="none"
+                                            value={values.name}
+                                            onChangeText={handleChange("name")}
+                                            onBlur={handleBlur("name")}
+                                            placeholder="Họ và tên"
+                                        ></TextInput>
+                                        <View
+                                            style={{
+                                                height: 1,
+                                                borderWidth: 1,
+                                                borderColor: "#DFE0E2",
+                                            }}
+                                        ></View>
+                                        {touched.name && errors.name && (
+                                            <CustomText style={styles.error}>
+                                                {errors.name}
+                                            </CustomText>
+                                        )}
+                                    </View>
+                                    <View style={{ marginTop: 15 }}>
+                                        <CustomText
+                                            style={{
+                                                fontFamily: "Be Vietnam bold",
+                                                color: "#08354F",
+                                            }}
                                         >
-                                            {new Date(time).toLocaleDateString(
-                                                "en-GB"
-                                            )}
-                                        </TextInput> */}
-                                    <CustomText
+                                            Chức vụ
+                                        </CustomText>
+                                        <CustomText>
+                                            {roleEnum[values.role]}
+                                        </CustomText>
+                                    </View>
+                                    <View
                                         style={{
-                                            fontSize:
-                                                textInputDefaultSize * scale,
+                                            marginTop: 15,
                                         }}
                                     >
-                                        {new Date(time).toLocaleDateString(
-                                            "en-GB"
+                                        <CustomText
+                                            style={{
+                                                fontFamily: "Be Vietnam bold",
+                                                color: "#08354F",
+                                            }}
+                                        >
+                                            Ngày sinh
+                                        </CustomText>
+                                        <Pressable
+                                            style={{
+                                                flexDirection: "row",
+                                                gap: 5,
+                                            }}
+                                            onPress={() => SetIsShow(true)}
+                                        >
+                                            <CustomText
+                                                style={{
+                                                    fontSize:
+                                                        textInputDefaultSize *
+                                                        scale,
+                                                }}
+                                            >
+                                                {new Date(
+                                                    values.birthday
+                                                ).toLocaleDateString("en-GB")}
+                                            </CustomText>
+                                            <Image
+                                                source={require("../../Public/calendar.png")}
+                                            ></Image>
+                                        </Pressable>
+                                        <DateTimePickerModal
+                                            isVisible={isShow}
+                                            mode="date"
+                                            date={Moment(
+                                                values.birthday,
+                                                "DD/MM/YYYY"
+                                            ).toDate()}
+                                            onConfirm={(date) => {
+                                                setFieldValue("birthday", date);
+                                                SetIsShow(false);
+                                            }}
+                                            onCancel={() => SetIsShow(false)}
+                                            locale="vi"
+                                            confirmTextIOS={"Xác nhận"}
+                                            cancelTextIOS={"Huỷ"}
+                                            confirmTextAndroid={"Xác Nhận"}
+                                            cancelTextAndroid={"Huỷ"}
+                                        />
+                                        <View
+                                            style={{
+                                                height: 1,
+                                                borderWidth: 1,
+                                                borderColor: "#DFE0E2",
+                                            }}
+                                        ></View>
+                                    </View>
+                                    <View
+                                        style={[
+                                            { marginTop: 15 },
+                                            Platform.OS === "ios" && {
+                                                zIndex: 10,
+                                            },
+                                        ]}
+                                    >
+                                        <DropDown
+                                            title="Giới tính"
+                                            titleColor={"#08354F"}
+                                            placeholder="Chọn giới tính"
+                                            value={values.gender}
+                                            items={items}
+                                            setValue={(val) => {
+                                                setFieldValue("gender", val());
+                                            }}
+                                            setItems={SetItems}
+                                            multiple={false}
+                                        />
+                                        <View
+                                            style={{
+                                                height: 1,
+                                                borderWidth: 1,
+                                                borderColor: "#DFE0E2",
+                                            }}
+                                        ></View>
+                                    </View>
+                                    <View style={{ marginTop: 15 }}>
+                                        <CustomText
+                                            style={{
+                                                fontFamily: "Be Vietnam bold",
+                                                color: "#08354F",
+                                            }}
+                                        >
+                                            Số điện thoại
+                                        </CustomText>
+                                        <TextInput
+                                            style={{
+                                                fontSize:
+                                                    textInputDefaultSize *
+                                                    scale,
+                                                color: "#5C5D60",
+                                                opacity: 1,
+                                            }}
+                                            onChangeText={handleChange(
+                                                "phoneNumber"
+                                            )}
+                                        >
+                                            {values.phoneNumber}
+                                        </TextInput>
+                                        <View
+                                            style={{
+                                                height: 1,
+                                                borderWidth: 1,
+                                                borderColor: "#DFE0E2",
+                                            }}
+                                        ></View>
+                                        {touched.phoneNumber &&
+                                            errors.phoneNumber && (
+                                                <CustomText
+                                                    style={styles.error}
+                                                >
+                                                    {errors.phoneNumber}
+                                                </CustomText>
+                                            )}
+                                    </View>
+                                    <View style={{ marginTop: 15 }}>
+                                        <CustomText
+                                            style={{
+                                                fontFamily: "Be Vietnam bold",
+                                                color: "#08354F",
+                                            }}
+                                        >
+                                            Email
+                                        </CustomText>
+                                        <TextInput
+                                            style={{
+                                                fontSize:
+                                                    textInputDefaultSize *
+                                                    scale,
+                                                color: "#5C5D60",
+                                                opacity: 1,
+                                            }}
+                                            onChangeText={handleChange("email")}
+                                            onBlur={handleBlur("email")}
+                                            placeholder="Email"
+                                            keyboardType="email-address"
+                                        >
+                                            {values.email}
+                                        </TextInput>
+                                        <View
+                                            style={{
+                                                height: 1,
+                                                borderWidth: 1,
+                                                borderColor: "#DFE0E2",
+                                            }}
+                                        ></View>
+                                        {touched.email && errors.email && (
+                                            <CustomText style={styles.error}>
+                                                {errors.email}
+                                            </CustomText>
                                         )}
-                                    </CustomText>
-                                    <Image
-                                        source={require("../../Public/calendar.png")}
-                                    ></Image>
-                                </Pressable>
-                                {isShow && (
-                                    <DateTimePicker
-                                        mode="date"
-                                        value={time}
-                                        style={{
-                                            width: 300,
-                                            opacity: 1,
-                                            height: 140,
-                                            marginVertical: 10,
-                                        }}
-                                        onChange={onTimeChange}
-                                        is24Hour={is24Hours}
-                                        minuteInterval={interval}
-                                        display="spinner"
-                                    />
-                                )}
-                                <View
-                                    style={{
-                                        height: 1,
-                                        borderWidth: 1,
-                                        borderColor: "#DFE0E2",
-                                    }}
-                                ></View>
+                                    </View>
+                                </ScrollView>
                             </View>
-                            <View
-                                style={[
-                                    { marginTop: 15 },
-                                    Platform.OS === "ios" && {
-                                        zIndex: 10,
-                                    },
-                                ]}
+                            <TouchableOpacity
+                                onPress={handleSubmit}
+                                style={[styles.btnAgree, { width: "100%" }]}
                             >
-                                <DropDown
-                                    title="Giới tính"
-                                    titleColor={"#08354F"}
-                                    placeholder="Chọn giới tính"
-                                    value={value}
-                                    items={items}
-                                    setValue={SetValue}
-                                    setItems={SetItems}
-                                    multiple={false}
-                                />
-                                <View
-                                    style={{
-                                        height: 1,
-                                        borderWidth: 1,
-                                        borderColor: "#DFE0E2",
-                                    }}
-                                ></View>
-                            </View>
-                            <View style={{ marginTop: 15 }}>
                                 <CustomText
                                     style={{
+                                        color: "white",
                                         fontFamily: "Be Vietnam bold",
-                                        color: "#08354F",
                                     }}
                                 >
-                                    Số điện thoại
+                                    Xác nhận
                                 </CustomText>
-                                <TextInput
-                                    style={{
-                                        fontSize: textInputDefaultSize * scale,
-                                    }}
-                                    onChangeText={(phoneNumber) =>
-                                        handleInputChange(
-                                            "phoneNumber",
-                                            phoneNumber
-                                        )
-                                    }
-                                >
-                                    {profile.phoneNumber}
-                                </TextInput>
-                                <View
-                                    style={{
-                                        height: 1,
-                                        borderWidth: 1,
-                                        borderColor: "#DFE0E2",
-                                    }}
-                                ></View>
-                            </View>
-                            <View style={{ marginTop: 15 }}>
-                                <CustomText
-                                    style={{
-                                        fontFamily: "Be Vietnam bold",
-                                        color: "#08354F",
-                                    }}
-                                >
-                                    Email
-                                </CustomText>
-                                <TextInput
-                                    style={{
-                                        fontSize: textInputDefaultSize * scale,
-                                    }}
-                                    onChangeText={(email) =>
-                                        handleInputChange("email", email)
-                                    }
-                                >
-                                    {profile.email}
-                                </TextInput>
-                                <View
-                                    style={{
-                                        height: 1,
-                                        borderWidth: 1,
-                                        borderColor: "#DFE0E2",
-                                    }}
-                                ></View>
-                            </View>
-                        </ScrollView>
-                    </KeyboardAvoidingView>
-                    <TouchableOpacity
-                        onPress={() => submitProfile()}
-                        style={[styles.btnAgree, { width: "100%" }]}
-                    >
-                        <CustomText
-                            style={{
-                                color: "white",
-                                fontFamily: "Be Vietnam bold",
-                            }}
-                        >
-                            Xác nhận
-                        </CustomText>
-                    </TouchableOpacity>
+                            </TouchableOpacity>
+                        </View>
+                    )}
+                    <Toast config={toastConfig} />
                 </View>
             )}
-            <Toast config={toastConfig} />
-        </View>
+        </Formik>
     );
 };
 export default ProfileEdit;

@@ -11,12 +11,14 @@ import {
     useWindowDimensions,
 } from "react-native";
 import Checkbox from "expo-checkbox";
+import Toast from "react-native-toast-message";
+import { toastConfig } from "../Components/ToastConfig.js";
 import styles from "./style.js";
 import { CustomText } from "../Components/CustomText.js";
 import { AuthContext } from "../../Context/AuthContext.js";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const Login = () => {
+const Login = ({ navigation, route }) => {
     const { isLoading, login } = useContext(AuthContext);
 
     const [username, SetUsername] = useState("");
@@ -42,6 +44,14 @@ const Login = () => {
         fetchData();
     }, []);
 
+    useEffect(() => {
+        if (route.params?.forgotSuccess) {
+            Toast.show({
+                type: "success",
+                text1: "Hệ thống đã gửi thông tin thiết lập mật khẩu đến email của bạn! Hãy kiểm tra email và làm theo hướng dẫn!",
+            });
+        }
+    }, [route.params]);
     const checkLogic = () => {
         if (
             username == null ||
@@ -99,7 +109,7 @@ const Login = () => {
                             Mật khẩu:
                         </CustomText>
                         <TextInput
-                            style={styles.input}
+                            style={[styles.input, { paddingRight: 38 }]}
                             placeholder="Mật khẩu"
                             value={password}
                             onChangeText={SetPassword}
@@ -168,9 +178,7 @@ const Login = () => {
                                 alignSelf: "flex-end",
                             }}
                             onPress={() =>
-                                Linking.openURL(
-                                    "https://www.google.com/search?q=qu%C3%AAn+m%E1%BA%ADt+kh%E1%BA%A9u+th%C3%AC+ph%E1%BA%A3i+l%C3%A0m+sao"
-                                )
+                                navigation.navigate("ForgotPassword")
                             }
                         >
                             Quên mật khẩu?
@@ -182,12 +190,10 @@ const Login = () => {
                         <CustomText>
                             Cần sự giúp đỡ? Liên hệ{" "}
                             <CustomText
-                                style={
-                                    (style = {
-                                        color: "#53B6ED",
-                                        textDecorationLine: "underline",
-                                    })
-                                }
+                                style={{
+                                    color: "#53B6ED",
+                                    textDecorationLine: "underline",
+                                }}
                                 onPress={() =>
                                     Linking.openURL(
                                         "https://www.facebook.com/maeveofmay"
@@ -200,6 +206,7 @@ const Login = () => {
                     </View>
                 </View>
             </View>
+            <Toast config={toastConfig} />
         </View>
     );
 };

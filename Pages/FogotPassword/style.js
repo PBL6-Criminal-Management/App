@@ -14,6 +14,7 @@ const styles = StyleSheet.create({
         bottom: 0,
         justifyContent: "center",
         alignItems: "center",
+        zIndex: 1,
     },
     form: {
         flex: 0.8,
@@ -55,16 +56,24 @@ const styles = StyleSheet.create({
         alignItems: "center",
         flexDirection: "row",
     },
+    error: {
+        color: "red",
+        fontWeight: "bold",
+        marginTop: 5,
+        alignSelf: "flex-start",
+    },
     input: {
         height: 50,
-        flexGrow: 1, //fill the remaining space.
+        flexBasis: 1,
+        flexGrow: 1,
         borderWidth: 1,
         borderColor: "#43BDD4",
         borderRadius: 10,
         padding: 10,
-        paddingRight: 38,
         marginLeft: 10,
         fontSize: textInputDefaultSize * scale,
+        color: "#5C5D60",
+        opacity: 1,
     },
     icon: {
         position: "absolute",
