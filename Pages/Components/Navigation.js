@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { AuthContext } from "../../Context/AuthContext";
 import BottomTab from "./BottomTab.js";
 import Login from "../Login/index.js";
+import ForgotPassword from "../FogotPassword/index.js";
 import Splash from "../SplashScreen/SplashScreen.js";
 
 const Stack = createNativeStackNavigator();
@@ -21,6 +22,10 @@ const Navigation = () => {
                 ) : (
                     <>
                         <Stack.Screen name="Login" component={Login} />
+                        <Stack.Screen
+                            name="ForgotPassword"
+                            component={ForgotPassword}
+                        />
                     </>
                 )}
             </Stack.Navigator>

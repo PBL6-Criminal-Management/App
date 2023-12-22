@@ -7,6 +7,7 @@ import {
     StatusBar,
     Modal,
     TouchableWithoutFeedback,
+    ActivityIndicator,
 } from "react-native";
 import Toast from "react-native-toast-message";
 import styles from "./style.js";
@@ -22,7 +23,7 @@ const Profile = ({ navigation, route }) => {
     const [isWarningShow, SetIsWarningShow] = useState(false);
     const [profile, SetProfile] = useState([]);
     const [userInformation, SetUserInformation] = useState([]);
-    const [, SetIsLoading] = useState(false);
+    const [isLoading, SetIsLoading] = useState(false);
 
     const getProfileFromAPI = async () => {
         SetIsLoading(true);
@@ -121,10 +122,26 @@ const Profile = ({ navigation, route }) => {
                 translucent
                 backgroundColor="transparent"
             />
+            {isLoading && (
+                <View style={styles.waitingCircle}>
+                    <ActivityIndicator size="large" color="green" />
+                </View>
+            )}
             <View style={[styles.head, { height: 350 }]}></View>
             <View
                 style={[styles.content, { bottom: 510, alignItems: "center" }]}
             >
+                <TouchableOpacity
+                    style={styles.reloadContainer}
+                    onPress={() => {
+                        getProfileFromAPI();
+                    }}
+                >
+                    <Image
+                        source={require("../../Public/sync.png")}
+                        style={styles.reloadBtn}
+                    />
+                </TouchableOpacity>
                 <TouchableOpacity
                     onPress={() => SetIsWarningShow(true)}
                     style={styles.btnLogout}

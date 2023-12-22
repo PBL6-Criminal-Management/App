@@ -12,20 +12,17 @@ const CaseElement = (props) => {
     };
     const colorStatusList = {
         0: "#6D1008",
-        1: "#3f5af4",
+        1: "#235a12",
         2: "#0d6630",
     };
     const BASE_PATH = "../../Public/";
 
     return (
-        <TouchableOpacity
-            style={[styles.container]}
-            onPress={props.onPress}
-        >
+        <TouchableOpacity style={[styles.container]} onPress={props.onPress}>
             <View style={styles.body}>
                 <View style={[styles.row, { alignItems: "center" }]}>
                     <CustomText style={styles.title}>
-                        {props.item.id}
+                        {props.item.code}
                     </CustomText>
                     <View
                         style={[
@@ -33,7 +30,7 @@ const CaseElement = (props) => {
                             {
                                 backgroundColor:
                                     colorBackgroundStatusList[
-                                    props.item.status
+                                        props.item.status
                                     ],
                             },
                         ]}

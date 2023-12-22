@@ -20,6 +20,21 @@ const styles = StyleSheet.create({
         height: 25,
         tintColor: "white",
     },
+    reloadContainer: {
+        position: "absolute",
+        right: 20,
+        paddingLeft: 5,
+        paddingBottom: 5,
+        borderWidth: 1,
+        borderColor: "white",
+        borderRadius: 100,
+        padding: 5,
+    },
+    reloadBtn: {
+        width: 15,
+        height: 15,
+        tintColor: "white",
+    },
     avatar: {
         width: 180,
         height: 180,
@@ -135,7 +150,7 @@ const styles = StyleSheet.create({
         bottom: 0,
         justifyContent: "center",
         alignItems: "center",
-        zIndex: 10,
+        zIndex: 1,
     },
     scroll: { height: "100%" },
 });

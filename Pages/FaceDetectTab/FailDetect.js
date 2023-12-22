@@ -16,7 +16,7 @@ const FailDetect = ({ navigation, route }) => {
     const checkLogic = () => {};
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: "#F1F2F2" }]}>
             {/*statusbar to set wifi, battery... to white*/}
             <StatusBar
                 barStyle="light-content"

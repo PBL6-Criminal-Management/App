@@ -55,6 +55,8 @@ const DropDown = (props) => {
                 listMode="SCROLLVIEW"
                 textStyle={{
                     fontSize: textInputDefaultSize * scale,
+                    color: "#5C5D60",
+                    opacity: 1,
                 }}
             />
         </View>

@@ -183,7 +183,7 @@ const CriminalList = ({ navigation }) => {
                     selectedArea.length > 0 ? selectedArea[0] : ""
                 }&Charge=${charge == null ? "" : charge}&Keyword=${
                     txtSearch == null ? "" : txtSearch
-                }`,
+                }&OrderBy="Id ASC"`,
             {
                 method: "GET", // *GET, POST, PUT, DELETE, etc.
                 mode: "cors", // no-cors, cors, *same-origin
@@ -271,6 +271,8 @@ const CriminalList = ({ navigation }) => {
                             style={{
                                 width: "81%",
                                 fontSize: textInputDefaultSize * scale,
+                                color: "#5C5D60",
+                                opacity: 1,
                                 borderBottomColor: "#c9c3c3",
                                 borderBottomWidth: 1,
                                 paddingBottom: 0,

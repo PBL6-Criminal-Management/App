@@ -51,11 +51,8 @@ const InformationFields = (props) => {
                 {isDropDown && (
                     <InformationFlat
                         listItems={props.listItems}
-                        haveImages={props.haveImages}
-                        imagesFieldName={props.imagesFieldName}
-                        images={props.images}
-                        paddingLeft={32}
-                        firstTopMargin={20}
+                        paddingHorizontal={20}
+                        firstTopPadding={20}
                     />
                 )}
             </View>

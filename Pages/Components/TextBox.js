@@ -63,6 +63,8 @@ const styles = StyleSheet.create({
         width: 250,
         paddingTop: 10,
         fontSize: textInputDefaultSize * scale,
+        color: "#5C5D60",
+        opacity: 1,
     },
 });
 

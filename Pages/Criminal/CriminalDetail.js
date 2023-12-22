@@ -5,6 +5,7 @@ import {
     StatusBar,
     Image,
     TouchableOpacity,
+    ActivityIndicator,
 } from "react-native";
 import { AuthContext } from "../../Context/AuthContext.js";
 import styles from "./style.js";
@@ -21,7 +22,7 @@ const CriminalDetail = ({ navigation, route }) => {
     const [criminalInformation, SetCriminalInformation] = useState({});
     const [wantedInformation, SetWantedInformation] = useState({});
     const [titleInfo, SetTitleInfo] = useState(null);
-    const [, SetIsLoading] = useState(false);
+    const [isLoading, SetIsLoading] = useState(false);
 
     useEffect(() => {
         if (route.params?.criminalId) {
@@ -74,7 +75,7 @@ const CriminalDetail = ({ navigation, route }) => {
                         )
                         .map((ci) => ({
                             url: ci.fileUrl,
-                        }))
+                        }));
                     SetBasicInformation({
                         "Họ và tên": res.data.name,
                         "Tên khác": res.data.anotherName,
@@ -99,8 +100,8 @@ const CriminalDetail = ({ navigation, route }) => {
                         "Đặc điểm nhận dạng": res.data.characteristics,
                         images: {
                             items: criminalImages,
-                            title: "Hình ảnh tội phạm"
-                        }
+                            title: "Hình ảnh tội phạm",
+                        },
                     });
                     SetCriminalInformation({
                         "Tình trạng": criminalStatus[res.data.status],
@@ -163,8 +164,8 @@ const CriminalDetail = ({ navigation, route }) => {
                             res.messages != null
                                 ? res.messages
                                 : res.title
-                                    ? res.title
-                                    : res,
+                                ? res.title
+                                : res,
                     });
                 }
                 SetIsLoading(false);
@@ -187,6 +188,11 @@ const CriminalDetail = ({ navigation, route }) => {
                 translucent
                 backgroundColor="transparent"
             />
+            {isLoading && (
+                <View style={styles.waitingCircle}>
+                    <ActivityIndicator size="large" color="green" />
+                </View>
+            )}
             <View style={[styles.head, { height: 350 }]}></View>
             <View
                 style={[styles.content, { bottom: 400, alignItems: "center" }]}
@@ -198,6 +204,18 @@ const CriminalDetail = ({ navigation, route }) => {
                     <Image
                         source={require("../../Public/back.png")}
                         style={styles.backBtn}
+                    />
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={styles.reloadContainer}
+                    onPress={() => {
+                        if (route.params?.criminalId)
+                            getCriminalByIdFromAPI(route.params?.criminalId);
+                    }}
+                >
+                    <Image
+                        source={require("../../Public/sync.png")}
+                        style={styles.reloadBtn}
                     />
                 </TouchableOpacity>
                 <Image

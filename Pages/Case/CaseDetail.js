@@ -5,12 +5,18 @@ import {
     StatusBar,
     Image,
     TouchableOpacity,
+    ActivityIndicator,
 } from "react-native";
 import { AuthContext } from "../../Context/AuthContext.js";
 import styles from "./style.js";
 import { CustomText } from "../Components/CustomText.js";
 import Toast from "react-native-toast-message";
-import { API_URL, caseStatus, typeOfViolation, wantedType } from "../../Utils/constants.js";
+import {
+    API_URL,
+    caseStatus,
+    typeOfViolation,
+    wantedType,
+} from "../../Utils/constants.js";
 import InformationFields from "../Components/InformationFields.js";
 import { toastConfig } from "../Components/ToastConfig.js";
 const CaseDetail = ({ navigation, route }) => {
@@ -24,12 +30,11 @@ const CaseDetail = ({ navigation, route }) => {
     const [titleInfo, SetTitleInfo] = useState(null);
     const [evidencesInformation, SetEvidencesInformation] = useState({});
     const [wantedInformation, SetWantedInformation] = useState({});
-    const [, SetIsLoading] = useState(false);
-
+    const [isLoading, SetIsLoading] = useState(false);
 
     const colorStatusList = {
         0: "#6D1008",
-        1: "#3f5af4",
+        1: "#235a12",
         2: "#0d6630",
     };
     const colorBackgroundStatusList = {
@@ -37,7 +42,6 @@ const CaseDetail = ({ navigation, route }) => {
         1: "#13d6d6",
         2: "#c8f2d9",
     };
-
 
     useEffect(() => {
         if (route.params?.caseId) {
@@ -77,7 +81,7 @@ const CaseDetail = ({ navigation, route }) => {
                 if (res.succeeded) {
                     SetTitleInfo({
                         code: route.params?.code,
-                        status: res.data.status
+                        status: res.data.status,
                     });
                     caseImages = res.data.caseImages
                         .filter(
@@ -88,20 +92,24 @@ const CaseDetail = ({ navigation, route }) => {
                         )
                         .map((ci) => ({
                             url: ci.fileUrl,
-                        }))
+                        }));
                     SetBasicInformation({
                         "Thời gian xảy ra": res.data.startDate,
                         "Địa điểm xảy ra": res.data.area,
                         "Tội danh": res.data.charge,
-                        "Loại vi phạm": typeOfViolation[res.data.typeOfViolation],
-                        "Ngày kết thúc vụ án": res.data.endDate,
+                        "Loại vi phạm":
+                            typeOfViolation[res.data.typeOfViolation],
+                        "Thời gian kết thúc": res.data.endDate,
                         "Mô tả": res.data.description,
                         images: {
                             items: caseImages,
-                            title: "Danh sánh của vụ án"
-                        }
+                            title: "Danh sánh hình ảnh của vụ án",
+                        },
                     });
-                    if (res.data.victims != null && res.data.victims.length > 0) {
+                    if (
+                        res.data.victims != null &&
+                        res.data.victims.length > 0
+                    ) {
                         const victims = res.data.victims;
                         if (victims.length > 1) {
                             victimInfo = victims.map((v) => ({
@@ -111,7 +119,7 @@ const CaseDetail = ({ navigation, route }) => {
                                 "Số điện thoại": v.phoneNumber,
                                 "Địa chỉ thường trú": v.address,
                                 "CCCD/CMND": v.citizenId,
-                                "Lời khai": v.testimony
+                                "Lời khai": v.testimony,
                             }));
                         } else {
                             const v = victims[0];
@@ -122,45 +130,61 @@ const CaseDetail = ({ navigation, route }) => {
                                 "Số điện thoại": v.phoneNumber,
                                 "Địa chỉ thường trú": v.address,
                                 "CCCD/CMND": v.citizenId,
-                                "Lời khai": v.testimony
+                                "Lời khai": v.testimony,
                             };
                         }
                         SetVictimInformation(victimInfo);
                     }
-                    if (res.data.criminals != null && res.data.criminals.length > 0) {
+                    if (
+                        res.data.criminals != null &&
+                        res.data.criminals.length > 0
+                    ) {
                         const criminals = res.data.criminals;
                         if (criminals.length > 1) {
                             criminalInfo = criminals.map((c) => ({
                                 "Họ và tên": c.name,
+                                "Tên khác": c.anotherName,
                                 "Ngày tháng năm sinh": c.birthday,
                                 "Giới tính": c.gender ? "Nam" : "Nữ",
-                                "Số điện thoại": c.phoneNumber,
-                                "Địa chỉ thường trú": c.address,
+                                "CMND/CCCD": c.citizenId,
+                                "Dân tộc": c.ethnicity,
+                                "Quốc tịch": c.nationality,
+                                "Quê quán": c.homeTown,
+                                "Chỗ ở hiện tại": c.currentAccommodation,
                                 "Tội danh": c.charge,
                                 "Lý do phạm tội": c.reason,
                                 "Vũ khí": c.weapon,
-                                "Loại vi phạm": typeOfViolation[c.typeOfViolation],
-                                "Lời khai": c.testimony
+                                "Loại vi phạm":
+                                    typeOfViolation[c.typeOfViolation],
+                                "Lời khai": c.testimony,
                             }));
                         } else {
                             const c = criminals[0];
                             criminalInfo = {
                                 "Họ và tên": c.name,
+                                "Tên khác": c.anotherName,
                                 "Ngày tháng năm sinh": c.birthday,
                                 "Giới tính": c.gender ? "Nam" : "Nữ",
-                                "Số điện thoại": c.phoneNumber,
-                                "Địa chỉ thường trú": c.address,
+                                "CMND/CCCD": c.citizenId,
+                                "Dân tộc": c.ethnicity,
+                                "Quốc tịch": c.nationality,
+                                "Quê quán": c.homeTown,
+                                "Chỗ ở hiện tại": c.currentAccommodation,
                                 "Tội danh": c.charge,
                                 "Lý do phạm tội": c.reason,
                                 "Vũ khí": c.weapon,
-                                "Loại vi phạm": typeOfViolation[c.typeOfViolation],
-                                "Lời khai": c.testimony
-                            }
+                                "Loại vi phạm":
+                                    typeOfViolation[c.typeOfViolation],
+                                "Lời khai": c.testimony,
+                            };
                         }
 
                         SetCriminalInformation(criminalInfo);
                     }
-                    if (res.data.investigators != null && res.data.investigators.length > 0) {
+                    if (
+                        res.data.investigators != null &&
+                        res.data.investigators.length > 0
+                    ) {
                         const investigators = res.data.investigators;
                         if (investigators.length > 1) {
                             investigatorInfo = investigators.map((i) => ({
@@ -168,7 +192,7 @@ const CaseDetail = ({ navigation, route }) => {
                                 "Ngày tháng năm sinh": i.birthday,
                                 "Giới tính": i.gender ? "Nam" : "Nữ",
                                 "Số điện thoại": i.phoneNumber,
-                                "Địa chỉ thường trú": i.address
+                                "Địa chỉ thường trú": i.address,
                             }));
                         } else {
                             const i = investigators[0];
@@ -177,12 +201,15 @@ const CaseDetail = ({ navigation, route }) => {
                                 "Ngày tháng năm sinh": i.birthday,
                                 "Giới tính": i.gender ? "Nam" : "Nữ",
                                 "Số điện thoại": i.phoneNumber,
-                                "Địa chỉ thường trú": i.address
-                            }
+                                "Địa chỉ thường trú": i.address,
+                            };
                         }
                         SetInvestigatorInformation(investigatorInfo);
                     }
-                    if (res.data.witnesses != null && res.data.witnesses.length > 0) {
+                    if (
+                        res.data.witnesses != null &&
+                        res.data.witnesses.length > 0
+                    ) {
                         const witnesses = res.data.witnesses;
                         if (witnesses.length > 1) {
                             witnessInfo = witnesses.map((w) => ({
@@ -206,17 +233,23 @@ const CaseDetail = ({ navigation, route }) => {
                         }
                         SetWitnessInformation(witnessInfo);
                     }
-                    if (res.data.wantedCriminalResponse != null && res.data.wantedCriminalResponse.length > 0) {
-                        const wantedCriminalResponse = res.data.wantedCriminalResponse;
+                    if (
+                        res.data.wantedCriminalResponse != null &&
+                        res.data.wantedCriminalResponse.length > 0
+                    ) {
+                        const wantedCriminalResponse =
+                            res.data.wantedCriminalResponse;
                         if (wantedCriminalResponse.length > 1) {
-                            wantedCriminalResponseInfo = wantedCriminalResponse.map((w) => ({
-                                "Id tội phạm": w.criminalId,
-                                "Hoạt động hiện tại": w.currentActivity,
-                                "Loại truy nã": wantedType[w.wantedType],
-                                "Số ra quyết định": w.wantedDecisionNo,
-                                "Ngày ra quyết định": w.wantedDecisionDay,
-                                "Đơn vị ra quyết định": w.decisionMakingUnit,
-                            }));
+                            wantedCriminalResponseInfo =
+                                wantedCriminalResponse.map((w) => ({
+                                    "Id tội phạm": w.criminalId,
+                                    "Hoạt động hiện tại": w.currentActivity,
+                                    "Loại truy nã": wantedType[w.wantedType],
+                                    "Số ra quyết định": w.wantedDecisionNo,
+                                    "Ngày ra quyết định": w.wantedDecisionDay,
+                                    "Đơn vị ra quyết định":
+                                        w.decisionMakingUnit,
+                                }));
                         } else {
                             const w = wantedCriminalResponse[0];
                             wantedCriminalResponseInfo = {
@@ -230,48 +263,57 @@ const CaseDetail = ({ navigation, route }) => {
                         }
                         SetWantedInformation(wantedCriminalResponseInfo);
                     }
-                    if (res.data.evidences != null && res.data.evidences.length > 0) {
+                    if (
+                        res.data.evidences != null &&
+                        res.data.evidences.length > 0
+                    ) {
                         const evidences = res.data.evidences;
                         if (evidences.length > 1) {
                             evidencesInfo = evidences.map((e) => {
-                                images = e.evidenceImages.length > 0 ? e.evidenceImages
-                                    .filter(
-                                        (ci) =>
-                                            ci.fileUrl != "" &&
-                                            ci.fileUrl != null &&
-                                            ci.fileUrl != undefined
-                                    )
-                                    .map((ci) => ({
-                                        url: ci.fileUrl,
-                                    })) : null
-                                return ({
-                                    "Tên": e.name,
+                                images =
+                                    e.evidenceImages.length > 0
+                                        ? e.evidenceImages
+                                              .filter(
+                                                  (ci) =>
+                                                      ci.fileUrl != "" &&
+                                                      ci.fileUrl != null &&
+                                                      ci.fileUrl != undefined
+                                              )
+                                              .map((ci) => ({
+                                                  url: ci.fileUrl,
+                                              }))
+                                        : null;
+                                return {
+                                    Tên: e.name,
                                     "Mô tả": e.description,
                                     images: {
                                         items: images,
-                                        title: "Ảnh vật chứng"
-                                    }
-                                })
+                                        title: "Ảnh vật chứng",
+                                    },
+                                };
                             });
                         } else {
                             const e = evidences[0];
-                            images = e.evidenceImages.length > 0 ? e.evidenceImages
-                                .filter(
-                                    (ci) =>
-                                        ci.fileUrl != "" &&
-                                        ci.fileUrl != null &&
-                                        ci.fileUrl != undefined
-                                )
-                                .map((ci) => ({
-                                    url: ci.fileUrl,
-                                })) : null
+                            images =
+                                e.evidenceImages.length > 0
+                                    ? e.evidenceImages
+                                          .filter(
+                                              (ci) =>
+                                                  ci.fileUrl != "" &&
+                                                  ci.fileUrl != null &&
+                                                  ci.fileUrl != undefined
+                                          )
+                                          .map((ci) => ({
+                                              url: ci.fileUrl,
+                                          }))
+                                    : null;
                             evidencesInfo = {
-                                "Tên": e.name,
+                                Tên: e.name,
                                 "Mô tả": e.description,
                                 images: {
                                     items: images,
-                                    title: "Ảnh vật chứng"
-                                }
+                                    title: "Ảnh vật chứng",
+                                },
                             };
                         }
                         SetEvidencesInformation(evidencesInfo);
@@ -284,8 +326,8 @@ const CaseDetail = ({ navigation, route }) => {
                             res.messages != null
                                 ? res.messages
                                 : res.title
-                                    ? res.title
-                                    : res,
+                                ? res.title
+                                : res,
                     });
                 }
                 SetIsLoading(false);
@@ -308,9 +350,14 @@ const CaseDetail = ({ navigation, route }) => {
                 translucent
                 backgroundColor="transparent"
             />
-            <View style={[styles.head, { height: 250 }]}></View>
+            {isLoading && (
+                <View style={styles.waitingCircle}>
+                    <ActivityIndicator size="large" color="green" />
+                </View>
+            )}
+            <View style={[styles.head, { height: 230 }]}></View>
             <View
-                style={[styles.content, { bottom: 150, alignItems: "center" }]}
+                style={[styles.content, { bottom: 290, alignItems: "center" }]}
             >
                 <TouchableOpacity
                     style={styles.backContainer}
@@ -321,33 +368,45 @@ const CaseDetail = ({ navigation, route }) => {
                         style={styles.backBtn}
                     />
                 </TouchableOpacity>
+                <TouchableOpacity
+                    style={styles.reloadContainer}
+                    onPress={() => {
+                        if (route.params?.caseId)
+                            getCaseByIdFromAPI(route.params?.caseId);
+                    }}
+                >
+                    <Image
+                        source={require("../../Public/sync.png")}
+                        style={styles.reloadBtn}
+                    />
+                </TouchableOpacity>
                 <CustomText style={styles.title}>{titleInfo?.name}</CustomText>
-                <View style={{
-                    width: '100%',
-                    flexDirection: "row",
-                    gap: 5,
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    paddingHorizontal: 10
-                }}>
+                <View
+                    style={{
+                        height: 146,
+                        width: "100%",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        paddingHorizontal: 10,
+                    }}
+                >
                     <CustomText style={styles.note}>
                         {titleInfo?.code}
                     </CustomText>
                     <View
-                        style={
-                            {
-                                backgroundColor:
-                                    colorBackgroundStatusList[
-                                    titleInfo?.status
-                                    ], height: 40,
-                                borderRadius: 5,
-                                color: "white",
-                                padding: 5,
-                                paddingHorizontal: 10,
-                                overflow: "hidden",
-                                justifyContent: "center",
-                            }
-                        }>
+                        style={{
+                            backgroundColor:
+                                colorBackgroundStatusList[titleInfo?.status],
+                            height: 40,
+                            borderRadius: 5,
+                            color: "white",
+                            padding: 5,
+                            paddingHorizontal: 10,
+                            overflow: "hidden",
+                            justifyContent: "center",
+                        }}
+                    >
                         <CustomText
                             style={{
                                 color: colorStatusList[titleInfo?.status],
@@ -357,7 +416,7 @@ const CaseDetail = ({ navigation, route }) => {
                         </CustomText>
                     </View>
                 </View>
-                <View style={{ marginTop: 26, width: "100%" }}>
+                <View style={{ width: "100%" }}>
                     <ScrollView style={styles.scroll}>
                         <InformationFields
                             title="Thông tin cơ bản"
@@ -391,7 +450,7 @@ const CaseDetail = ({ navigation, route }) => {
                 </View>
             </View>
             <Toast config={toastConfig} />
-        </View >
+        </View>
     );
 };
 export default CaseDetail;

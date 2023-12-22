@@ -98,7 +98,9 @@ const WantedList = ({ navigation }) => {
                         : ""
                 }&&YearOfBirth=${
                     value != null && value.length > 0 ? value[0] : ""
-                }&&Keyword=${txtSearch == null ? "" : txtSearch}`,
+                }&&Keyword=${
+                    txtSearch == null ? "" : txtSearch
+                }&OrderBy="Id ASC"`,
             {
                 method: "GET", // *GET, POST, PUT, DELETE, etc.
                 mode: "cors", // no-cors, cors, *same-origin
@@ -180,6 +182,8 @@ const WantedList = ({ navigation }) => {
                             style={{
                                 width: "81%",
                                 fontSize: textInputDefaultSize * scale,
+                                color: "#5C5D60",
+                                opacity: 1,
                                 borderBottomColor: "#c9c3c3",
                                 borderBottomWidth: 1,
                                 paddingBottom: 0,

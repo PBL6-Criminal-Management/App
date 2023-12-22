@@ -24,7 +24,7 @@ const BottomTab = ({ navigation }) => {
         <View
             style={{
                 width,
-                height,
+                height: "100%",
             }}
         >
             <Tab.Navigator

@@ -8,9 +8,9 @@ import {
 } from "react-native";
 import styles from "./style.js";
 import { CustomText } from "../Components/CustomText.js";
-import InformationFlat from "../Components/InformationFlat.js";
 import { criminalStatus, wantedType } from "../../Utils/constants.js";
 import { scale } from "../../Utils/constants";
+import InformationFields from "../Components/InformationFields.js";
 
 const SuccessDetect = ({ navigation, route }) => {
     const [SeeMore, SetSeeMore] = useState(false);
@@ -19,7 +19,6 @@ const SuccessDetect = ({ navigation, route }) => {
     const [basicInformation, SetBasicInformation] = useState(null);
     const [moreInformation, SetMoreInformation] = useState(null);
     const [wantedInformation, SetWantedInformation] = useState({});
-    const [criminalImages, SetCriminalImages] = useState(null);
 
     useEffect(() => {
         if (route.params?.result) {
@@ -30,6 +29,17 @@ const SuccessDetect = ({ navigation, route }) => {
 
     useEffect(() => {
         if (criminalInfo != null && criminalInfo.foundCriminal != null) {
+            criminalImages = criminalInfo.foundCriminal.criminalImages
+                .filter(
+                    (ci) =>
+                        ci.fileUrl != "" &&
+                        ci.fileUrl != null &&
+                        ci.fileUrl != undefined
+                )
+                .map((ci) => ({
+                    url: ci.fileUrl,
+                }));
+
             SetBasicInformation({
                 "Họ và tên": criminalInfo.foundCriminal.name,
                 "Tên khác": criminalInfo.foundCriminal.anotherName,
@@ -54,6 +64,10 @@ const SuccessDetect = ({ navigation, route }) => {
                 "CCCD/CMND mẹ": criminalInfo.foundCriminal.motherCitizenId,
                 "Đặc điểm nhận dạng":
                     criminalInfo.foundCriminal.characteristics,
+                images: {
+                    items: criminalImages,
+                    title: "Danh sách ảnh tội phạm",
+                },
             });
             SetMoreInformation({
                 "Tình trạng": criminalStatus[criminalInfo.foundCriminal.status],
@@ -111,27 +125,13 @@ const SuccessDetect = ({ navigation, route }) => {
                 }
                 SetWantedInformation(wantedInfor);
             }
-            if (criminalInfo.foundCriminal.criminalImages.length > 0) {
-                SetCriminalImages(
-                    criminalInfo.foundCriminal.criminalImages
-                        .filter(
-                            (ci) =>
-                                ci.fileUrl != "" &&
-                                ci.fileUrl != null &&
-                                ci.fileUrl != undefined
-                        )
-                        .map((ci) => ({
-                            url: ci.fileUrl,
-                        }))
-                );
-            }
         }
     }, [criminalInfo]);
 
     const checkLogic = () => {};
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: "#F1F2F2" }]}>
             {/*statusbar to set wifi, battery... to white*/}
             <StatusBar
                 barStyle="light-content"
@@ -139,7 +139,13 @@ const SuccessDetect = ({ navigation, route }) => {
                 backgroundColor="transparent"
             />
             <View
-                style={[styles.content, { bottom: 440, alignItems: "center" }]}
+                style={[
+                    styles.content,
+                    {
+                        bottom: 440,
+                        alignItems: "center",
+                    },
+                ]}
             >
                 <View
                     style={{
@@ -186,7 +192,14 @@ const SuccessDetect = ({ navigation, route }) => {
                         {criminalInfo?.detectConfidence + " %"}
                     </CustomText>
                 </CustomText>
-                <View style={styles.body}>
+                <View
+                    style={[
+                        styles.body,
+                        {
+                            backgroundColor: "#F1F2F2",
+                        },
+                    ]}
+                >
                     <View style={styles.informationTitle}>
                         <CustomText
                             style={{
@@ -203,16 +216,10 @@ const SuccessDetect = ({ navigation, route }) => {
                             showsVerticalScrollIndicator={true}
                             persistentScrollbar={true}
                         >
-                            {criminalImages != null ? (
-                                <InformationFlat
-                                    listItems={basicInformation}
-                                    haveImages={true}
-                                    images={criminalImages}
-                                    imagesFieldName={"Hình ảnh tội phạm"}
-                                />
-                            ) : (
-                                <InformationFlat listItems={basicInformation} />
-                            )}
+                            <InformationFields
+                                title={"Thông tin cơ bản"}
+                                listItems={basicInformation}
+                            />
                             {!SeeMore && (
                                 <CustomText
                                     style={{
@@ -227,10 +234,12 @@ const SuccessDetect = ({ navigation, route }) => {
                             )}
                             {SeeMore && (
                                 <>
-                                    <InformationFlat
+                                    <InformationFields
+                                        title={"Thông tin thêm"}
                                         listItems={moreInformation}
                                     />
-                                    <InformationFlat
+                                    <InformationFields
+                                        title={"Thông tin truy nã"}
                                         listItems={wantedInformation}
                                     />
                                 </>
