@@ -5,7 +5,9 @@ import {
     Image,
     StatusBar,
     TouchableOpacity,
+    Modal,
 } from "react-native";
+import ImageViewer from "react-native-image-zoom-viewer";
 import styles from "./style.js";
 import { CustomText } from "../Components/CustomText.js";
 import { criminalStatus, wantedType } from "../../Utils/constants.js";
@@ -19,6 +21,7 @@ const SuccessDetect = ({ navigation, route }) => {
     const [basicInformation, SetBasicInformation] = useState(null);
     const [moreInformation, SetMoreInformation] = useState(null);
     const [wantedInformation, SetWantedInformation] = useState({});
+    const [isModalVisible, SetIsModalVisible] = useState(false);
 
     useEffect(() => {
         if (route.params?.result) {
@@ -174,13 +177,40 @@ const SuccessDetect = ({ navigation, route }) => {
                         Kết quả
                     </CustomText>
                 </View>
-                <Image
-                    style={styles.avatar}
-                    source={{
-                        uri:
-                            "data:image/png;base64," + criminalInfo?.resultFile,
-                    }}
-                ></Image>
+                <TouchableOpacity onPress={() => SetIsModalVisible(true)}>
+                    <Image
+                        style={styles.avatar}
+                        source={{
+                            uri:
+                                "data:image/png;base64," +
+                                criminalInfo?.resultFile,
+                        }}
+                    ></Image>
+                </TouchableOpacity>
+                {criminalInfo != null && (
+                    <Modal
+                        visible={isModalVisible}
+                        transparent={true}
+                        onRequestClose={() => {
+                            SetIsModalVisible(!isModalVisible);
+                        }}
+                        onBackdropPress={() => SetIsModalVisible(false)}
+                    >
+                        <ImageViewer
+                            imageUrls={[
+                                {
+                                    url:
+                                        "data:image/png;base64," +
+                                        criminalInfo?.resultFile,
+                                },
+                            ]}
+                            renderIndicator={() => {}}
+                            onClick={() => SetIsModalVisible(false)}
+                            enableSwipeDown={true}
+                            onSwipeDown={() => SetIsModalVisible(false)}
+                        />
+                    </Modal>
+                )}
                 <CustomText style={styles.name}>
                     {IsFoundCriminal
                         ? criminalInfo?.foundCriminal.name
@@ -237,10 +267,20 @@ const SuccessDetect = ({ navigation, route }) => {
                                     <InformationFields
                                         title={"Thông tin thêm"}
                                         listItems={moreInformation}
+                                        navigation={navigation}
+                                        fromScreen={{
+                                            name: "SuccessDetect",
+                                            id: criminalInfo.foundCriminal.id,
+                                        }}
                                     />
                                     <InformationFields
                                         title={"Thông tin truy nã"}
                                         listItems={wantedInformation}
+                                        navigation={navigation}
+                                        fromScreen={{
+                                            name: "SuccessDetect",
+                                            id: criminalInfo.foundCriminal.id,
+                                        }}
                                     />
                                 </>
                             )}

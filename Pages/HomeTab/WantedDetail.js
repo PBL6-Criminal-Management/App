@@ -6,7 +6,10 @@ import {
     Image,
     TouchableOpacity,
     ActivityIndicator,
+    Modal,
+    Animated,
 } from "react-native";
+import ImageViewer from "react-native-image-zoom-viewer";
 import { AuthContext } from "../../Context/AuthContext.js";
 import styles from "./style.js";
 import { CustomText } from "../Components/CustomText.js";
@@ -24,9 +27,19 @@ const WantedDetail = ({ navigation, route }) => {
     const [titleInfo, SetTitleInfo] = useState(null);
     const [isLoading, SetIsLoading] = useState(false);
 
+    const [isModalVisible, SetIsModalVisible] = useState(false);
+    const [fromScreen, SetFromScreen] = useState(null);
+
+    const [criminalId, SetCriminalId] = useState(null);
+    // const scrollY = useRef(new Animated.Value(0)).current;
+
     useEffect(() => {
         if (route.params?.criminalId) {
+            SetCriminalId(route.params?.criminalId);
             getCriminalByIdFromAPI(route.params?.criminalId);
+        }
+        if (route.params?.fromScreen) {
+            SetFromScreen(route.params?.fromScreen);
         }
     }, [route.params]);
 
@@ -130,6 +143,8 @@ const WantedDetail = ({ navigation, route }) => {
                             ];
                         SetWantedInformation({
                             "Tội danh truy nã": wantedInfor.charge,
+                            "Vụ án": wantedInfor.caseId,
+                            "Hoạt động hiện tại": wantedInfor.currentActivity,
                             "Loại truy nã": wantedType[wantedInfor.wantedType],
                             "Số ra quyết định": wantedInfor.wantedDecisionNo,
                             "Ngày ra quyết định": wantedInfor.wantedDecisionDay,
@@ -199,10 +214,34 @@ const WantedDetail = ({ navigation, route }) => {
                         style={styles.reloadBtn}
                     />
                 </TouchableOpacity>
-                <Image
-                    style={styles.avatar}
-                    source={{ uri: titleInfo?.image }}
-                ></Image>
+                <TouchableOpacity onPress={() => SetIsModalVisible(true)}>
+                    <Image
+                        style={styles.avatar}
+                        source={{ uri: titleInfo?.image }}
+                    ></Image>
+                </TouchableOpacity>
+                {titleInfo != null && (
+                    <Modal
+                        visible={isModalVisible}
+                        transparent={true}
+                        onRequestClose={() => {
+                            SetIsModalVisible(!isModalVisible);
+                        }}
+                        onBackdropPress={() => SetIsModalVisible(false)}
+                    >
+                        <ImageViewer
+                            imageUrls={[
+                                {
+                                    url: titleInfo?.image,
+                                },
+                            ]}
+                            renderIndicator={() => {}}
+                            onClick={() => SetIsModalVisible(false)}
+                            enableSwipeDown={true}
+                            onSwipeDown={() => SetIsModalVisible(false)}
+                        />
+                    </Modal>
+                )}
                 <CustomText style={styles.title}>{titleInfo?.name}</CustomText>
                 <CustomText style={styles.note}>
                     Tội danh gần nhất: {titleInfo?.charge}
@@ -216,10 +255,20 @@ const WantedDetail = ({ navigation, route }) => {
                         <InformationFields
                             title="Thông tin tội phạm"
                             listItems={criminalInformation}
+                            navigation={navigation}
+                            fromScreen={{
+                                name: "WantedDetail",
+                                id: criminalId,
+                            }}
                         />
                         <InformationFields
                             title="Thông tin truy nã"
                             listItems={wantedInformation}
+                            navigation={navigation}
+                            fromScreen={{
+                                name: "WantedDetail",
+                                id: criminalId,
+                            }}
                         />
                     </ScrollView>
                 </View>

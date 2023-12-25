@@ -54,121 +54,212 @@ const InformationFlat = (props) => {
                                 borderColor: "lightgray",
                             }}
                         >
-                            {Object.entries(item).map(([key, value], index) => {
-                                return (
-                                    <View
-                                        key={index}
-                                        style={{
-                                            flexDirection: "column",
-                                            paddingBottom: 10,
-                                        }}
-                                    >
-                                        {(key != "images" ||
-                                            (item.images.items != null &&
-                                                item.images.items.length >
-                                                    0)) && (
-                                            <CustomText
-                                                style={{
-                                                    fontFamily:
-                                                        "Be Vietnam bold",
-                                                    color: "#08354F",
-                                                }}
-                                            >
-                                                {key != "images"
-                                                    ? key
-                                                    : value.title}
-                                                :
-                                            </CustomText>
-                                        )}
-                                        {key != "images" ? (
-                                            <CustomText style={{}}>
-                                                {value}
-                                            </CustomText>
-                                        ) : (
-                                            item.images.items != null &&
-                                            item.images.items.length > 0 && (
-                                                <>
-                                                    <ScrollView
-                                                        snapToInterval={200}
-                                                        decelerationRate={
-                                                            "fast"
-                                                        }
-                                                        alwaysBounceHorizontal={
-                                                            true
-                                                        }
-                                                        horizontal
-                                                        contentContainerStyle={{
-                                                            alignItems:
-                                                                "center",
-                                                            justifyContent:
-                                                                "center",
-                                                        }}
-                                                    >
-                                                        {value.items.map(
-                                                            (image, index) => (
-                                                                <Pressable
-                                                                    key={index}
+                            {Object.entries(item)
+                                .filter(([key, value]) => key != "Id")
+                                .map(([key, value], index) => {
+                                    return (
+                                        <View
+                                            key={index}
+                                            style={{
+                                                flexDirection: "column",
+                                                paddingBottom: 10,
+                                            }}
+                                        >
+                                            {(key != "images" ||
+                                                (item.images.items != null &&
+                                                    item.images.items.length >
+                                                        0)) && (
+                                                <CustomText
+                                                    style={{
+                                                        fontFamily:
+                                                            "Be Vietnam bold",
+                                                        color: "#08354F",
+                                                    }}
+                                                >
+                                                    {key != "images"
+                                                        ? key
+                                                        : value.title}
+                                                    :
+                                                </CustomText>
+                                            )}
+                                            {(key == "Vụ án liên quan" ||
+                                                key == "Vụ án") &&
+                                            props.navigation != undefined ? (
+                                                <View
+                                                    style={{
+                                                        display: "flex",
+                                                        flexDirection: "row",
+                                                        gap: 15,
+                                                    }}
+                                                >
+                                                    {value
+                                                        .toString()
+                                                        .split(",")
+                                                        .map((c, id) => {
+                                                            return (
+                                                                <CustomText
+                                                                    key={id}
+                                                                    style={{
+                                                                        color: "#53B6ED",
+                                                                        textDecorationLine:
+                                                                            "underline",
+                                                                    }}
                                                                     onPress={() => {
-                                                                        SetImageIndex(
-                                                                            index
+                                                                        console.log(
+                                                                            "CaseDetail",
+                                                                            (params =
+                                                                                {
+                                                                                    caseId: c,
+                                                                                    fromScreen:
+                                                                                        props.fromScreen,
+                                                                                })
                                                                         );
-                                                                        SetIsModalVisible(
-                                                                            true
+                                                                        props.navigation.navigate(
+                                                                            "CaseDetail",
+                                                                            (params =
+                                                                                {
+                                                                                    caseId: c,
+                                                                                    fromScreen:
+                                                                                        props.fromScreen,
+                                                                                })
                                                                         );
                                                                     }}
                                                                 >
-                                                                    <Image
-                                                                        source={{
-                                                                            uri: image.url,
-                                                                        }}
-                                                                        style={
-                                                                            styles.image
-                                                                        }
-                                                                    />
-                                                                </Pressable>
-                                                            )
-                                                        )}
-                                                    </ScrollView>
-                                                    <Modal
-                                                        visible={isModalVisible}
-                                                        transparent={true}
-                                                        onRequestClose={() => {
-                                                            SetIsModalVisible(
-                                                                !isModalVisible
+                                                                    Vụ án{" "}
+                                                                    {id + 1}
+                                                                </CustomText>
                                                             );
-                                                        }}
-                                                        onBackdropPress={() =>
-                                                            SetIsModalVisible(
-                                                                false
-                                                            )
-                                                        }
-                                                    >
-                                                        <ImageViewer
-                                                            index={imageIndex}
-                                                            imageUrls={
-                                                                value.items
+                                                        })}
+                                                </View>
+                                            ) : key != "images" ? (
+                                                <CustomText style={{}}>
+                                                    {value}
+                                                </CustomText>
+                                            ) : (
+                                                item.images.items != null &&
+                                                item.images.items.length >
+                                                    0 && (
+                                                    <>
+                                                        <ScrollView
+                                                            snapToInterval={200}
+                                                            decelerationRate={
+                                                                "fast"
                                                             }
-                                                            onClick={() =>
-                                                                SetIsModalVisible(
-                                                                    false
-                                                                )
-                                                            }
-                                                            enableSwipeDown={
+                                                            alwaysBounceHorizontal={
                                                                 true
                                                             }
-                                                            onSwipeDown={() =>
+                                                            horizontal
+                                                            contentContainerStyle={{
+                                                                alignItems:
+                                                                    "center",
+                                                                justifyContent:
+                                                                    "center",
+                                                            }}
+                                                        >
+                                                            {value.items.map(
+                                                                (
+                                                                    image,
+                                                                    index
+                                                                ) => (
+                                                                    <Pressable
+                                                                        key={
+                                                                            index
+                                                                        }
+                                                                        onPress={() => {
+                                                                            SetImageIndex(
+                                                                                index
+                                                                            );
+                                                                            SetIsModalVisible(
+                                                                                true
+                                                                            );
+                                                                        }}
+                                                                    >
+                                                                        <Image
+                                                                            source={{
+                                                                                uri: image.url,
+                                                                            }}
+                                                                            style={
+                                                                                styles.image
+                                                                            }
+                                                                        />
+                                                                    </Pressable>
+                                                                )
+                                                            )}
+                                                        </ScrollView>
+                                                        <Modal
+                                                            visible={
+                                                                isModalVisible
+                                                            }
+                                                            transparent={true}
+                                                            onRequestClose={() => {
+                                                                SetIsModalVisible(
+                                                                    !isModalVisible
+                                                                );
+                                                            }}
+                                                            onBackdropPress={() =>
                                                                 SetIsModalVisible(
                                                                     false
                                                                 )
                                                             }
-                                                        />
-                                                    </Modal>
-                                                </>
-                                            )
-                                        )}
-                                    </View>
-                                );
-                            })}
+                                                        >
+                                                            <ImageViewer
+                                                                index={
+                                                                    imageIndex
+                                                                }
+                                                                imageUrls={
+                                                                    value.items
+                                                                }
+                                                                onClick={() =>
+                                                                    SetIsModalVisible(
+                                                                        false
+                                                                    )
+                                                                }
+                                                                enableSwipeDown={
+                                                                    true
+                                                                }
+                                                                onSwipeDown={() =>
+                                                                    SetIsModalVisible(
+                                                                        false
+                                                                    )
+                                                                }
+                                                            />
+                                                        </Modal>
+                                                    </>
+                                                )
+                                            )}
+                                        </View>
+                                    );
+                                })}
+                            {props.hasDetailView && (
+                                <View style={{ alignSelf: "center" }}>
+                                    <CustomText
+                                        style={{
+                                            color: "#53B6ED",
+                                            textDecorationLine: "underline",
+                                        }}
+                                        onPress={() => {
+                                            console.log(
+                                                "CriminalDetail",
+                                                (params = {
+                                                    criminalId: item.Id,
+                                                    fromScreen:
+                                                        props.fromScreen,
+                                                })
+                                            );
+                                            props.navigation.navigate(
+                                                "CriminalDetail",
+                                                (params = {
+                                                    criminalId: item.Id,
+                                                    fromScreen:
+                                                        props.fromScreen,
+                                                })
+                                            );
+                                        }}
+                                    >
+                                        Xem chi tiết
+                                    </CustomText>
+                                </View>
+                            )}
                         </View>
                     );
                 })}

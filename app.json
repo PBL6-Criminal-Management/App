@@ -19,7 +19,8 @@
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "Cho phép $(PRODUCT_NAME) để truy cập ảnh của bạn",
         "NSPhotoLibraryAddUsageDescription": "Cho phép $(PRODUCT_NAME) để lưu ảnh của bạn"
-      }
+      },
+      "bundleIdentifier": "com.anonymous.Criminalmanagementapp"
     },
     "android": {
       "adaptiveIcon": {

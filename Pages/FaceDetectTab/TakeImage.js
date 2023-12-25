@@ -11,7 +11,6 @@ import { PinchGestureHandler, State } from "react-native-gesture-handler";
 import { CustomText } from "../Components/CustomText.js";
 import * as ImagePicker from "expo-image-picker";
 import * as MediaLibrary from "expo-media-library";
-import { API_URL } from "../../Utils/constants.js";
 import styles from "./style.js";
 
 const whiteBlcProps = [

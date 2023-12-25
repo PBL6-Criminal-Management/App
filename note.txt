@@ -22,7 +22,7 @@ v yearOfbirth start with txtSearch
 
 - thêm edit ảnh account
 
-- nghiên cứu để có thể detect vs ảnh dc chụp
+v nghiên cứu để có thể detect vs ảnh dc chụp
 
 - kéo scroll xún 1 chút trong profile
 
