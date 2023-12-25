@@ -9,6 +9,7 @@ import {
     TouchableWithoutFeedback,
     ActivityIndicator,
 } from "react-native";
+import ImageViewer from "react-native-image-zoom-viewer";
 import Toast from "react-native-toast-message";
 import styles from "./style.js";
 import { AuthContext } from "../../Context/AuthContext.js";
@@ -24,6 +25,7 @@ const Profile = ({ navigation, route }) => {
     const [profile, SetProfile] = useState([]);
     const [userInformation, SetUserInformation] = useState([]);
     const [isLoading, SetIsLoading] = useState(false);
+    const [isModalVisible, SetIsModalVisible] = useState(false);
 
     const getProfileFromAPI = async () => {
         SetIsLoading(true);
@@ -233,10 +235,34 @@ const Profile = ({ navigation, route }) => {
                         </View>
                     </TouchableWithoutFeedback>
                 </Modal>
-                <Image
-                    style={styles.avatar}
-                    source={{ uri: profile.imageLink }}
-                ></Image>
+                <TouchableOpacity onPress={() => SetIsModalVisible(true)}>
+                    <Image
+                        style={styles.avatar}
+                        source={{ uri: profile.imageLink }}
+                    ></Image>
+                </TouchableOpacity>
+                {profile != null && (
+                    <Modal
+                        visible={isModalVisible}
+                        transparent={true}
+                        onRequestClose={() => {
+                            SetIsModalVisible(!isModalVisible);
+                        }}
+                        onBackdropPress={() => SetIsModalVisible(false)}
+                    >
+                        <ImageViewer
+                            imageUrls={[
+                                {
+                                    url: profile.imageLink,
+                                },
+                            ]}
+                            renderIndicator={() => {}}
+                            onClick={() => SetIsModalVisible(false)}
+                            enableSwipeDown={true}
+                            onSwipeDown={() => SetIsModalVisible(false)}
+                        />
+                    </Modal>
+                )}
                 <CustomText style={styles.name}>{profile.name}</CustomText>
                 <CustomText style={styles.note}>
                     {roleEnum[profile.role]}

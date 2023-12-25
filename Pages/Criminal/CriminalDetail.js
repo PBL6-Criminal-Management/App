@@ -6,7 +6,9 @@ import {
     Image,
     TouchableOpacity,
     ActivityIndicator,
+    Modal,
 } from "react-native";
+import ImageViewer from "react-native-image-zoom-viewer";
 import { AuthContext } from "../../Context/AuthContext.js";
 import styles from "./style.js";
 import { CustomText } from "../Components/CustomText.js";
@@ -24,11 +26,22 @@ const CriminalDetail = ({ navigation, route }) => {
     const [titleInfo, SetTitleInfo] = useState(null);
     const [isLoading, SetIsLoading] = useState(false);
 
+    const [isModalVisible, SetIsModalVisible] = useState(false);
+    const [fromScreen, SetFromScreen] = useState(null);
+
+    const [criminalId, SetCriminalId] = useState(null);
+
     useEffect(() => {
         if (route.params?.criminalId) {
+            SetCriminalId(route.params?.criminalId);
             getCriminalByIdFromAPI(route.params?.criminalId);
         }
+        if (route.params?.fromScreen) {
+            SetFromScreen(route.params?.fromScreen);
+        }
     }, [route.params]);
+
+    // useEffect(() => console.log(fromScreen), [fromScreen]);
 
     const getCriminalByIdFromAPI = async (criminalId) => {
         SetIsLoading(true);
@@ -199,7 +212,25 @@ const CriminalDetail = ({ navigation, route }) => {
             >
                 <TouchableOpacity
                     style={styles.backContainer}
-                    onPress={() => navigation.goBack()}
+                    onPress={() => {
+                        if (fromScreen != null)
+                            console.log(fromScreen.name, {
+                                caseId: fromScreen.id,
+                                fromScreen: {
+                                    name: "CriminalDetail",
+                                    id: criminalId,
+                                },
+                            });
+                        if (fromScreen != null)
+                            navigation.navigate(fromScreen.name, {
+                                caseId: fromScreen.id,
+                                fromScreen: {
+                                    name: "CriminalDetail",
+                                    id: criminalId,
+                                },
+                            });
+                        else navigation.goBack();
+                    }}
                 >
                     <Image
                         source={require("../../Public/back.png")}
@@ -209,8 +240,8 @@ const CriminalDetail = ({ navigation, route }) => {
                 <TouchableOpacity
                     style={styles.reloadContainer}
                     onPress={() => {
-                        if (route.params?.criminalId)
-                            getCriminalByIdFromAPI(route.params?.criminalId);
+                        if (criminalId != null)
+                            getCriminalByIdFromAPI(criminalId);
                     }}
                 >
                     <Image
@@ -218,10 +249,34 @@ const CriminalDetail = ({ navigation, route }) => {
                         style={styles.reloadBtn}
                     />
                 </TouchableOpacity>
-                <Image
-                    style={styles.avatar}
-                    source={{ uri: titleInfo?.image }}
-                ></Image>
+                <TouchableOpacity onPress={() => SetIsModalVisible(true)}>
+                    <Image
+                        style={styles.avatar}
+                        source={{ uri: titleInfo?.image }}
+                    ></Image>
+                </TouchableOpacity>
+                {titleInfo != null && (
+                    <Modal
+                        visible={isModalVisible}
+                        transparent={true}
+                        onRequestClose={() => {
+                            SetIsModalVisible(!isModalVisible);
+                        }}
+                        onBackdropPress={() => SetIsModalVisible(false)}
+                    >
+                        <ImageViewer
+                            imageUrls={[
+                                {
+                                    url: titleInfo?.image,
+                                },
+                            ]}
+                            renderIndicator={() => {}}
+                            onClick={() => SetIsModalVisible(false)}
+                            enableSwipeDown={true}
+                            onSwipeDown={() => SetIsModalVisible(false)}
+                        />
+                    </Modal>
+                )}
                 <CustomText style={styles.title}>{titleInfo?.name}</CustomText>
                 <CustomText style={styles.note}>
                     Tội danh gần nhất: {titleInfo?.charge}
@@ -235,10 +290,20 @@ const CriminalDetail = ({ navigation, route }) => {
                         <InformationFields
                             title="Thông tin tội phạm"
                             listItems={criminalInformation}
+                            navigation={navigation}
+                            fromScreen={{
+                                name: "CriminalDetail",
+                                id: criminalId,
+                            }}
                         />
                         <InformationFields
                             title="Lịch sử truy nã"
                             listItems={wantedInformation}
+                            navigation={navigation}
+                            fromScreen={{
+                                name: "CriminalDetail",
+                                id: criminalId,
+                            }}
                         />
                     </ScrollView>
                 </View>

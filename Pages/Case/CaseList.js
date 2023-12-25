@@ -198,11 +198,8 @@ const CaseList = ({ navigation }) => {
         SetSelectedArea([]);
     };
 
-    const goToCaseDetail = (id, code) => {
-        navigation.navigate(
-            "CaseDetail",
-            (params = { caseId: id, code: code })
-        );
+    const goToCaseDetail = (id) => {
+        navigation.navigate("CaseDetail", (params = { caseId: id }));
     };
 
     const inputRef = useRef(null);
@@ -374,9 +371,7 @@ const CaseList = ({ navigation }) => {
                                     <CaseElement
                                         key={index}
                                         item={item}
-                                        onPress={() =>
-                                            goToCaseDetail(item.id, item.code)
-                                        }
+                                        onPress={() => goToCaseDetail(item.id)}
                                     />
                                 );
                             })}

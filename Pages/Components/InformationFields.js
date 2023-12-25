@@ -53,6 +53,9 @@ const InformationFields = (props) => {
                         listItems={props.listItems}
                         paddingHorizontal={20}
                         firstTopPadding={20}
+                        hasDetailView={props.hasDetailView}
+                        navigation={props.navigation}
+                        fromScreen={props.fromScreen}
                     />
                 )}
             </View>

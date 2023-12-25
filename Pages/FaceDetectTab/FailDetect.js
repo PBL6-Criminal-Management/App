@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { View, Image, StatusBar, TouchableOpacity } from "react-native";
+import { View, Image, StatusBar, TouchableOpacity, Modal } from "react-native";
 import styles from "./style.js";
 import { CustomText } from "../Components/CustomText.js";
 import { scale } from "../../Utils/constants";
+import ImageViewer from "react-native-image-zoom-viewer";
 
 const FailDetect = ({ navigation, route }) => {
     const [criminalInfo, SetCriminalInfo] = useState(null);
+    const [isModalVisible, SetIsModalVisible] = useState(false);
 
     useEffect(() => {
         if (route.params?.result) {
@@ -53,13 +55,40 @@ const FailDetect = ({ navigation, route }) => {
                         Kết quả
                     </CustomText>
                 </View>
-                <Image
-                    style={styles.avatar}
-                    source={{
-                        uri:
-                            "data:image/png;base64," + criminalInfo?.resultFile,
-                    }}
-                ></Image>
+                <TouchableOpacity onPress={() => SetIsModalVisible(true)}>
+                    <Image
+                        style={styles.avatar}
+                        source={{
+                            uri:
+                                "data:image/png;base64," +
+                                criminalInfo?.resultFile,
+                        }}
+                    ></Image>
+                </TouchableOpacity>
+                {criminalInfo != null && (
+                    <Modal
+                        visible={isModalVisible}
+                        transparent={true}
+                        onRequestClose={() => {
+                            SetIsModalVisible(!isModalVisible);
+                        }}
+                        onBackdropPress={() => SetIsModalVisible(false)}
+                    >
+                        <ImageViewer
+                            imageUrls={[
+                                {
+                                    url:
+                                        "data:image/png;base64," +
+                                        criminalInfo?.resultFile,
+                                },
+                            ]}
+                            renderIndicator={() => {}}
+                            onClick={() => SetIsModalVisible(false)}
+                            enableSwipeDown={true}
+                            onSwipeDown={() => SetIsModalVisible(false)}
+                        />
+                    </Modal>
+                )}
                 <CustomText style={styles.name}>Không xác định</CustomText>
                 <CustomText style={[styles.note, { marginTop: 20 }]}>
                     Chúng tôi không tìm thấy bất kỳ tội phạm nào trong cơ sở dữ

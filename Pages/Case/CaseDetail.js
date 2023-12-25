@@ -32,6 +32,10 @@ const CaseDetail = ({ navigation, route }) => {
     const [wantedInformation, SetWantedInformation] = useState({});
     const [isLoading, SetIsLoading] = useState(false);
 
+    const [caseId, SetCaseId] = useState(null);
+
+    const [fromScreen, SetFromScreen] = useState(null);
+
     const colorStatusList = {
         0: "#6D1008",
         1: "#235a12",
@@ -45,7 +49,11 @@ const CaseDetail = ({ navigation, route }) => {
 
     useEffect(() => {
         if (route.params?.caseId) {
+            SetCaseId(route.params?.caseId);
             getCaseByIdFromAPI(route.params?.caseId);
+        }
+        if (route.params?.fromScreen) {
+            SetFromScreen(route.params?.fromScreen);
         }
     }, [route.params]);
     const getCaseByIdFromAPI = async (caseId) => {
@@ -80,7 +88,7 @@ const CaseDetail = ({ navigation, route }) => {
             .then((res) => {
                 if (res.succeeded) {
                     SetTitleInfo({
-                        code: route.params?.code,
+                        code: res.data.code,
                         status: res.data.status,
                     });
                     caseImages = res.data.caseImages
@@ -142,6 +150,7 @@ const CaseDetail = ({ navigation, route }) => {
                         const criminals = res.data.criminals;
                         if (criminals.length > 1) {
                             criminalInfo = criminals.map((c) => ({
+                                Id: c.id,
                                 "Họ và tên": c.name,
                                 "Tên khác": c.anotherName,
                                 "Ngày tháng năm sinh": c.birthday,
@@ -161,6 +170,7 @@ const CaseDetail = ({ navigation, route }) => {
                         } else {
                             const c = criminals[0];
                             criminalInfo = {
+                                Id: c.id,
                                 "Họ và tên": c.name,
                                 "Tên khác": c.anotherName,
                                 "Ngày tháng năm sinh": c.birthday,
@@ -361,7 +371,25 @@ const CaseDetail = ({ navigation, route }) => {
             >
                 <TouchableOpacity
                     style={styles.backContainer}
-                    onPress={() => navigation.goBack()}
+                    onPress={() => {
+                        if (fromScreen != null)
+                            console.log(fromScreen.name, {
+                                criminalId: fromScreen.id,
+                                fromScreen: {
+                                    name: "CaseDetail",
+                                    id: caseId,
+                                },
+                            });
+                        if (fromScreen != null)
+                            navigation.navigate(fromScreen.name, {
+                                criminalId: fromScreen.id,
+                                fromScreen: {
+                                    name: "CaseDetail",
+                                    id: caseId,
+                                },
+                            });
+                        else navigation.goBack();
+                    }}
                 >
                     <Image
                         source={require("../../Public/back.png")}
@@ -371,8 +399,7 @@ const CaseDetail = ({ navigation, route }) => {
                 <TouchableOpacity
                     style={styles.reloadContainer}
                     onPress={() => {
-                        if (route.params?.caseId)
-                            getCaseByIdFromAPI(route.params?.caseId);
+                        if (caseId) getCaseByIdFromAPI(caseId);
                     }}
                 >
                     <Image
@@ -429,6 +456,12 @@ const CaseDetail = ({ navigation, route }) => {
                         <InformationFields
                             title="Thông tin tội phạm"
                             listItems={criminalInformation}
+                            hasDetailView={true}
+                            navigation={navigation}
+                            fromScreen={{
+                                name: "CaseDetail",
+                                id: caseId,
+                            }}
                         />
                         <InformationFields
                             title="Thông tin nhân chứng"
