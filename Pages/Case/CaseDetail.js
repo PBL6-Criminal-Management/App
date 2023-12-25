@@ -128,6 +128,7 @@ const CaseDetail = ({ navigation, route }) => {
                                 "Địa chỉ thường trú": v.address,
                                 "CCCD/CMND": v.citizenId,
                                 "Lời khai": v.testimony,
+                                "Ngày cho lời khai": v.date
                             }));
                         } else {
                             const v = victims[0];
@@ -139,6 +140,7 @@ const CaseDetail = ({ navigation, route }) => {
                                 "Địa chỉ thường trú": v.address,
                                 "CCCD/CMND": v.citizenId,
                                 "Lời khai": v.testimony,
+                                "Ngày cho lời khai": v.date
                             };
                         }
                         SetVictimInformation(victimInfo);
@@ -159,6 +161,7 @@ const CaseDetail = ({ navigation, route }) => {
                                 "Dân tộc": c.ethnicity,
                                 "Quốc tịch": c.nationality,
                                 "Quê quán": c.homeTown,
+                                "Địa chỉ thường trú": c.permanentResidence,
                                 "Chỗ ở hiện tại": c.currentAccommodation,
                                 "Tội danh": c.charge,
                                 "Lý do phạm tội": c.reason,
@@ -166,6 +169,7 @@ const CaseDetail = ({ navigation, route }) => {
                                 "Loại vi phạm":
                                     typeOfViolation[c.typeOfViolation],
                                 "Lời khai": c.testimony,
+                                "Ngày cho lời khai": c.date,
                             }));
                         } else {
                             const c = criminals[0];
@@ -179,6 +183,7 @@ const CaseDetail = ({ navigation, route }) => {
                                 "Dân tộc": c.ethnicity,
                                 "Quốc tịch": c.nationality,
                                 "Quê quán": c.homeTown,
+                                "Địa chỉ thường trú": c.permanentResidence,
                                 "Chỗ ở hiện tại": c.currentAccommodation,
                                 "Tội danh": c.charge,
                                 "Lý do phạm tội": c.reason,
@@ -186,6 +191,7 @@ const CaseDetail = ({ navigation, route }) => {
                                 "Loại vi phạm":
                                     typeOfViolation[c.typeOfViolation],
                                 "Lời khai": c.testimony,
+                                "Ngày cho lời khai": c.date,
                             };
                         }
 
@@ -224,6 +230,8 @@ const CaseDetail = ({ navigation, route }) => {
                         if (witnesses.length > 1) {
                             witnessInfo = witnesses.map((w) => ({
                                 "Họ và tên": w.name,
+                                "Giới tính": w.gender ? "Nam" : "Nữ",
+                                "Ngày sinh": w.birthday,
                                 "Số điện thoại": w.phoneNumber,
                                 "CCCD/CMND": w.citizenId,
                                 "Địa chỉ thường trú": w.address,
@@ -234,6 +242,8 @@ const CaseDetail = ({ navigation, route }) => {
                             const w = witnesses[0];
                             witnessInfo = {
                                 "Họ và tên": w.name,
+                                "Giới tính": w.gender ? "Nam" : "Nữ",
+                                "Ngày sinh": w.birthday,
                                 "Số điện thoại": w.phoneNumber,
                                 "CCCD/CMND": w.citizenId,
                                 "Địa chỉ thường trú": w.address,
@@ -259,6 +269,7 @@ const CaseDetail = ({ navigation, route }) => {
                                     "Ngày ra quyết định": w.wantedDecisionDay,
                                     "Đơn vị ra quyết định":
                                         w.decisionMakingUnit,
+                                    "Vũ khí": w.weapon
                                 }));
                         } else {
                             const w = wantedCriminalResponse[0];
@@ -269,6 +280,7 @@ const CaseDetail = ({ navigation, route }) => {
                                 "Số ra quyết định": w.wantedDecisionNo,
                                 "Ngày ra quyết định": w.wantedDecisionDay,
                                 "Đơn vị ra quyết định": w.decisionMakingUnit,
+                                "Vũ khí": w.weapon
                             };
                         }
                         SetWantedInformation(wantedCriminalResponseInfo);
@@ -283,15 +295,15 @@ const CaseDetail = ({ navigation, route }) => {
                                 images =
                                     e.evidenceImages.length > 0
                                         ? e.evidenceImages
-                                              .filter(
-                                                  (ci) =>
-                                                      ci.fileUrl != "" &&
-                                                      ci.fileUrl != null &&
-                                                      ci.fileUrl != undefined
-                                              )
-                                              .map((ci) => ({
-                                                  url: ci.fileUrl,
-                                              }))
+                                            .filter(
+                                                (ci) =>
+                                                    ci.fileUrl != "" &&
+                                                    ci.fileUrl != null &&
+                                                    ci.fileUrl != undefined
+                                            )
+                                            .map((ci) => ({
+                                                url: ci.fileUrl,
+                                            }))
                                         : null;
                                 return {
                                     Tên: e.name,
@@ -307,15 +319,15 @@ const CaseDetail = ({ navigation, route }) => {
                             images =
                                 e.evidenceImages.length > 0
                                     ? e.evidenceImages
-                                          .filter(
-                                              (ci) =>
-                                                  ci.fileUrl != "" &&
-                                                  ci.fileUrl != null &&
-                                                  ci.fileUrl != undefined
-                                          )
-                                          .map((ci) => ({
-                                              url: ci.fileUrl,
-                                          }))
+                                        .filter(
+                                            (ci) =>
+                                                ci.fileUrl != "" &&
+                                                ci.fileUrl != null &&
+                                                ci.fileUrl != undefined
+                                        )
+                                        .map((ci) => ({
+                                            url: ci.fileUrl,
+                                        }))
                                     : null;
                             evidencesInfo = {
                                 Tên: e.name,
@@ -336,8 +348,8 @@ const CaseDetail = ({ navigation, route }) => {
                             res.messages != null
                                 ? res.messages
                                 : res.title
-                                ? res.title
-                                : res,
+                                    ? res.title
+                                    : res,
                     });
                 }
                 SetIsLoading(false);
