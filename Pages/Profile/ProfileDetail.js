@@ -251,6 +251,7 @@ const Profile = ({ navigation, route }) => {
                         onBackdropPress={() => SetIsModalVisible(false)}
                     >
                         <ImageViewer
+                            index={0}
                             imageUrls={[
                                 {
                                     url: profile.imageLink,
@@ -278,7 +279,10 @@ const Profile = ({ navigation, route }) => {
                         showsVerticalScrollIndicator={true}
                         persistentScrollbar={true}
                     >
-                        <InformationFlat listItems={userInformation} />
+                        <InformationFlat
+                            listItems={userInformation}
+                            isShow={true}
+                        />
                     </ScrollView>
                 </View>
                 <TouchableOpacity

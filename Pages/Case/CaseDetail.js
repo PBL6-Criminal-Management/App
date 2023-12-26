@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import {
     View,
-    ScrollView,
     StatusBar,
     Image,
     TouchableOpacity,
@@ -17,7 +16,7 @@ import {
     typeOfViolation,
     wantedType,
 } from "../../Utils/constants.js";
-import InformationFields from "../Components/InformationFields.js";
+import CustomStickyView from "../Components/CustomStickyView.js";
 import { toastConfig } from "../Components/ToastConfig.js";
 const CaseDetail = ({ navigation, route }) => {
     const { refreshToken } = useContext(AuthContext);
@@ -456,42 +455,47 @@ const CaseDetail = ({ navigation, route }) => {
                     </View>
                 </View>
                 <View style={{ width: "100%" }}>
-                    <ScrollView style={styles.scroll}>
-                        <InformationFields
-                            title="Thông tin cơ bản"
-                            listItems={basicInformation}
-                        />
-                        <InformationFields
-                            title="Thông tin nạn nhân"
-                            listItems={victimInformation}
-                        />
-                        <InformationFields
-                            title="Thông tin tội phạm"
-                            listItems={criminalInformation}
-                            hasDetailView={true}
-                            navigation={navigation}
-                            fromScreen={{
-                                name: "CaseDetail",
-                                id: caseId,
-                            }}
-                        />
-                        <InformationFields
-                            title="Thông tin nhân chứng"
-                            listItems={witnessInformation}
-                        />
-                        <InformationFields
-                            title="Thông tin vật chứng"
-                            listItems={evidencesInformation}
-                        />
-                        <InformationFields
-                            title="Danh sách tội phạm truy nã"
-                            listItems={wantedInformation}
-                        />
-                        <InformationFields
-                            title="Thông tin điều tra viên"
-                            listItems={investigatorInformation}
-                        />
-                    </ScrollView>
+                    <CustomStickyView
+                        style={styles.scroll}
+                        data={[
+                            {
+                                title: "Thông tin cơ bản",
+                                listItems: basicInformation,
+                            },
+                            {
+                                title: "Thông tin nạn nhân",
+                                listItems: victimInformation,
+                            },
+                            {
+                                title: "Thông tin tội phạm",
+                                listItems: criminalInformation,
+                            },
+                            {
+                                title: "Thông tin nhân chứng",
+                                listItems: witnessInformation,
+                            },
+                            {
+                                title: "Thông tin vật chứng",
+                                listItems: evidencesInformation,
+                            },
+                            {
+                                title: "Danh sách tội phạm truy nã",
+                                listItems: investigatorInformation,
+                            },
+                            {
+                                title: "Thông tin điều tra viên",
+                                listItems: wantedInformation,
+                            },
+                        ]}
+                        childrenKey={"listItems"}
+                        hasDetailView={true}
+                        listIndexHasDetailView={[2]}
+                        navigation={navigation}
+                        fromScreen={{
+                            name: "CaseDetail",
+                            id: caseId,
+                        }}
+                    />
                 </View>
             </View>
             <Toast config={toastConfig} />

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     View,
     StyleSheet,
@@ -14,6 +14,7 @@ import { CustomText } from "./CustomText.js";
 const InformationFlat = (props) => {
     const [isModalVisible, SetIsModalVisible] = useState(false);
     const [imageIndex, SetImageIndex] = useState(0);
+    const [isShow, SetIsShow] = useState(false);
 
     const convertToArrayOfObjects = (input) => {
         if (Array.isArray(input)) {
@@ -23,7 +24,13 @@ const InformationFlat = (props) => {
         }
     };
 
+    useEffect(() => {
+        if (props.isShow !== null && props.isShow !== undefined)
+            SetIsShow(props.isShow);
+    }, [props]);
+
     return (
+        isShow &&
         Object.keys(props.listItems).length > 0 && (
             <View
                 style={[
@@ -37,6 +44,9 @@ const InformationFlat = (props) => {
                                 ? props.firstTopPadding
                                 : 0,
                         paddingBottom: 20,
+                        borderTopLeftRadius: 5,
+                        borderTopRightRadius: 5,
+                        marginBottom: 20,
                     },
                 ]}
             >

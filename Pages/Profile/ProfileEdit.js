@@ -143,7 +143,7 @@ const ProfileEdit = ({ navigation }) => {
                 name: "photo.jpg",
             };
             formData.append("Files", image);
-            formData.append("FilePath", "Avatar/" + newProfileData.username);
+            formData.append("FilePath", "Avatar/" + userInfo.username);
 
             fetch(API_URL + `v1/upload`, {
                 method: "POST", // *GET, POST, PUT, DELETE, etc.

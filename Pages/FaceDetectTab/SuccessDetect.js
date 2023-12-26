@@ -1,18 +1,11 @@
 import React, { useEffect, useState } from "react";
-import {
-    View,
-    ScrollView,
-    Image,
-    StatusBar,
-    TouchableOpacity,
-    Modal,
-} from "react-native";
+import { View, Image, StatusBar, TouchableOpacity, Modal } from "react-native";
 import ImageViewer from "react-native-image-zoom-viewer";
 import styles from "./style.js";
 import { CustomText } from "../Components/CustomText.js";
 import { criminalStatus, wantedType } from "../../Utils/constants.js";
 import { scale } from "../../Utils/constants";
-import InformationFields from "../Components/InformationFields.js";
+import CustomStickyView from "../Components/CustomStickyView.js";
 
 const SuccessDetect = ({ navigation, route }) => {
     const [SeeMore, SetSeeMore] = useState(false);
@@ -242,13 +235,47 @@ const SuccessDetect = ({ navigation, route }) => {
                         </CustomText>
                     </View>
                     {IsFoundCriminal && basicInformation != null ? (
-                        <ScrollView
-                            showsVerticalScrollIndicator={true}
-                            persistentScrollbar={true}
-                        >
-                            <InformationFields
-                                title={"Thông tin cơ bản"}
-                                listItems={basicInformation}
+                        <>
+                            <CustomStickyView
+                                // showsVerticalScrollIndicator={true}
+                                // persistentScrollbar={true}
+                                style={{ height: "90%" }}
+                                data={
+                                    !SeeMore
+                                        ? [
+                                              {
+                                                  title: "Thông tin cơ bản",
+                                                  listItems: basicInformation,
+                                              },
+                                          ]
+                                        : [
+                                              {
+                                                  title: "Thông tin cơ bản",
+                                                  listItems: basicInformation,
+                                              },
+                                              {
+                                                  title: "Thông tin thêm",
+                                                  listItems: moreInformation,
+                                              },
+                                              {
+                                                  title: "Thông tin truy nã",
+                                                  listItems:
+                                                      wantedInformation.length >
+                                                      0
+                                                          ? wantedInformation
+                                                          : {
+                                                                "Số lần truy nã":
+                                                                    "Chưa bị truy nã lần nào",
+                                                            },
+                                              },
+                                          ]
+                                }
+                                childrenKey={"listItems"}
+                                navigation={navigation}
+                                fromScreen={{
+                                    name: "SuccessDetect",
+                                    id: criminalInfo.foundCriminal.id,
+                                }}
                             />
                             {!SeeMore && (
                                 <CustomText
@@ -262,29 +289,7 @@ const SuccessDetect = ({ navigation, route }) => {
                                     Xem thêm
                                 </CustomText>
                             )}
-                            {SeeMore && (
-                                <>
-                                    <InformationFields
-                                        title={"Thông tin thêm"}
-                                        listItems={moreInformation}
-                                        navigation={navigation}
-                                        fromScreen={{
-                                            name: "SuccessDetect",
-                                            id: criminalInfo.foundCriminal.id,
-                                        }}
-                                    />
-                                    <InformationFields
-                                        title={"Thông tin truy nã"}
-                                        listItems={wantedInformation}
-                                        navigation={navigation}
-                                        fromScreen={{
-                                            name: "SuccessDetect",
-                                            id: criminalInfo.foundCriminal.id,
-                                        }}
-                                    />
-                                </>
-                            )}
-                        </ScrollView>
+                        </>
                     ) : (
                         <CustomText style={{ alignSelf: "center" }}>
                             Không tìm thấy thông tin tội phạm này trong cơ sở dữ

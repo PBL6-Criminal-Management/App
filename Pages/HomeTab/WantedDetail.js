@@ -1,13 +1,11 @@
 import React, { useState, useEffect, useContext } from "react";
 import {
     View,
-    ScrollView,
     StatusBar,
     Image,
     TouchableOpacity,
     ActivityIndicator,
     Modal,
-    Animated,
 } from "react-native";
 import ImageViewer from "react-native-image-zoom-viewer";
 import { AuthContext } from "../../Context/AuthContext.js";
@@ -15,8 +13,8 @@ import styles from "./style.js";
 import { CustomText } from "../Components/CustomText.js";
 import Toast from "react-native-toast-message";
 import { API_URL, criminalStatus, wantedType } from "../../Utils/constants.js";
-import InformationFields from "../Components/InformationFields.js";
 import { toastConfig } from "../Components/ToastConfig.js";
+import CustomStickyView from "../Components/CustomStickyView.js";
 
 const WantedDetail = ({ navigation, route }) => {
     const { refreshToken } = useContext(AuthContext);
@@ -247,30 +245,29 @@ const WantedDetail = ({ navigation, route }) => {
                     Tội danh gần nhất: {titleInfo?.charge}
                 </CustomText>
                 <View style={{ marginTop: 26, width: "100%" }}>
-                    <ScrollView style={styles.scroll}>
-                        <InformationFields
-                            title="Thông tin cơ bản"
-                            listItems={basicInformation}
-                        />
-                        <InformationFields
-                            title="Thông tin tội phạm"
-                            listItems={criminalInformation}
-                            navigation={navigation}
-                            fromScreen={{
-                                name: "WantedDetail",
-                                id: criminalId,
-                            }}
-                        />
-                        <InformationFields
-                            title="Thông tin truy nã"
-                            listItems={wantedInformation}
-                            navigation={navigation}
-                            fromScreen={{
-                                name: "WantedDetail",
-                                id: criminalId,
-                            }}
-                        />
-                    </ScrollView>
+                    <CustomStickyView
+                        style={styles.scroll}
+                        data={[
+                            {
+                                title: "Thông tin cơ bản",
+                                listItems: basicInformation,
+                            },
+                            {
+                                title: "Thông tin tội phạm",
+                                listItems: criminalInformation,
+                            },
+                            {
+                                title: "Thông tin truy nã",
+                                listItems: wantedInformation,
+                            },
+                        ]}
+                        childrenKey={"listItems"}
+                        navigation={navigation}
+                        fromScreen={{
+                            name: "WantedDetail",
+                            id: criminalId,
+                        }}
+                    />
                 </View>
             </View>
             <Toast config={toastConfig} />
