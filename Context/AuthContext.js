@@ -255,6 +255,8 @@ export const AuthProvider = ({ children }) => {
                         });
                 } else {
                     console.log("Refresh token hết hạn");
+                    SetUsername(null);
+                    SetUserInfo(null);
                     return {
                         isSuccessfully: false,
                         data: "Refresh token hết hạn! Vui lòng đăng nhập lại!",

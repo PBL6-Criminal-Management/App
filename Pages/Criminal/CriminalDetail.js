@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import {
     View,
-    ScrollView,
     StatusBar,
     Image,
     TouchableOpacity,
@@ -14,7 +13,8 @@ import styles from "./style.js";
 import { CustomText } from "../Components/CustomText.js";
 import Toast from "react-native-toast-message";
 import { API_URL, criminalStatus, wantedType } from "../../Utils/constants.js";
-import InformationFields from "../Components/InformationFields.js";
+import CustomStickyView from "../Components/CustomStickyView.js";
+
 import { toastConfig } from "../Components/ToastConfig.js";
 
 const CriminalDetail = ({ navigation, route }) => {
@@ -116,6 +116,7 @@ const CriminalDetail = ({ navigation, route }) => {
                             title: "Hình ảnh tội phạm",
                         },
                     });
+
                     SetCriminalInformation({
                         "Tình trạng": criminalStatus[res.data.status],
                         "Mức độ nguy hiểm": res.data.dangerousLevel,
@@ -282,30 +283,35 @@ const CriminalDetail = ({ navigation, route }) => {
                     Tội danh gần nhất: {titleInfo?.charge}
                 </CustomText>
                 <View style={{ marginTop: 26, width: "100%" }}>
-                    <ScrollView style={styles.scroll}>
-                        <InformationFields
-                            title="Thông tin cơ bản"
-                            listItems={basicInformation}
-                        />
-                        <InformationFields
-                            title="Thông tin tội phạm"
-                            listItems={criminalInformation}
-                            navigation={navigation}
-                            fromScreen={{
-                                name: "CriminalDetail",
-                                id: criminalId,
-                            }}
-                        />
-                        <InformationFields
-                            title="Lịch sử truy nã"
-                            listItems={wantedInformation}
-                            navigation={navigation}
-                            fromScreen={{
-                                name: "CriminalDetail",
-                                id: criminalId,
-                            }}
-                        />
-                    </ScrollView>
+                    <CustomStickyView
+                        style={styles.scroll}
+                        data={[
+                            {
+                                title: "Thông tin cơ bản",
+                                listItems: basicInformation,
+                            },
+                            {
+                                title: "Thông tin tội phạm",
+                                listItems: criminalInformation,
+                            },
+                            {
+                                title: "Lịch sử truy nã",
+                                listItems:
+                                    wantedInformation.length > 0
+                                        ? wantedInformation
+                                        : {
+                                              "Số lần truy nã":
+                                                  "Chưa bị truy nã lần nào",
+                                          },
+                            },
+                        ]}
+                        childrenKey={"listItems"}
+                        navigation={navigation}
+                        fromScreen={{
+                            name: "CriminalDetail",
+                            id: criminalId,
+                        }}
+                    />
                 </View>
             </View>
             <Toast config={toastConfig} />
