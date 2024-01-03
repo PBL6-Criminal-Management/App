@@ -53,24 +53,27 @@ const CaseList = ({ navigation }) => {
 
     useEffect(() => {
         const fetchArea = () =>
-            fetch("https://provinces.open-api.vn/api/?depth=1", {
-                method: "GET", // *GET, POST, PUT, DELETE, etc.
-                mode: "cors", // no-cors, cors, *same-origin
-                cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-                credentials: "same-origin", // include, *same-origin, omit
-                headers: {
-                    Accept: "application/json",
-                },
-                redirect: "follow", // manual, *follow, error
-                referrer: "no-referrer", // no-referrer, *client
-            })
+            fetch(
+                "https://vnprovinces.pythonanywhere.com/api/districts/?province_id=49&basic=true&limit=100",
+                {
+                    method: "GET", // *GET, POST, PUT, DELETE, etc.
+                    mode: "cors", // no-cors, cors, *same-origin
+                    cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+                    credentials: "same-origin", // include, *same-origin, omit
+                    headers: {
+                        Accept: "application/json",
+                    },
+                    redirect: "follow", // manual, *follow, error
+                    referrer: "no-referrer", // no-referrer, *client
+                }
+            )
                 .then((res) => res.json())
                 .then((res) => {
                     if (res) {
                         SetAreaItems(
-                            res.map((r) => ({
-                                label: r.name,
-                                value: extractPrefixInProvice(r.name),
+                            res.results.map((r) => ({
+                                label: r.full_name,
+                                value: extractPrefixInProvice(r.full_name),
                             }))
                         );
                     } else {
@@ -96,10 +99,10 @@ const CaseList = ({ navigation }) => {
     }, []);
 
     const extractPrefixInProvice = (province) => {
-        if (province.startsWith("Tỉnh Thừa Thiên "))
-            return province.substring("Tỉnh Thừa Thiên ".length);
-        if (province.startsWith("Tỉnh "))
-            return province.substring("Tỉnh ".length);
+        if (province.startsWith("Thị Xã "))
+            return province.substring("Thị Xã ".length);
+        if (province.startsWith("Huyện "))
+            return province.substring("Huyện ".length);
         if (province.startsWith("Thành phố "))
             return province.substring("Thành phố ".length);
         return province;

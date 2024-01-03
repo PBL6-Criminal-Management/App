@@ -25,6 +25,11 @@ const styles = StyleSheet.create({
         alignItems: "center",
         zIndex: 1,
     },
+    imageOverlay: {
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
+        zIndex: 10,
+        ...StyleSheet.absoluteFill,
+    },
     btnLight: {
         padding: 5,
     },

@@ -4,13 +4,13 @@ v tăng max size upload ảnh
 
 - tạo pr
 
-- hiệu ứng scan
+v hiệu ứng scan
 
 v refactor code bên profile lại (dùng component)
 
 v căn giữa waiting circle trong face detect
 
-- thêm link đến case trong các vụ án liên quan
+v thêm link đến case trong các vụ án liên quan
 
 v train model bằng colab
 
@@ -18,12 +18,12 @@ v train model bằng colab
 
 v yearOfbirth start with txtSearch
 
-- thêm waiting circle cho các màn hình có isloading
+v thêm waiting circle cho các màn hình có isloading
 
-- thêm edit ảnh account
+v thêm edit ảnh account
 
 v nghiên cứu để có thể detect vs ảnh dc chụp
 
 - kéo scroll xún 1 chút trong profile
 
-- thêm refresh page circle trên các màn hình k có refresh scroll
+v thêm refresh page circle trên các màn hình k có refresh scroll

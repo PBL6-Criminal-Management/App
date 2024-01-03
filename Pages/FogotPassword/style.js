@@ -30,6 +30,17 @@ const styles = StyleSheet.create({
         // borderWidth: 1,
         marginBottom: 55,
     },
+    backContainer: {
+        position: "absolute",
+        top: 30,
+        left: 20,
+        paddingRight: 5,
+        paddingBottom: 5,
+    },
+    backBtn: {
+        width: 25,
+        height: 25,
+    },
     title: {
         fontSize: 45 * scale,
         fontFamily: "Inter",
