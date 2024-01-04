@@ -4,10 +4,11 @@ import {
     StyleSheet,
     ScrollView,
     Modal,
-    Pressable,
     Image,
+    TouchableOpacity,
 } from "react-native";
 import ImageViewer from "react-native-image-zoom-viewer";
+import { Video, ResizeMode, Audio } from "expo-av";
 
 import { CustomText } from "./CustomText.js";
 
@@ -15,12 +16,31 @@ const InformationFlat = (props) => {
     const [isModalVisible, SetIsModalVisible] = useState(false);
     const [imageIndex, SetImageIndex] = useState(0);
     const [isShow, SetIsShow] = useState(false);
+    const [status, setStatus] = useState({});
 
     const convertToArrayOfObjects = (input) => {
         if (Array.isArray(input)) {
             return input;
         } else {
             return [input];
+        }
+    };
+
+    useEffect(() => {
+        Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
+    }, []);
+
+    const getFileType = (url) => {
+        const extension = url.slice(((url.lastIndexOf(".") - 1) >>> 0) + 2);
+        const imageExtensions = ["jpg", "png", "gif", "jpeg"]; // Additional image extensions
+        const videoExtensions = ["mp3", "mp4", "mpeg"]; // Additional video extensions
+
+        if (imageExtensions.includes(extension.toLowerCase())) {
+            return "image";
+        } else if (videoExtensions.includes(extension.toLowerCase())) {
+            return "video";
+        } else {
+            return "unknown";
         }
     };
 
@@ -168,10 +188,10 @@ const InformationFlat = (props) => {
                                                         >
                                                             {value.items.map(
                                                                 (
-                                                                    image,
+                                                                    file,
                                                                     index
                                                                 ) => (
-                                                                    <Pressable
+                                                                    <TouchableOpacity
                                                                         key={
                                                                             index
                                                                         }
@@ -184,15 +204,77 @@ const InformationFlat = (props) => {
                                                                             );
                                                                         }}
                                                                     >
-                                                                        <Image
-                                                                            source={{
-                                                                                uri: image.url,
-                                                                            }}
-                                                                            style={
-                                                                                styles.image
-                                                                            }
-                                                                        />
-                                                                    </Pressable>
+                                                                        {getFileType(
+                                                                            file.url
+                                                                        ) ===
+                                                                        "image" ? (
+                                                                            <Image
+                                                                                source={{
+                                                                                    uri: file.url,
+                                                                                }}
+                                                                                style={
+                                                                                    styles.image
+                                                                                }
+                                                                            />
+                                                                        ) : (
+                                                                            <View
+                                                                                style={{
+                                                                                    width: 200,
+                                                                                    height: 200,
+                                                                                    overflow:
+                                                                                        "hidden",
+                                                                                    alignItems:
+                                                                                        "center",
+                                                                                    justifyContent:
+                                                                                        "center",
+                                                                                }}
+                                                                            >
+                                                                                <Video
+                                                                                    style={[
+                                                                                        styles.image,
+                                                                                        {
+                                                                                            position:
+                                                                                                "absolute",
+                                                                                        },
+                                                                                    ]}
+                                                                                    source={{
+                                                                                        uri: file.url,
+                                                                                    }}
+                                                                                    useNativeControls
+                                                                                    resizeMode={
+                                                                                        ResizeMode.CONTAIN
+                                                                                    }
+                                                                                    isLooping
+                                                                                    isMuted={
+                                                                                        false
+                                                                                    }
+                                                                                    rate={
+                                                                                        1.0
+                                                                                    }
+                                                                                    volume={
+                                                                                        1.0
+                                                                                    }
+                                                                                    onPlaybackStatusUpdate={
+                                                                                        setStatus
+                                                                                    }
+                                                                                />
+                                                                                <View
+                                                                                    style={{
+                                                                                        ...StyleSheet.absoluteFill,
+                                                                                    }}
+                                                                                />
+                                                                                <Image
+                                                                                    style={{
+                                                                                        width: 50,
+                                                                                        height: 50,
+                                                                                        tintColor:
+                                                                                            "white",
+                                                                                    }}
+                                                                                    source={require("../../Public/start.png")}
+                                                                                />
+                                                                            </View>
+                                                                        )}
+                                                                    </TouchableOpacity>
                                                                 )
                                                             )}
                                                         </ScrollView>
@@ -219,11 +301,11 @@ const InformationFlat = (props) => {
                                                                 imageUrls={
                                                                     value.items
                                                                 }
-                                                                onClick={() =>
-                                                                    SetIsModalVisible(
-                                                                        false
-                                                                    )
-                                                                }
+                                                                // onClick={() =>
+                                                                //     SetIsModalVisible(
+                                                                //         false
+                                                                //     )
+                                                                // }
                                                                 enableSwipeDown={
                                                                     true
                                                                 }
@@ -232,6 +314,80 @@ const InformationFlat = (props) => {
                                                                         false
                                                                     )
                                                                 }
+                                                                renderImage={(
+                                                                    file
+                                                                ) => {
+                                                                    if (
+                                                                        getFileType(
+                                                                            file
+                                                                                .source
+                                                                                .uri
+                                                                        ) ===
+                                                                        "image"
+                                                                    ) {
+                                                                        return (
+                                                                            <View
+                                                                                style={{
+                                                                                    flex: 1,
+                                                                                }}
+                                                                            >
+                                                                                <Image
+                                                                                    style={{
+                                                                                        flex: 1,
+                                                                                    }}
+                                                                                    source={{
+                                                                                        uri: file
+                                                                                            .source
+                                                                                            .uri,
+                                                                                    }}
+                                                                                />
+                                                                            </View>
+                                                                        );
+                                                                    } else
+                                                                        return (
+                                                                            <View
+                                                                                style={{
+                                                                                    flex: 1,
+                                                                                    justifyContent:
+                                                                                        "center",
+                                                                                    alignItems:
+                                                                                        "center",
+                                                                                }}
+                                                                            >
+                                                                                <Video
+                                                                                    style={{
+                                                                                        height: 562.2254758418741,
+                                                                                        width: 375,
+                                                                                    }}
+                                                                                    source={{
+                                                                                        uri: file
+                                                                                            .source
+                                                                                            .uri,
+                                                                                    }}
+                                                                                    useNativeControls
+                                                                                    resizeMode={
+                                                                                        ResizeMode.CONTAIN
+                                                                                    }
+                                                                                    isLooping
+                                                                                    isMuted={
+                                                                                        false
+                                                                                    }
+                                                                                    rate={
+                                                                                        1.0
+                                                                                    }
+                                                                                    volume={
+                                                                                        1.0
+                                                                                    }
+                                                                                    shouldPlay={
+                                                                                        true
+                                                                                    }
+                                                                                    onPlaybackStatusUpdate={
+                                                                                        setStatus
+                                                                                    }
+                                                                                />
+                                                                            </View>
+                                                                        );
+                                                                }}
                                                             />
                                                         </Modal>
                                                     </>

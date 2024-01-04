@@ -80,7 +80,7 @@ const ProfileEdit = ({ navigation }) => {
 
         fetch(
             //&PageNumber=1&PageSize=10
-            API_URL + `v1/account/${userInfo.userId}`,
+            API_URL + `v1/profile`,
             {
                 method: "GET", // *GET, POST, PUT, DELETE, etc.
                 mode: "cors", // no-cors, cors, *same-origin
@@ -205,7 +205,7 @@ const ProfileEdit = ({ navigation }) => {
     };
 
     const updateProfileToApi = async (token, newProfileData, image) => {
-        await fetch(API_URL + `v1/account`, {
+        await fetch(API_URL + `v1/profile`, {
             method: "PUT", // *GET, POST, PUT, DELETE, etc.
             mode: "cors", // no-cors, cors, *same-origin
             cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
@@ -478,7 +478,11 @@ const ProfileEdit = ({ navigation }) => {
                             >
                                 <Image
                                     style={styles.image}
-                                    source={{ uri: values.imageLink }}
+                                    source={
+                                        values.imageLink
+                                            ? { uri: values.imageLink }
+                                            : require("../../Public/notFoundAvatar.png")
+                                    }
                                 ></Image>
                                 <View style={styles.imageOverlay} />
                                 <Image
@@ -509,7 +513,7 @@ const ProfileEdit = ({ navigation }) => {
                                 </View>
                                 <ScrollView
                                     contentContainerStyle={{
-                                        paddingBottom: 85,
+                                        paddingBottom: 150,
                                     }}
                                 >
                                     <View>

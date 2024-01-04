@@ -29,10 +29,12 @@ const CustomStickyView = ({
         <View style={style}>
             <StickyHeaderFlatlist
                 keyExtractor={(_, i) => i + ""}
+                style={{ borderRadius: 5 }}
                 childrenKey={childrenKey}
                 renderHeader={({ item, index }) => {
                     return (
                         <InformationFields
+                            key={index}
                             item={item}
                             isShow={listShow[index / 2]}
                             onHeadPressed={() => onHeadPressed(index / 2)}
@@ -46,6 +48,7 @@ const CustomStickyView = ({
                     )
                         return (
                             <InformationFlat
+                                key={index}
                                 listItems={item}
                                 paddingHorizontal={20}
                                 firstTopPadding={20}
@@ -58,6 +61,7 @@ const CustomStickyView = ({
 
                     return (
                         <InformationFlat
+                            key={index}
                             listItems={item}
                             paddingHorizontal={20}
                             firstTopPadding={20}

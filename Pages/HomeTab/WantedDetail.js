@@ -244,7 +244,12 @@ const WantedDetail = ({ navigation, route }) => {
                 <CustomText style={styles.note}>
                     Tội danh gần nhất: {titleInfo?.charge}
                 </CustomText>
-                <View style={{ marginTop: 26, width: "100%" }}>
+                <View
+                    style={{
+                        marginTop: 26,
+                        width: "100%",
+                    }}
+                >
                     <CustomStickyView
                         style={styles.scroll}
                         data={[
