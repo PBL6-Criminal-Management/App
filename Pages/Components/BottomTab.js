@@ -21,7 +21,6 @@ import { API_URL, scale } from "../../Utils/constants";
 // import { HubConnectionBuilder, LogLevel } from '@aspnet/signalr';
 import { HubConnectionBuilder } from "@microsoft/signalr";
 import { setupURLPolyfill } from "react-native-url-polyfill";
-import CustomStickyView from "../Components/CustomStickyView.js";
 import Notification from "../Notification/Notification.js";
 
 setupURLPolyfill();
@@ -31,8 +30,23 @@ const { width, height } = Dimensions.get("window");
 
 const BottomTab = ({ navigation }) => {
     const [isWarningShow, SetIsWarningShow] = useState(false);
+    const [isNotify, SetIsNotify] = useState(false);
     const { logout, userInfo, refreshToken } = useContext(AuthContext);
+    useEffect(() => {
+        const connection = new HubConnectionBuilder()
+            .withUrl(API_URL + "notification?userId=" + userInfo.userId)
+            .build();
 
+        connection
+            .start();
+
+        connection.on("ReceiveNotification", (message) => {
+            SetIsNotify(true);
+        });
+        return () => {
+            connection.stop();
+        };
+    }, [isNotify]);
     return (
         <View
             style={{
@@ -41,18 +55,24 @@ const BottomTab = ({ navigation }) => {
         >
             <TouchableOpacity
                 onPress={() => {
-                    navigation.navigate("Notification");
-                    // SetIsNotifyShow(true)
+                    navigation.navigate("Notification", { notify: isNotify });
+                    SetIsNotify(false)
                 }}
                 style={styles.btnNotify}
             >
-                <Image
+                {!isNotify ? <Image
                     style={{
                         height: 25,
                         width: 25,
                     }}
                     source={require("../../Public/bell.png")}
-                />
+                /> : <Image
+                    style={{
+                        height: 25,
+                        width: 25,
+                    }}
+                    source={require("../../Public/bell-notify.png")}
+                />}
             </TouchableOpacity>
             <TouchableOpacity
                 onPress={() => SetIsWarningShow(true)}
@@ -166,11 +186,6 @@ const BottomTab = ({ navigation }) => {
                     }}
                 >
                     <Tab.Screen
-                        name="Notification"
-                        component={Notification}
-                        options={{ tabBarVisible: false }}
-                    />
-                    <Tab.Screen
                         name="Home"
                         component={HomeTab}
                         options={{
@@ -206,6 +221,11 @@ const BottomTab = ({ navigation }) => {
                                 </View>
                             ),
                         }}
+                    />
+                    <Tab.Screen
+                        name="Notification"
+                        component={Notification}
+                        options={{ tabBarButton: () => null }}
                     />
                     <Tab.Screen
                         name="Criminals"

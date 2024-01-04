@@ -6,6 +6,8 @@ import {
     TouchableOpacity,
     ActivityIndicator,
     Modal,
+    ScrollView,
+    RefreshControl
 } from "react-native";
 import ImageViewer from "react-native-image-zoom-viewer";
 import { AuthContext } from "../../Context/AuthContext.js";
@@ -17,48 +19,33 @@ import { toastConfig } from "../Components/ToastConfig.js";
 import CustomStickyView from "../Components/CustomStickyView.js";
 import { HubConnectionBuilder } from "@microsoft/signalr";
 import { setupURLPolyfill } from "react-native-url-polyfill";
+import NotificationElement from "../Components/NotificationElement.js";
 
 const Notification = ({ navigation, route }) => {
     const { refreshToken, userInfo } = useContext(AuthContext);
-
-    const [basicInformation, SetBasicInformation] = useState({});
-    const [criminalInformation, SetCriminalInformation] = useState({});
-    const [wantedInformation, SetWantedInformation] = useState({});
-    const [titleInfo, SetTitleInfo] = useState(null);
+    const [refresh, SetRefresh] = useState(false);
     const [isLoading, SetIsLoading] = useState(false);
-    const [isNotifyShow, SetIsNotifyShow] = useState(false);
-
-    const [isModalVisible, SetIsModalVisible] = useState(false);
-    const [fromScreen, SetFromScreen] = useState(null);
-
-    const [criminalId, SetCriminalId] = useState(null);
     const [notifications, setNotifications] = useState([]);
-    // const scrollY = useRef(new Animated.Value(0)).current;
-
-    // _hubConnection = new HubConnectionBuilder()
-    //     .withUrl(API_URL + "notification")
-    //     .configureLogging(LogLevel.Debug)
-    //     .build();
-    // _hubConnection.start().then(a => {
-    //     console.log('Connected rafa');
-    // });
-    // _hubConnection.on('ReceiveNotification', notification => {
-    //     console.log("notification : " + notification)
-    // });
-
+    // const { isNotify } = route.params;
+    let isNotify = false;
+    if (route.params != undefined && route.params.notify != undefined) {
+        isNotify = true;
+    }
     const getAllReportFromAPI = async () => {
+        SetIsLoading(!refresh);
         let result = await refreshToken();
         if (!result.isSuccessfully) {
             Toast.show({
                 type: "error",
                 text1: result.data,
             });
+            SetIsLoading(false);
             return;
         }
 
         fetch(
             //&PageNumber=1&PageSize=10
-            API_URL + `v1/report?OrderBy=sendingTime%20desc`,
+            API_URL + `v1/report?OrderBy=createdAt%20desc`,
             {
                 method: "GET", // *GET, POST, PUT, DELETE, etc.
                 mode: "cors", // no-cors, cors, *same-origin
@@ -79,127 +66,67 @@ const Notification = ({ navigation, route }) => {
                 } else {
                     console.log(res);
                 }
+                SetIsLoading(false);
             })
             .catch((e) => {
                 console.log(`login error: ${e}`);
+                SetIsLoading(false);
             });
     };
 
     useEffect(() => {
-        const connection = new HubConnectionBuilder()
-            .withUrl(API_URL + "notification?userId=" + userInfo.userId)
-            .build();
-
-        connection
-            .start()
-            .then(() => {
-                connection.invoke("SendOfflineNotifications");
-                console.log("SignalR Connected");
-            })
-            .catch((err) => console.log("SignalR Connection Error: ", err));
-
-        connection.on("ReceiveNotification", (message) => {
-            console.log("Notification : " + message);
-            setNotifications([message, ...notifications]);
-        });
-        // connection.on("SendNotification", (message) => {
-        //     console.log("Notification : " + notifications);
-        // });
-        return () => {
-            connection.stop();
-        };
-    }, [notifications]);
-
-    useEffect(() => {
         getAllReportFromAPI();
     }, []);
-
+    useEffect(() => {
+        if (refresh) {
+            getAllReportFromAPI();
+            SetRefresh(false);
+        }
+    }, [refresh]);
+    useEffect(() => {
+        if (isNotify) {
+            getAllReportFromAPI();
+        }
+    }, [isNotify]);
     return (
-        <View style={[styles.container, { backgroundColor: "#F1F2F2" }]}>
+        <View style={styles.container}>
             {/*statusbar to set wifi, battery... to white*/}
             <StatusBar
                 barStyle="light-content"
                 translucent
                 backgroundColor="transparent"
             />
-            {isLoading && (
-                <View style={styles.waitingCircle}>
-                    <ActivityIndicator size="large" color="green" />
-                </View>
-            )}
-            <View style={[styles.head, { height: 350 }]}></View>
-            <View
-                style={[styles.content, { bottom: 400, alignItems: "center" }]}
-            >
-                <TouchableOpacity
-                    style={styles.backContainer}
-                    onPress={() => navigation.goBack()}
-                >
-                    <Image
-                        source={require("../../Public/back.png")}
-                        style={styles.backBtn}
-                    />
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={styles.reloadContainer}
-                    onPress={() => {
-                        if (route.params?.criminalId)
-                            getCriminalByIdFromAPI(route.params?.criminalId);
-                    }}
-                >
-                    <Image
-                        source={require("../../Public/sync.png")}
-                        style={styles.reloadBtn}
-                    />
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => SetIsModalVisible(true)}>
-                    <Image
-                        style={styles.avatar}
-                        source={{ uri: titleInfo?.image }}
-                    ></Image>
-                </TouchableOpacity>
-                {titleInfo != null && (
-                    <Modal
-                        visible={isModalVisible}
-                        transparent={true}
-                        onRequestClose={() => {
-                            SetIsModalVisible(!isModalVisible);
-                        }}
-                        onBackdropPress={() => SetIsModalVisible(false)}
-                    >
-                        <ImageViewer
-                            imageUrls={[
-                                {
-                                    url: titleInfo?.image,
-                                },
-                            ]}
-                            renderIndicator={() => {}}
-                            onClick={() => SetIsModalVisible(false)}
-                            enableSwipeDown={true}
-                            onSwipeDown={() => SetIsModalVisible(false)}
-                        />
-                    </Modal>
-                )}
-                <CustomText style={styles.title}>{titleInfo?.name}</CustomText>
-                <CustomText style={styles.note}>
-                    Tội danh gần nhất: {titleInfo?.charge}
-                </CustomText>
-                <View
-                    style={{
-                        marginTop: 26,
-                        width: "100%",
-                    }}
-                >
-                    <CustomStickyView
-                        style={{ height: 300 }}
-                        data={[
-                            {
-                                title: "Báo cáo tội phạm",
-                                listItems: notifications,
-                            },
-                        ]}
-                        childrenKey={"listItems"}
-                    />
+            <View style={[styles.head, { height: 250 }]}></View>
+            <View style={[styles.content, { bottom: 140 }]}>
+                <CustomText style={styles.title}>Danh sách báo cáo</CustomText>
+                <View style={styles.body}>
+                    {isLoading && (
+                        <View style={styles.waitingCircle}>
+                            <ActivityIndicator size="large" color="green" />
+                        </View>
+                    )}
+                    {notifications && (
+                        <ScrollView
+                            style={styles.scroll}
+                            refreshControl={
+                                <RefreshControl
+                                    refreshing={refresh}
+                                    onRefresh={() => SetRefresh(true)}
+                                />
+                            }
+                        >
+                            {notifications.map((item, index) => {
+                                // const Max_Image_Number = 20;
+                                // if (index < Max_Image_Number)
+                                return (
+                                    <NotificationElement
+                                        key={index}
+                                        item={item}
+                                    />
+                                );
+                            })}
+                        </ScrollView>
+                    )}
                 </View>
             </View>
             <Toast config={toastConfig} />
