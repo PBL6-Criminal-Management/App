@@ -6,7 +6,7 @@ import {
     TouchableOpacity,
     Dimensions,
     Modal,
-    TouchableWithoutFeedback
+    TouchableWithoutFeedback,
 } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
@@ -19,9 +19,9 @@ import FaceDetectTab from "../FaceDetectTab/index";
 import { AuthContext } from "../../Context/AuthContext.js";
 import { API_URL, scale } from "../../Utils/constants";
 // import { HubConnectionBuilder, LogLevel } from '@aspnet/signalr';
-import { HubConnectionBuilder } from '@microsoft/signalr';
+import { HubConnectionBuilder } from "@microsoft/signalr";
 import InformationFields from "../Components/InformationFields.js";
-import { setupURLPolyfill } from 'react-native-url-polyfill';
+import { setupURLPolyfill } from "react-native-url-polyfill";
 
 setupURLPolyfill();
 
@@ -43,17 +43,58 @@ const BottomTab = ({ navigation }) => {
     // _hubConnection.on('ReceiveNotification', notification => {
     //     console.log("notification : " + notification)
     // });
+
+    const getAllReportFromAPI = async () => {
+        let result = await refreshToken();
+        if (!result.isSuccessfully) {
+            Toast.show({
+                type: "error",
+                text1: result.data,
+            });
+            return;
+        }
+
+        fetch(
+            //&PageNumber=1&PageSize=10
+            API_URL + `v1/report?OrderBy=sendingTime%20desc`,
+            {
+                method: "GET", // *GET, POST, PUT, DELETE, etc.
+                mode: "cors", // no-cors, cors, *same-origin
+                cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+                credentials: "same-origin", // include, *same-origin, omit
+                headers: {
+                    Accept: "application/json",
+                    Authorization: `Bearer ${result.data}`,
+                },
+                redirect: "follow", // manual, *follow, error
+                referrer: "no-referrer", // no-referrer, *client
+            }
+        )
+            .then((res) => res.json())
+            .then((res) => {
+                if (res.succeeded) {
+                    setNotifications([...res.data, ...notifications]);
+                } else {
+                    console.log(res);
+                }
+            })
+            .catch((e) => {
+                console.log(`login error: ${e}`);
+            });
+    };
+
     useEffect(() => {
         const connection = new HubConnectionBuilder()
             .withUrl(API_URL + "notification?userId=" + userInfo.userId)
             .build();
 
-        connection.start()
+        connection
+            .start()
             .then(() => {
                 connection.invoke("SendOfflineNotifications");
-                console.log("SignalR Connected")
+                console.log("SignalR Connected");
             })
-            .catch(err => console.log("SignalR Connection Error: ", err));
+            .catch((err) => console.log("SignalR Connection Error: ", err));
 
         connection.on("ReceiveNotification", (message) => {
             console.log("Notification : " + message);
@@ -66,20 +107,28 @@ const BottomTab = ({ navigation }) => {
             connection.stop();
         };
     }, [notifications]);
+
+    useEffect(() => {
+        getAllReportFromAPI();
+    }, []);
+
     return (
-        <View style={{
-            position: "relative",
-        }}>
+        <View
+            style={{
+                position: "relative",
+            }}
+        >
             <TouchableOpacity
                 onPress={() => SetIsNotifyShow(true)}
                 style={styles.btnNotify}
             >
-                <Image style={
-                    {
+                <Image
+                    style={{
                         height: 25,
-                        width: 25
+                        width: 25,
                     }}
-                    source={require("../../Public/bell.png")} />
+                    source={require("../../Public/bell.png")}
+                />
             </TouchableOpacity>
             <Modal
                 animationType="slide"
@@ -110,13 +159,13 @@ const BottomTab = ({ navigation }) => {
                 onPress={() => SetIsWarningShow(true)}
                 style={styles.btnLogout}
             >
-                <Image style={
-                    {
+                <Image
+                    style={{
                         height: 25,
-                        width: 25
-                    }
-                }
-                    source={require("../../Public/logout.png")} />
+                        width: 25,
+                    }}
+                    source={require("../../Public/logout.png")}
+                />
             </TouchableOpacity>
             <Modal
                 animationType="slide"
@@ -135,9 +184,7 @@ const BottomTab = ({ navigation }) => {
                                 <View style={styles.modalHead}>
                                     <TouchableOpacity
                                         style={styles.iconCancel}
-                                        onPress={() =>
-                                            SetIsWarningShow(false)
-                                        }
+                                        onPress={() => SetIsWarningShow(false)}
                                     >
                                         <Image
                                             source={require("../../Public/darkCancel.png")}
@@ -154,8 +201,7 @@ const BottomTab = ({ navigation }) => {
                                             width: 270,
                                         }}
                                     >
-                                        Bạn có chắc chắn muốn đăng xuất
-                                        không?
+                                        Bạn có chắc chắn muốn đăng xuất không?
                                     </CustomText>
                                 </View>
                                 <View
@@ -174,24 +220,20 @@ const BottomTab = ({ navigation }) => {
                                         <CustomText
                                             style={{
                                                 color: "white",
-                                                fontFamily:
-                                                    "Be Vietnam bold",
+                                                fontFamily: "Be Vietnam bold",
                                             }}
                                         >
                                             Đăng xuất
                                         </CustomText>
                                     </TouchableOpacity>
                                     <TouchableOpacity
-                                        onPress={() =>
-                                            SetIsWarningShow(false)
-                                        }
+                                        onPress={() => SetIsWarningShow(false)}
                                         style={styles.btnCancel}
                                     >
                                         <CustomText
                                             style={{
                                                 color: "#4F4F4F",
-                                                fontFamily:
-                                                    "Be Vietnam bold",
+                                                fontFamily: "Be Vietnam bold",
                                             }}
                                         >
                                             Huỷ
@@ -249,7 +291,9 @@ const BottomTab = ({ navigation }) => {
                                     />
                                     <CustomText
                                         style={{
-                                            color: focused ? "#386BF6" : "white",
+                                            color: focused
+                                                ? "#386BF6"
+                                                : "white",
                                             fontSize: 12 * scale,
                                         }}
                                     >
@@ -284,7 +328,9 @@ const BottomTab = ({ navigation }) => {
                                     />
                                     <CustomText
                                         style={{
-                                            color: focused ? "#386BF6" : "white",
+                                            color: focused
+                                                ? "#386BF6"
+                                                : "white",
                                             fontSize: 12 * scale,
                                         }}
                                     >
@@ -358,7 +404,9 @@ const BottomTab = ({ navigation }) => {
                                     />
                                     <CustomText
                                         style={{
-                                            color: focused ? "#386BF6" : "white",
+                                            color: focused
+                                                ? "#386BF6"
+                                                : "white",
                                             fontSize: 12 * scale,
                                         }}
                                     >
@@ -393,7 +441,9 @@ const BottomTab = ({ navigation }) => {
                                     />
                                     <CustomText
                                         style={{
-                                            color: focused ? "#386BF6" : "white",
+                                            color: focused
+                                                ? "#386BF6"
+                                                : "white",
                                             fontSize: 12 * scale,
                                         }}
                                     >
@@ -419,13 +469,14 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 3.5,
         elevation: 5,
-    }, btnLogout: {
+    },
+    btnLogout: {
         position: "absolute",
         right: 20,
         top: 40,
         paddingBottom: 15,
         paddingLeft: 10,
-        zIndex: 1
+        zIndex: 1,
     },
     btnNotify: {
         position: "absolute",
@@ -433,12 +484,14 @@ const styles = StyleSheet.create({
         top: 40,
         paddingBottom: 15,
         paddingLeft: 10,
-        zIndex: 1
-    }, modalContainer: {
+        zIndex: 1,
+    },
+    modalContainer: {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-    }, modalView: {
+    },
+    modalView: {
         alignItems: "center",
         backgroundColor: "white",
         borderRadius: 10,
@@ -457,7 +510,8 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         width: "100%",
         justifyContent: "center",
-    }, iconCancel: {
+    },
+    iconCancel: {
         position: "absolute",
         left: 10,
         padding: 5,
