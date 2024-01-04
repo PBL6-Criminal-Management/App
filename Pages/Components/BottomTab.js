@@ -20,8 +20,9 @@ import { AuthContext } from "../../Context/AuthContext.js";
 import { API_URL, scale } from "../../Utils/constants";
 // import { HubConnectionBuilder, LogLevel } from '@aspnet/signalr';
 import { HubConnectionBuilder } from "@microsoft/signalr";
-import InformationFields from "../Components/InformationFields.js";
 import { setupURLPolyfill } from "react-native-url-polyfill";
+import CustomStickyView from "../Components/CustomStickyView.js";
+import Notification from "../Notification/Notification.js";
 
 setupURLPolyfill();
 
@@ -29,88 +30,8 @@ const Tab = createBottomTabNavigator();
 const { width, height } = Dimensions.get("window");
 
 const BottomTab = ({ navigation }) => {
-    const [notifications, setNotifications] = useState([]);
     const [isWarningShow, SetIsWarningShow] = useState(false);
-    const [isNotifyShow, SetIsNotifyShow] = useState(false);
     const { logout, userInfo, refreshToken } = useContext(AuthContext);
-    // _hubConnection = new HubConnectionBuilder()
-    //     .withUrl(API_URL + "notification")
-    //     .configureLogging(LogLevel.Debug)
-    //     .build();
-    // _hubConnection.start().then(a => {
-    //     console.log('Connected rafa');
-    // });
-    // _hubConnection.on('ReceiveNotification', notification => {
-    //     console.log("notification : " + notification)
-    // });
-
-    const getAllReportFromAPI = async () => {
-        let result = await refreshToken();
-        if (!result.isSuccessfully) {
-            Toast.show({
-                type: "error",
-                text1: result.data,
-            });
-            return;
-        }
-
-        fetch(
-            //&PageNumber=1&PageSize=10
-            API_URL + `v1/report?OrderBy=sendingTime%20desc`,
-            {
-                method: "GET", // *GET, POST, PUT, DELETE, etc.
-                mode: "cors", // no-cors, cors, *same-origin
-                cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-                credentials: "same-origin", // include, *same-origin, omit
-                headers: {
-                    Accept: "application/json",
-                    Authorization: `Bearer ${result.data}`,
-                },
-                redirect: "follow", // manual, *follow, error
-                referrer: "no-referrer", // no-referrer, *client
-            }
-        )
-            .then((res) => res.json())
-            .then((res) => {
-                if (res.succeeded) {
-                    setNotifications([...res.data, ...notifications]);
-                } else {
-                    console.log(res);
-                }
-            })
-            .catch((e) => {
-                console.log(`login error: ${e}`);
-            });
-    };
-
-    useEffect(() => {
-        const connection = new HubConnectionBuilder()
-            .withUrl(API_URL + "notification?userId=" + userInfo.userId)
-            .build();
-
-        connection
-            .start()
-            .then(() => {
-                connection.invoke("SendOfflineNotifications");
-                console.log("SignalR Connected");
-            })
-            .catch((err) => console.log("SignalR Connection Error: ", err));
-
-        connection.on("ReceiveNotification", (message) => {
-            console.log("Notification : " + message);
-            setNotifications([message, ...notifications]);
-        });
-        // connection.on("SendNotification", (message) => {
-        //     console.log("Notification : " + notifications);
-        // });
-        return () => {
-            connection.stop();
-        };
-    }, [notifications]);
-
-    useEffect(() => {
-        getAllReportFromAPI();
-    }, []);
 
     return (
         <View
@@ -119,7 +40,10 @@ const BottomTab = ({ navigation }) => {
             }}
         >
             <TouchableOpacity
-                onPress={() => SetIsNotifyShow(true)}
+                onPress={() => {
+                    navigation.navigate("Notification");
+                    // SetIsNotifyShow(true)
+                }}
                 style={styles.btnNotify}
             >
                 <Image
@@ -130,31 +54,6 @@ const BottomTab = ({ navigation }) => {
                     source={require("../../Public/bell.png")}
                 />
             </TouchableOpacity>
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={isNotifyShow}
-                onRequestClose={() => {
-                    SetIsNotifyShow(!isNotifyShow);
-                }}
-            >
-                <TouchableWithoutFeedback
-                    onPressOut={() => SetIsNotifyShow(false)}
-                >
-                    <View style={styles.modalContainer}>
-                        <TouchableWithoutFeedback>
-                            <View style={styles.modalView}>
-                                <View style={styles.modalHead}>
-                                    <InformationFields
-                                        title="Thông tin điều tra viên"
-                                        listItems={notifications}
-                                    />
-                                </View>
-                            </View>
-                        </TouchableWithoutFeedback>
-                    </View>
-                </TouchableWithoutFeedback>
-            </Modal>
             <TouchableOpacity
                 onPress={() => SetIsWarningShow(true)}
                 style={styles.btnLogout}
@@ -266,6 +165,11 @@ const BottomTab = ({ navigation }) => {
                         },
                     }}
                 >
+                    <Tab.Screen
+                        name="Notification"
+                        component={Notification}
+                        options={{ tabBarVisible: false }}
+                    />
                     <Tab.Screen
                         name="Home"
                         component={HomeTab}
