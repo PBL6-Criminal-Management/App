@@ -14,6 +14,7 @@ const styles = StyleSheet.create({
         left: 20,
         paddingRight: 5,
         paddingBottom: 5,
+        top: -10
     },
     backBtn: {
         width: 25,
@@ -22,13 +23,16 @@ const styles = StyleSheet.create({
     },
     reloadContainer: {
         position: "absolute",
-        right: 20,
-        paddingLeft: 5,
-        paddingBottom: 5,
         borderWidth: 1,
         borderColor: "white",
         borderRadius: 100,
         padding: 5,
+        width: 25,
+        height: 25,
+        top: -10,
+        right: 100,
+        alignItems: "center",
+        justifyContent: "center"
     },
     reloadBtn: {
         width: 15,

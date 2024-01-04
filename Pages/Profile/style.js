@@ -19,12 +19,6 @@ const styles = StyleSheet.create({
         alignItems: "center",
         zIndex: 1,
     },
-    btnLogout: {
-        position: "absolute",
-        right: 20,
-        paddingBottom: 15,
-        paddingLeft: 10,
-    },
     backContainer: {
         position: "absolute",
         left: 20,
@@ -45,6 +39,7 @@ const styles = StyleSheet.create({
         borderColor: "white",
         borderRadius: 100,
         padding: 5,
+        top: -10
     },
     reloadBtn: {
         width: 15,
@@ -118,50 +113,6 @@ const styles = StyleSheet.create({
         color: "red",
         fontWeight: "bold",
         marginTop: 5,
-    },
-    modalContainer: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    modalView: {
-        alignItems: "center",
-        backgroundColor: "white",
-        borderRadius: 10,
-        paddingVertical: 20,
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
-        elevation: 5,
-        width: 310,
-    },
-    modalHead: {
-        flexDirection: "row",
-        width: "100%",
-        justifyContent: "center",
-    },
-    iconCancel: {
-        position: "absolute",
-        left: 10,
-        padding: 5,
-    },
-    modalTitle: {
-        fontSize: 15 * scale,
-    },
-    modalText: {
-        marginBottom: 15,
-        textAlign: "center",
-        fontSize: 15 * scale,
-    },
-    modalContent: {
-        height: 100,
-        justifyContent: "center",
-        alignItems: "center",
-        paddingHorizontal: 15,
     },
     btnAgree: {
         width: 200,

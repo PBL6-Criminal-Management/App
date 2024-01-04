@@ -377,7 +377,7 @@ const CaseDetail = ({ navigation, route }) => {
                     <ActivityIndicator size="large" color="green" />
                 </View>
             )}
-            <View style={[styles.head, { height: 230 }]}></View>
+            <View style={[styles.head, { height: 220 }]}></View>
             <View
                 style={[styles.content, { bottom: 290, alignItems: "center" }]}
             >
