@@ -6,7 +6,7 @@ import {
     TouchableOpacity,
     Dimensions,
     Modal,
-    TouchableWithoutFeedback
+    TouchableWithoutFeedback,
 } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
@@ -19,9 +19,10 @@ import FaceDetectTab from "../FaceDetectTab/index";
 import { AuthContext } from "../../Context/AuthContext.js";
 import { API_URL, scale } from "../../Utils/constants";
 // import { HubConnectionBuilder, LogLevel } from '@aspnet/signalr';
-import { HubConnectionBuilder } from '@microsoft/signalr';
-import InformationFields from "../Components/InformationFields.js";
-import { setupURLPolyfill } from 'react-native-url-polyfill';
+import { HubConnectionBuilder } from "@microsoft/signalr";
+import { setupURLPolyfill } from "react-native-url-polyfill";
+import CustomStickyView from "../Components/CustomStickyView.js";
+import Notification from "../Notification/Notification.js";
 
 setupURLPolyfill();
 
@@ -29,94 +30,41 @@ const Tab = createBottomTabNavigator();
 const { width, height } = Dimensions.get("window");
 
 const BottomTab = ({ navigation }) => {
-    const [notifications, setNotifications] = useState([]);
     const [isWarningShow, SetIsWarningShow] = useState(false);
-    const [isNotifyShow, SetIsNotifyShow] = useState(false);
     const { logout, userInfo, refreshToken } = useContext(AuthContext);
-    // _hubConnection = new HubConnectionBuilder()
-    //     .withUrl(API_URL + "notification")
-    //     .configureLogging(LogLevel.Debug)
-    //     .build();
-    // _hubConnection.start().then(a => {
-    //     console.log('Connected rafa');
-    // });
-    // _hubConnection.on('ReceiveNotification', notification => {
-    //     console.log("notification : " + notification)
-    // });
-    useEffect(() => {
-        const connection = new HubConnectionBuilder()
-            .withUrl(API_URL + "notification?userId=" + userInfo.userId)
-            .build();
 
-        connection.start()
-            .then(() => {
-                connection.invoke("SendOfflineNotifications");
-                console.log("SignalR Connected")
-            })
-            .catch(err => console.log("SignalR Connection Error: ", err));
-
-        connection.on("ReceiveNotification", (message) => {
-            console.log("Notification : " + message);
-            setNotifications([message, ...notifications]);
-        });
-        // connection.on("SendNotification", (message) => {
-        //     console.log("Notification : " + notifications);
-        // });
-        return () => {
-            connection.stop();
-        };
-    }, [notifications]);
     return (
-        <View style={{
-            position: "relative",
-        }}>
+        <View
+            style={{
+                position: "relative",
+            }}
+        >
             <TouchableOpacity
-                onPress={() => SetIsNotifyShow(true)}
+                onPress={() => {
+                    navigation.navigate("Notification");
+                    // SetIsNotifyShow(true)
+                }}
                 style={styles.btnNotify}
             >
-                <Image style={
-                    {
+                <Image
+                    style={{
                         height: 25,
-                        width: 25
+                        width: 25,
                     }}
-                    source={require("../../Public/bell.png")} />
+                    source={require("../../Public/bell.png")}
+                />
             </TouchableOpacity>
-            <Modal
-                animationType="slide"
-                transparent={true}
-                visible={isNotifyShow}
-                onRequestClose={() => {
-                    SetIsNotifyShow(!isNotifyShow);
-                }}
-            >
-                <TouchableWithoutFeedback
-                    onPressOut={() => SetIsNotifyShow(false)}
-                >
-                    <View style={styles.modalContainer}>
-                        <TouchableWithoutFeedback>
-                            <View style={styles.modalView}>
-                                <View style={styles.modalHead}>
-                                    <InformationFields
-                                        title="Thông tin điều tra viên"
-                                        listItems={notifications}
-                                    />
-                                </View>
-                            </View>
-                        </TouchableWithoutFeedback>
-                    </View>
-                </TouchableWithoutFeedback>
-            </Modal>
             <TouchableOpacity
                 onPress={() => SetIsWarningShow(true)}
                 style={styles.btnLogout}
             >
-                <Image style={
-                    {
+                <Image
+                    style={{
                         height: 25,
-                        width: 25
-                    }
-                }
-                    source={require("../../Public/logout.png")} />
+                        width: 25,
+                    }}
+                    source={require("../../Public/logout.png")}
+                />
             </TouchableOpacity>
             <Modal
                 animationType="slide"
@@ -135,9 +83,7 @@ const BottomTab = ({ navigation }) => {
                                 <View style={styles.modalHead}>
                                     <TouchableOpacity
                                         style={styles.iconCancel}
-                                        onPress={() =>
-                                            SetIsWarningShow(false)
-                                        }
+                                        onPress={() => SetIsWarningShow(false)}
                                     >
                                         <Image
                                             source={require("../../Public/darkCancel.png")}
@@ -154,10 +100,9 @@ const BottomTab = ({ navigation }) => {
                                             width: 270,
                                         }}
                                     >
-                                        Bạn có chắc chắn muốn đăng xuất
-                                        không?
-                                    </CustomText>
-                                </View>
+                                        Bạn có chắc chắn muốn đăng xuất không?
+                                    </CustomText >
+                                </View >
                                 <View
                                     style={{
                                         flexDirection: "row",
@@ -174,35 +119,31 @@ const BottomTab = ({ navigation }) => {
                                         <CustomText
                                             style={{
                                                 color: "white",
-                                                fontFamily:
-                                                    "Be Vietnam bold",
+                                                fontFamily: "Be Vietnam bold",
                                             }}
                                         >
                                             Đăng xuất
                                         </CustomText>
                                     </TouchableOpacity>
                                     <TouchableOpacity
-                                        onPress={() =>
-                                            SetIsWarningShow(false)
-                                        }
+                                        onPress={() => SetIsWarningShow(false)}
                                         style={styles.btnCancel}
                                     >
                                         <CustomText
                                             style={{
                                                 color: "#4F4F4F",
-                                                fontFamily:
-                                                    "Be Vietnam bold",
+                                                fontFamily: "Be Vietnam bold",
                                             }}
                                         >
                                             Huỷ
                                         </CustomText>
                                     </TouchableOpacity>
                                 </View>
-                            </View>
-                        </TouchableWithoutFeedback>
-                    </View>
-                </TouchableWithoutFeedback>
-            </Modal>
+                            </View >
+                        </TouchableWithoutFeedback >
+                    </View >
+                </TouchableWithoutFeedback >
+            </Modal >
             <View
                 style={{
                     width,
@@ -224,6 +165,11 @@ const BottomTab = ({ navigation }) => {
                         },
                     }}
                 >
+                    <Tab.Screen
+                        name="Notification"
+                        component={Notification}
+                        options={{ tabBarVisible: false }}
+                    />
                     <Tab.Screen
                         name="Home"
                         component={HomeTab}
@@ -249,7 +195,9 @@ const BottomTab = ({ navigation }) => {
                                     />
                                     <CustomText
                                         style={{
-                                            color: focused ? "#386BF6" : "white",
+                                            color: focused
+                                                ? "#386BF6"
+                                                : "white",
                                             fontSize: 12 * scale,
                                         }}
                                     >
@@ -284,7 +232,9 @@ const BottomTab = ({ navigation }) => {
                                     />
                                     <CustomText
                                         style={{
-                                            color: focused ? "#386BF6" : "white",
+                                            color: focused
+                                                ? "#386BF6"
+                                                : "white",
                                             fontSize: 12 * scale,
                                         }}
                                     >
@@ -358,7 +308,9 @@ const BottomTab = ({ navigation }) => {
                                     />
                                     <CustomText
                                         style={{
-                                            color: focused ? "#386BF6" : "white",
+                                            color: focused
+                                                ? "#386BF6"
+                                                : "white",
                                             fontSize: 12 * scale,
                                         }}
                                     >
@@ -393,7 +345,9 @@ const BottomTab = ({ navigation }) => {
                                     />
                                     <CustomText
                                         style={{
-                                            color: focused ? "#386BF6" : "white",
+                                            color: focused
+                                                ? "#386BF6"
+                                                : "white",
                                             fontSize: 12 * scale,
                                         }}
                                     >
@@ -405,7 +359,7 @@ const BottomTab = ({ navigation }) => {
                     />
                 </Tab.Navigator>
             </View>
-        </View>
+        </View >
     );
 };
 
@@ -458,6 +412,82 @@ const styles = StyleSheet.create({
         width: "100%",
         justifyContent: "center",
     }, iconCancel: {
+        position: "absolute",
+        left: 10,
+        padding: 5,
+    },
+    modalTitle: {
+        fontSize: 15 * scale,
+    },
+    modalText: {
+        marginBottom: 15,
+        textAlign: "center",
+        fontSize: 15 * scale,
+    },
+    modalContent: {
+        height: 100,
+        justifyContent: "center",
+        alignItems: "center",
+        paddingHorizontal: 15,
+    },
+    btnConfirm: {
+        width: 130,
+        height: 56,
+        backgroundColor: "#FF495F",
+        alignItems: "center",
+        justifyContent: "center",
+        borderRadius: 5,
+    },
+    btnCancel: {
+        width: 130,
+        height: 56,
+        backgroundColor: "#F1F1F1",
+        alignItems: "center",
+        justifyContent: "center",
+        borderRadius: 5,
+    },
+    btnLogout: {
+        position: "absolute",
+        right: 20,
+        top: 40,
+        paddingBottom: 15,
+        paddingLeft: 10,
+        zIndex: 1,
+    },
+    btnNotify: {
+        position: "absolute",
+        right: 60,
+        top: 40,
+        paddingBottom: 15,
+        paddingLeft: 10,
+        zIndex: 1,
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    modalView: {
+        alignItems: "center",
+        backgroundColor: "white",
+        borderRadius: 10,
+        paddingVertical: 20,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
+        width: 310,
+    },
+    modalHead: {
+        flexDirection: "row",
+        width: "100%",
+        justifyContent: "center",
+    },
+    iconCancel: {
         position: "absolute",
         left: 10,
         padding: 5,

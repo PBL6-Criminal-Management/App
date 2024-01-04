@@ -41,7 +41,7 @@ const Profile = ({ navigation, route }) => {
 
         fetch(
             //&PageNumber=1&PageSize=10
-            API_URL + `v1/account/${userInfo.userId}`,
+            API_URL + `v1/profile`,
             {
                 method: "GET", // *GET, POST, PUT, DELETE, etc.
                 mode: "cors", // no-cors, cors, *same-origin
@@ -147,7 +147,11 @@ const Profile = ({ navigation, route }) => {
                 <TouchableOpacity onPress={() => SetIsModalVisible(true)}>
                     <Image
                         style={styles.avatar}
-                        source={{ uri: profile.imageLink }}
+                        source={
+                            profile.imageLink
+                                ? { uri: profile.imageLink }
+                                : require("../../Public/notFoundAvatar.png")
+                        }
                     ></Image>
                 </TouchableOpacity>
                 {profile != null && (
@@ -160,6 +164,7 @@ const Profile = ({ navigation, route }) => {
                         onBackdropPress={() => SetIsModalVisible(false)}
                     >
                         <ImageViewer
+                            index={0}
                             imageUrls={[
                                 {
                                     url: profile.imageLink,
@@ -187,7 +192,10 @@ const Profile = ({ navigation, route }) => {
                         showsVerticalScrollIndicator={true}
                         persistentScrollbar={true}
                     >
-                        <InformationFlat listItems={userInformation} />
+                        <InformationFlat
+                            listItems={userInformation}
+                            isShow={true}
+                        />
                     </ScrollView>
                 </View>
                 <TouchableOpacity

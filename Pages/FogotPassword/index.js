@@ -6,6 +6,7 @@ import {
     TextInput,
     ActivityIndicator,
     StatusBar,
+    Image,
 } from "react-native";
 import { Formik } from "formik";
 import * as yup from "yup";
@@ -106,6 +107,15 @@ const ForgotPassword = ({ navigation }) => {
                                 <ActivityIndicator size="large" color="green" />
                             </View>
                         )}
+                        <TouchableOpacity
+                            style={styles.backContainer}
+                            onPress={() => navigation.goBack()}
+                        >
+                            <Image
+                                source={require("../../Public/back.png")}
+                                style={styles.backBtn}
+                            />
+                        </TouchableOpacity>
                         <View style={styles.head}>
                             <CustomText style={styles.title}>
                                 Quản lý{"\n"}tội phạm

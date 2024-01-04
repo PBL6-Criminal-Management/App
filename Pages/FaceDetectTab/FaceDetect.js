@@ -7,6 +7,7 @@ import { toastConfig } from "../Components/ToastConfig.js";
 import { CustomText } from "../Components/CustomText.js";
 import { API_URL } from "../../Utils/constants.js";
 import styles from "./style.js";
+import ScanAnimation from "../Components/ScanAnimation.js";
 
 const FaceDetect = ({ navigation, route }) => {
     const { userInfo } = useContext(AuthContext);
@@ -27,6 +28,9 @@ const FaceDetect = ({ navigation, route }) => {
     const [type, SetType] = useState(CameraType.back);
     const [flashMode, SetFlashMode] = useState(FlashMode.off);
     const [image, SetImage] = useState(null);
+    const [isShowAnimated, SetIsShowAnimated] = useState(false);
+    const [detectDisabled, SetDetectDisabled] = useState(false);
+    const [imageHeight, setImageHeight] = useState(100);
 
     const toggleCameraFlash = () => {
         SetFlashMode((current) =>
@@ -36,6 +40,8 @@ const FaceDetect = ({ navigation, route }) => {
 
     const detectImage = () => {
         SetIsLoading(true);
+        SetIsShowAnimated(true);
+        SetDetectDisabled(true);
         const formData = new FormData();
         formData.append("CriminalImage", image);
 
@@ -64,6 +70,8 @@ const FaceDetect = ({ navigation, route }) => {
                                     text1: message,
                                 });
                             });
+                            SetIsShowAnimated(false);
+                            SetDetectDisabled(false);
                             SetIsLoading(false);
                             return;
                         }
@@ -92,11 +100,15 @@ const FaceDetect = ({ navigation, route }) => {
                                     : res,
                         });
                     }
+                    SetIsShowAnimated(false);
+                    SetDetectDisabled(false);
                     SetIsLoading(false);
                 })
                 .catch((e) => {
                     console.log(`login error: ${e}`);
                     SetIsLoading(false);
+                    SetIsShowAnimated(false);
+                    SetDetectDisabled(false);
                     Toast.show({
                         type: "error",
                         text1: "Có lỗi xảy ra: " + e,
@@ -108,6 +120,8 @@ const FaceDetect = ({ navigation, route }) => {
                 text1: "Không có quyền truy cập",
             });
             SetIsLoading(false);
+            SetIsShowAnimated(false);
+            SetDetectDisabled(false);
         }
     };
 
@@ -147,6 +161,7 @@ const FaceDetect = ({ navigation, route }) => {
                 </TouchableOpacity>
             </View>
             <View style={styles.centerImage}>
+                {isShowAnimated && <ScanAnimation imageHeight={imageHeight} />}
                 {isLoading && (
                     <View style={styles.waitingCircle}>
                         <ActivityIndicator size="large" color="green" />
@@ -158,14 +173,21 @@ const FaceDetect = ({ navigation, route }) => {
                         height: "100%",
                     }}
                     source={{ uri: image?.uri }}
+                    onLayout={(event) =>
+                        setImageHeight(event.nativeEvent.layout.height)
+                    }
                 />
             </View>
             <View style={[styles.foot, { justifyContent: "center" }]}>
                 <View style={[styles.bodyFoot, { gap: 100 }]}>
                     <TouchableOpacity
                         style={styles.btnDetectImage}
-                        onPress={() => detectImage()}
+                        onPress={() => {
+                            detectImage();
+                        }}
+                        disabled={detectDisabled}
                     >
+                        {detectDisabled && <View style={styles.imageOverlay} />}
                         <Image
                             source={require("../../Public/confirm.png")}
                             style={{
