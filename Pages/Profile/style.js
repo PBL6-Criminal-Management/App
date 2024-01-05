@@ -1,0 +1,145 @@
+import { StyleSheet } from "react-native";
+import color from "../../Contains/color";
+import { scale } from "../../Utils/constants";
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: "#F1F2F2",
+    },
+    head: {
+        backgroundColor: "#152259",
+    },
+    waitingCircle: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: 1,
+    },
+    backContainer: {
+        position: "absolute",
+        left: 20,
+        paddingRight: 5,
+        paddingBottom: 5,
+    },
+    backBtn: {
+        width: 25,
+        height: 25,
+        tintColor: "white",
+    },
+    reloadContainer: {
+        position: "absolute",
+        left: 20,
+        paddingRight: 5,
+        paddingBottom: 5,
+        borderWidth: 1,
+        borderColor: "white",
+        borderRadius: 100,
+        padding: 5,
+        top: -10
+    },
+    reloadBtn: {
+        width: 15,
+        height: 15,
+        tintColor: "white",
+    },
+    imageViewContainer: {
+        width: 180,
+        height: 180,
+        backgroundColor: "gray",
+        overflow: "hidden",
+        alignItems: "center",
+        justifyContent: "center",
+        borderRadius: 100,
+        marginBottom: 20,
+        borderWidth: 2,
+        borderColor: "white",
+    },
+    image: {
+        width: 180,
+        height: 180,
+        position: "absolute",
+    },
+    imageOverlay: {
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
+        ...StyleSheet.absoluteFill,
+    },
+    avatar: {
+        width: 180,
+        height: 180,
+        marginBottom: 20,
+        borderWidth: 2,
+        borderRadius: 100,
+        borderColor: "white",
+    },
+    content: {
+        position: "absolute",
+        top: 50,
+        width: "100%",
+        paddingHorizontal: 15,
+    },
+    name: {
+        fontFamily: "Be Vietnam bold",
+        fontSize: 20 * scale,
+        opacity: 1,
+        color: "white",
+    },
+    note: {
+        fontSize: 15 * scale,
+        opacity: 1,
+        color: "white",
+    },
+    body: {
+        width: "100%",
+        backgroundColor: "white",
+        borderRadius: 10,
+        paddingHorizontal: 30,
+        marginTop: 20,
+        marginBottom: 10,
+        paddingBottom: 20,
+    },
+    title: {
+        flexDirection: "row",
+        gap: 10,
+        alignItems: "center",
+        justifyContent: "center",
+        marginTop: 20,
+        paddingBottom: 20,
+    },
+    error: {
+        color: "red",
+        fontWeight: "bold",
+        marginTop: 5,
+    },
+    btnAgree: {
+        width: 200,
+        height: 56,
+        backgroundColor: "#152259",
+        color: "white",
+        alignItems: "center",
+        justifyContent: "center",
+        borderRadius: 5,
+    },
+    btnConfirm: {
+        width: 130,
+        height: 56,
+        backgroundColor: "#FF495F",
+        alignItems: "center",
+        justifyContent: "center",
+        borderRadius: 5,
+    },
+    btnCancel: {
+        width: 130,
+        height: 56,
+        backgroundColor: "#F1F1F1",
+        alignItems: "center",
+        justifyContent: "center",
+        borderRadius: 5,
+    },
+    scroll: {},
+});
+
+export default styles;
