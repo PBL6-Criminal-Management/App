@@ -91,16 +91,13 @@ const WantedList = ({ navigation }) => {
         fetch(
             //&PageNumber=1&PageSize=10
             API_URL +
-                "v1/wanted-criminal" +
-                `?WantedType=${
-                    dangerousLevelsChecked.length > 0
-                        ? dangerousLevelsChecked[0]
-                        : ""
-                }&&YearOfBirth=${
-                    value != null && value.length > 0 ? value[0] : ""
-                }&&Keyword=${
-                    txtSearch == null ? "" : txtSearch
-                }&OrderBy="Id ASC"`,
+            "v1/wanted-criminal" +
+            `?WantedType=${dangerousLevelsChecked.length > 0
+                ? dangerousLevelsChecked[0]
+                : ""
+            }&&YearOfBirth=${value != null && value.length > 0 ? value[0] : ""
+            }&&Keyword=${txtSearch == null ? "" : txtSearch
+            }&OrderBy="Id ASC"`,
             {
                 method: "GET", // *GET, POST, PUT, DELETE, etc.
                 mode: "cors", // no-cors, cors, *same-origin
@@ -126,8 +123,8 @@ const WantedList = ({ navigation }) => {
                             res.messages != null
                                 ? res.messages
                                 : res.title
-                                ? res.title
-                                : res,
+                                    ? res.title
+                                    : res,
                     });
                 }
                 SetIsLoading(false);
@@ -151,7 +148,7 @@ const WantedList = ({ navigation }) => {
     };
 
     const inputRef = useRef(null);
-    const checkLogic = () => {};
+    const checkLogic = () => { };
 
     return (
         <View style={styles.container}>
@@ -161,7 +158,7 @@ const WantedList = ({ navigation }) => {
                 translucent
                 backgroundColor="transparent"
             />
-            <View style={[styles.head, { height: 240 }]}></View>
+            <View style={[styles.head, { height: 250 }]}></View>
             <View style={[styles.content, { bottom: 250 }]}>
                 <CustomText style={styles.title}>Danh sách truy nã</CustomText>
                 <View style={styles.search}>

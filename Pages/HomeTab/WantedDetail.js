@@ -137,7 +137,7 @@ const WantedDetail = ({ navigation, route }) => {
                     if (res.data.wantedCriminals.length > 0) {
                         wantedInfor =
                             res.data.wantedCriminals[
-                                res.data.wantedCriminals.length - 1
+                            res.data.wantedCriminals.length - 1
                             ];
                         SetWantedInformation({
                             "Tội danh truy nã": wantedInfor.charge,
@@ -158,8 +158,8 @@ const WantedDetail = ({ navigation, route }) => {
                             res.messages != null
                                 ? res.messages
                                 : res.title
-                                ? res.title
-                                : res,
+                                    ? res.title
+                                    : res,
                     });
                 }
                 SetIsLoading(false);
@@ -233,7 +233,7 @@ const WantedDetail = ({ navigation, route }) => {
                                     url: titleInfo?.image,
                                 },
                             ]}
-                            renderIndicator={() => {}}
+                            renderIndicator={() => { }}
                             onClick={() => SetIsModalVisible(false)}
                             enableSwipeDown={true}
                             onSwipeDown={() => SetIsModalVisible(false)}

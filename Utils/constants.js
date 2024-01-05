@@ -1,5 +1,6 @@
+// export const API_URL = "http://192.168.101.13:5678/api/"; //local host server
 // export const API_URL = "http://192.168.1.5:5678/api/"; //local host server
-export const API_URL = "https://webapi20240103001211.azurewebsites.net/api/";
+export const API_URL = "https://criminalmanagementapi.azurewebsites.net/api/";
 //Note: if demo aspnet backend at localhost, change this API_URL and applicationUrl field
 //in launchSettings.json file of aspnet to your wifi ip on computer (only http (not https) that working at localhost)
 //(keep port 5678)
@@ -46,4 +47,9 @@ export const caseStatus = {
     0: "Chưa xét xử",
     1: "Đang điều tra",
     2: "Đã xét xử",
+};
+export const reportStatus = {
+    0: "Chưa xử lý",
+    1: "Đang xử lý",
+    2: "Đã xử lý",
 };

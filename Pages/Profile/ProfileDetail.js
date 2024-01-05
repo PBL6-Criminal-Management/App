@@ -75,8 +75,8 @@ const Profile = ({ navigation, route }) => {
                             res.messages != null
                                 ? res.messages
                                 : res.title
-                                ? res.title
-                                : res,
+                                    ? res.title
+                                    : res,
                     });
                 }
                 SetIsLoading(false);
@@ -114,7 +114,7 @@ const Profile = ({ navigation, route }) => {
         }
     }, [route.params]);
 
-    const checkLogic = () => {};
+    const checkLogic = () => { };
 
     return (
         <View style={styles.container}>
@@ -144,97 +144,6 @@ const Profile = ({ navigation, route }) => {
                         style={styles.reloadBtn}
                     />
                 </TouchableOpacity>
-                <TouchableOpacity
-                    onPress={() => SetIsWarningShow(true)}
-                    style={styles.btnLogout}
-                >
-                    <Image source={require("../../Public/logout.png")} />
-                </TouchableOpacity>
-                <Modal
-                    animationType="slide"
-                    transparent={true}
-                    visible={isWarningShow}
-                    onRequestClose={() => {
-                        SetIsWarningShow(!isWarningShow);
-                    }}
-                >
-                    <TouchableWithoutFeedback
-                        onPressOut={() => SetIsWarningShow(false)}
-                    >
-                        <View style={styles.modalContainer}>
-                            <TouchableWithoutFeedback>
-                                <View style={styles.modalView}>
-                                    <View style={styles.modalHead}>
-                                        <TouchableOpacity
-                                            style={styles.iconCancel}
-                                            onPress={() =>
-                                                SetIsWarningShow(false)
-                                            }
-                                        >
-                                            <Image
-                                                source={require("../../Public/darkCancel.png")}
-                                            />
-                                        </TouchableOpacity>
-                                        <CustomText style={styles.modalTitle}>
-                                            Cảnh báo
-                                        </CustomText>
-                                    </View>
-                                    <View style={styles.modalContent}>
-                                        <CustomText
-                                            style={{
-                                                fontSize: 14 * scale,
-                                                width: 270,
-                                            }}
-                                        >
-                                            Bạn có chắc chắn muốn đăng xuất
-                                            không?
-                                        </CustomText>
-                                    </View>
-                                    <View
-                                        style={{
-                                            flexDirection: "row",
-                                            gap: 20,
-                                        }}
-                                    >
-                                        <TouchableOpacity
-                                            onPress={() => {
-                                                SetIsWarningShow(false);
-                                                logout();
-                                            }}
-                                            style={styles.btnConfirm}
-                                        >
-                                            <CustomText
-                                                style={{
-                                                    color: "white",
-                                                    fontFamily:
-                                                        "Be Vietnam bold",
-                                                }}
-                                            >
-                                                Đăng xuất
-                                            </CustomText>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity
-                                            onPress={() =>
-                                                SetIsWarningShow(false)
-                                            }
-                                            style={styles.btnCancel}
-                                        >
-                                            <CustomText
-                                                style={{
-                                                    color: "#4F4F4F",
-                                                    fontFamily:
-                                                        "Be Vietnam bold",
-                                                }}
-                                            >
-                                                Huỷ
-                                            </CustomText>
-                                        </TouchableOpacity>
-                                    </View>
-                                </View>
-                            </TouchableWithoutFeedback>
-                        </View>
-                    </TouchableWithoutFeedback>
-                </Modal>
                 <TouchableOpacity onPress={() => SetIsModalVisible(true)}>
                     <Image
                         style={styles.avatar}
@@ -261,7 +170,7 @@ const Profile = ({ navigation, route }) => {
                                     url: profile.imageLink,
                                 },
                             ]}
-                            renderIndicator={() => {}}
+                            renderIndicator={() => { }}
                             onClick={() => SetIsModalVisible(false)}
                             enableSwipeDown={true}
                             onSwipeDown={() => SetIsModalVisible(false)}

@@ -106,8 +106,8 @@ const ProfileEdit = ({ navigation }) => {
                             res.messages != null
                                 ? res.messages
                                 : res.title
-                                ? res.title
-                                : res,
+                                    ? res.title
+                                    : res,
                     });
                 }
                 SetIsLoading(false);
@@ -183,8 +183,8 @@ const ProfileEdit = ({ navigation }) => {
                                 res.messages != null
                                     ? res.messages
                                     : res.title
-                                    ? res.title
-                                    : res,
+                                        ? res.title
+                                        : res,
                         });
                     }
                     SetIsLoading(false);
@@ -235,8 +235,8 @@ const ProfileEdit = ({ navigation }) => {
                             res.messages != null
                                 ? res.messages
                                 : res.title
-                                ? res.title
-                                : res,
+                                    ? res.title
+                                    : res,
                     });
                     SetIsLoading(false);
                 }
@@ -251,7 +251,7 @@ const ProfileEdit = ({ navigation }) => {
             });
     };
 
-    const checkLogic = () => {};
+    const checkLogic = () => { };
 
     useEffect(() => {
         getProfileFromAPI();
@@ -286,22 +286,22 @@ const ProfileEdit = ({ navigation }) => {
             initialValues={
                 profile
                     ? {
-                          ...profile,
-                          birthday: Moment(
-                              profile.birthday,
-                              "DD/MM/YYYY"
-                          ).toDate(),
-                      }
+                        ...profile,
+                        birthday: Moment(
+                            profile.birthday,
+                            "DD/MM/YYYY"
+                        ).toDate(),
+                    }
                     : {
-                          name: "",
-                          role: "",
-                          birthday: new Date(),
-                          gender: null,
-                          phoneNumber: "",
-                          email: "",
-                          image: "",
-                          imageLink: undefined,
-                      }
+                        name: "",
+                        role: "",
+                        birthday: new Date(),
+                        gender: null,
+                        phoneNumber: "",
+                        email: "",
+                        image: "",
+                        imageLink: undefined,
+                    }
             }
             validationSchema={validationSchema}
             onSubmit={(values) => {
@@ -360,118 +360,6 @@ const ProfileEdit = ({ navigation }) => {
                                     style={styles.backBtn}
                                 />
                             </TouchableOpacity>
-                            <TouchableOpacity
-                                onPress={() => SetIsWarningShow(true)}
-                                style={styles.btnLogout}
-                            >
-                                <Image
-                                    source={require("../../Public/logout.png")}
-                                />
-                            </TouchableOpacity>
-                            <Modal
-                                animationType="slide"
-                                transparent={true}
-                                visible={isWarningShow}
-                                onRequestClose={() => {
-                                    SetIsWarningShow(!isWarningShow);
-                                }}
-                            >
-                                <TouchableWithoutFeedback
-                                    onPressOut={() => SetIsWarningShow(false)}
-                                >
-                                    <View style={styles.modalContainer}>
-                                        <TouchableWithoutFeedback>
-                                            <View style={styles.modalView}>
-                                                <View style={styles.modalHead}>
-                                                    <TouchableOpacity
-                                                        style={
-                                                            styles.iconCancel
-                                                        }
-                                                        onPress={() =>
-                                                            SetIsWarningShow(
-                                                                false
-                                                            )
-                                                        }
-                                                    >
-                                                        <Image
-                                                            source={require("../../Public/darkCancel.png")}
-                                                        />
-                                                    </TouchableOpacity>
-                                                    <CustomText
-                                                        style={
-                                                            styles.modalTitle
-                                                        }
-                                                    >
-                                                        Cảnh báo
-                                                    </CustomText>
-                                                </View>
-                                                <View
-                                                    style={styles.modalContent}
-                                                >
-                                                    <CustomText
-                                                        style={{
-                                                            fontSize:
-                                                                14 * scale,
-                                                            width: 270,
-                                                        }}
-                                                    >
-                                                        Bạn có chắc chắn muốn
-                                                        đăng xuất không? Thông
-                                                        tin thay đổi của bạn có
-                                                        thể sẽ không được lưu!
-                                                    </CustomText>
-                                                </View>
-                                                <View
-                                                    style={{
-                                                        flexDirection: "row",
-                                                        gap: 20,
-                                                    }}
-                                                >
-                                                    <TouchableOpacity
-                                                        onPress={() => {
-                                                            SetIsWarningShow(
-                                                                false
-                                                            );
-                                                            logout();
-                                                        }}
-                                                        style={
-                                                            styles.btnConfirm
-                                                        }
-                                                    >
-                                                        <CustomText
-                                                            style={{
-                                                                color: "white",
-                                                                fontFamily:
-                                                                    "Be Vietnam bold",
-                                                            }}
-                                                        >
-                                                            Đăng xuất
-                                                        </CustomText>
-                                                    </TouchableOpacity>
-                                                    <TouchableOpacity
-                                                        onPress={() =>
-                                                            SetIsWarningShow(
-                                                                false
-                                                            )
-                                                        }
-                                                        style={styles.btnCancel}
-                                                    >
-                                                        <CustomText
-                                                            style={{
-                                                                color: "#4F4F4F",
-                                                                fontFamily:
-                                                                    "Be Vietnam bold",
-                                                            }}
-                                                        >
-                                                            Huỷ
-                                                        </CustomText>
-                                                    </TouchableOpacity>
-                                                </View>
-                                            </View>
-                                        </TouchableWithoutFeedback>
-                                    </View>
-                                </TouchableWithoutFeedback>
-                            </Modal>
                             <TouchableOpacity
                                 style={styles.imageViewContainer}
                                 onPress={() => chooseImage()}

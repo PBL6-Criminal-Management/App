@@ -102,8 +102,8 @@ const CriminalList = ({ navigation }) => {
                                 res.messages != null
                                     ? res.messages
                                     : res.title
-                                    ? res.title
-                                    : res,
+                                        ? res.title
+                                        : res,
                         });
                     }
                 })
@@ -170,23 +170,17 @@ const CriminalList = ({ navigation }) => {
         fetch(
             //&PageNumber=1&PageSize=10
             API_URL +
-                "v1/criminal" +
-                `?Status=${statusChecked.length > 0 ? statusChecked[0] : ""}
-                &YearOfBirth=${
-                    selectedYearOfBirth.length > 0 ? selectedYearOfBirth[0] : ""
-                }&Gender=${
-                    genderChecked.length > 0 ? genderChecked[0] == 1 : ""
-                }&Characteristics=${
-                    characteristics == null ? "" : characteristics
-                }&TypeOfViolation=${
-                    typeOfViolationChecked.length > 0
-                        ? typeOfViolationChecked[0]
-                        : ""
-                }&Area=${
-                    selectedArea.length > 0 ? selectedArea[0] : ""
-                }&Charge=${charge == null ? "" : charge}&Keyword=${
-                    txtSearch == null ? "" : txtSearch
-                }&OrderBy="Id ASC"`,
+            "v1/criminal" +
+            `?Status=${statusChecked.length > 0 ? statusChecked[0] : ""}
+                &YearOfBirth=${selectedYearOfBirth.length > 0 ? selectedYearOfBirth[0] : ""
+            }&Gender=${genderChecked.length > 0 ? genderChecked[0] == 1 : ""
+            }&Characteristics=${characteristics == null ? "" : characteristics
+            }&TypeOfViolation=${typeOfViolationChecked.length > 0
+                ? typeOfViolationChecked[0]
+                : ""
+            }&Area=${selectedArea.length > 0 ? selectedArea[0] : ""
+            }&Charge=${charge == null ? "" : charge}&Keyword=${txtSearch == null ? "" : txtSearch
+            }&OrderBy="Id ASC"`,
             {
                 method: "GET", // *GET, POST, PUT, DELETE, etc.
                 mode: "cors", // no-cors, cors, *same-origin
@@ -212,8 +206,8 @@ const CriminalList = ({ navigation }) => {
                             res.messages != null
                                 ? res.messages
                                 : res.title
-                                ? res.title
-                                : res,
+                                    ? res.title
+                                    : res,
                     });
                 }
                 SetIsLoading(false);
@@ -243,7 +237,7 @@ const CriminalList = ({ navigation }) => {
     };
 
     const inputRef = useRef(null);
-    const checkLogic = () => {};
+    const checkLogic = () => { };
 
     return (
         <View style={styles.container}>
@@ -253,7 +247,7 @@ const CriminalList = ({ navigation }) => {
                 translucent
                 backgroundColor="transparent"
             />
-            <View style={[styles.head, { height: 240 }]}></View>
+            <View style={[styles.head, { height: 250 }]}></View>
             <View style={[styles.content, { bottom: 250 }]}>
                 <CustomText style={styles.title}>Danh sách tội phạm</CustomText>
                 <View style={styles.search}>
