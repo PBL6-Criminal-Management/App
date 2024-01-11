@@ -15,9 +15,9 @@ import {
 } from "react-native";
 import styles from "./style.js";
 import CriminalElement from "../Components/CriminalElement.js";
-import FilterFields from "../Components/FilterFields.js";
 import { AuthContext } from "../../Context/AuthContext.js";
 import { CustomText } from "../Components/CustomText.js";
+import RadioFields from "../Components/RadioFields.js";
 import Toast from "react-native-toast-message";
 import {
     API_URL,
@@ -43,7 +43,7 @@ const CriminalList = ({ navigation }) => {
     const [txtSearch, SetTxtSearch] = useState(null);
 
     //combobox
-    const [selectedYearOfBirth, SetSelectedYearOfBirth] = useState([]);
+    const [selectedYearOfBirth, SetSelectedYearOfBirth] = useState(null);
     //value: now - 200 -> now (0 years old - 200 years old)
     const [yearOfBirthItems, SetYearOfBirthItems] = useState(
         Array.from({ length: 201 }, (_, i) => {
@@ -55,13 +55,13 @@ const CriminalList = ({ navigation }) => {
     );
 
     //area
-    const [selectedArea, SetSelectedArea] = useState([]);
+    const [selectedArea, SetSelectedArea] = useState(null);
     const [areaItems, SetAreaItems] = useState([]);
 
     //checkbox
-    const [statusChecked, SetStatusChecked] = useState([]);
-    const [typeOfViolationChecked, SetTypeOfViolationChecked] = useState([]);
-    const [genderChecked, SetGenderChecked] = useState([]);
+    const [statusChecked, SetStatusChecked] = useState(null);
+    const [typeOfViolationChecked, SetTypeOfViolationChecked] = useState(null);
+    const [genderChecked, SetGenderChecked] = useState(null);
 
     //textbox
     const [charge, SetCharge] = useState(null);
@@ -102,8 +102,8 @@ const CriminalList = ({ navigation }) => {
                                 res.messages != null
                                     ? res.messages
                                     : res.title
-                                        ? res.title
-                                        : res,
+                                    ? res.title
+                                    : res,
                         });
                     }
                 })
@@ -170,17 +170,21 @@ const CriminalList = ({ navigation }) => {
         fetch(
             //&PageNumber=1&PageSize=10
             API_URL +
-            "v1/criminal" +
-            `?Status=${statusChecked.length > 0 ? statusChecked[0] : ""}
-                &YearOfBirth=${selectedYearOfBirth.length > 0 ? selectedYearOfBirth[0] : ""
-            }&Gender=${genderChecked.length > 0 ? genderChecked[0] == 1 : ""
-            }&Characteristics=${characteristics == null ? "" : characteristics
-            }&TypeOfViolation=${typeOfViolationChecked.length > 0
-                ? typeOfViolationChecked[0]
-                : ""
-            }&Area=${selectedArea.length > 0 ? selectedArea[0] : ""
-            }&Charge=${charge == null ? "" : charge}&Keyword=${txtSearch == null ? "" : txtSearch
-            }&OrderBy="Id ASC"`,
+                "v1/criminal" +
+                `?Status=${statusChecked != null ? statusChecked : ""}
+                &YearOfBirth=${
+                    selectedYearOfBirth != null ? selectedYearOfBirth : ""
+                }&Gender=${
+                    genderChecked != null ? genderChecked == 1 : ""
+                }&Characteristics=${
+                    characteristics == null ? "" : characteristics
+                }&TypeOfViolation=${
+                    typeOfViolationChecked != null ? typeOfViolationChecked : ""
+                }&Area=${selectedArea != null ? selectedArea : ""}&Charge=${
+                    charge == null ? "" : charge
+                }&Keyword=${
+                    txtSearch == null ? "" : txtSearch
+                }&OrderBy="Id ASC"`,
             {
                 method: "GET", // *GET, POST, PUT, DELETE, etc.
                 mode: "cors", // no-cors, cors, *same-origin
@@ -206,8 +210,8 @@ const CriminalList = ({ navigation }) => {
                             res.messages != null
                                 ? res.messages
                                 : res.title
-                                    ? res.title
-                                    : res,
+                                ? res.title
+                                : res,
                     });
                 }
                 SetIsLoading(false);
@@ -223,11 +227,11 @@ const CriminalList = ({ navigation }) => {
     };
 
     const resetFilter = () => {
-        SetGenderChecked([]);
-        SetStatusChecked([]);
-        SetTypeOfViolationChecked([]);
-        SetSelectedYearOfBirth([]);
-        SetSelectedArea([]);
+        SetGenderChecked(null);
+        SetStatusChecked(null);
+        SetTypeOfViolationChecked(null);
+        SetSelectedYearOfBirth(null);
+        SetSelectedArea(null);
         SetCharge(null);
         SetCharacteristics(null);
     };
@@ -237,7 +241,7 @@ const CriminalList = ({ navigation }) => {
     };
 
     const inputRef = useRef(null);
-    const checkLogic = () => { };
+    const checkLogic = () => {};
 
     return (
         <View style={styles.container}>
@@ -338,11 +342,11 @@ const CriminalList = ({ navigation }) => {
                                             width: "100%",
                                         }}
                                     >
-                                        <FilterFields
+                                        <RadioFields
                                             title="Trạng thái"
                                             listItems={criminalStatus}
-                                            listChecked={statusChecked}
-                                            setListChecked={SetStatusChecked}
+                                            value={statusChecked}
+                                            setValue={SetStatusChecked}
                                         />
                                         <DropDown
                                             title="Năm sinh"
@@ -352,13 +356,11 @@ const CriminalList = ({ navigation }) => {
                                             setValue={SetSelectedYearOfBirth}
                                             setItems={SetYearOfBirthItems}
                                         />
-                                        <FilterFields
+                                        <RadioFields
                                             title="Loại vi phạm"
                                             listItems={typeOfViolation}
-                                            listChecked={typeOfViolationChecked}
-                                            setListChecked={
-                                                SetTypeOfViolationChecked
-                                            }
+                                            value={typeOfViolationChecked}
+                                            setValue={SetTypeOfViolationChecked}
                                         />
                                         <DropDown
                                             title="Khu vực"
@@ -368,11 +370,11 @@ const CriminalList = ({ navigation }) => {
                                             setValue={SetSelectedArea}
                                             setItems={SetAreaItems}
                                         />
-                                        <FilterFields
+                                        <RadioFields
                                             title="Giới tính"
                                             listItems={gender}
-                                            listChecked={genderChecked}
-                                            setListChecked={SetGenderChecked}
+                                            value={genderChecked}
+                                            setValue={SetGenderChecked}
                                         />
                                         <TextBox
                                             title="Tội danh"

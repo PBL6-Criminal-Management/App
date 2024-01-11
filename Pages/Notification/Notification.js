@@ -7,7 +7,7 @@ import {
     ActivityIndicator,
     Modal,
     ScrollView,
-    RefreshControl
+    RefreshControl,
 } from "react-native";
 import ImageViewer from "react-native-image-zoom-viewer";
 import { AuthContext } from "../../Context/AuthContext.js";
@@ -110,6 +110,7 @@ const Notification = ({ navigation, route }) => {
                             style={styles.scroll}
                             refreshControl={
                                 <RefreshControl
+                                    style={{ tintColor: "white" }}
                                     refreshing={refresh}
                                     onRefresh={() => SetRefresh(true)}
                                 />

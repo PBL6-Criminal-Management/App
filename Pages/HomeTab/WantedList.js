@@ -14,7 +14,7 @@ import {
 } from "react-native";
 import styles from "./style.js";
 import WantedElement from "../Components/WantedElement.js";
-import FilterFields from "../Components/FilterFields.js";
+import RadioFields from "../Components/RadioFields.js";
 import { AuthContext } from "../../Context/AuthContext.js";
 import { CustomText } from "../Components/CustomText.js";
 import Toast from "react-native-toast-message";
@@ -34,7 +34,7 @@ const WantedList = ({ navigation }) => {
     const [wantedList, SetWantedList] = useState(null);
     const { refreshToken } = useContext(AuthContext);
 
-    const [value, SetValue] = useState([]);
+    const [value, SetValue] = useState(null);
     const [isSubmit, SetIsSubmit] = useState(false);
     const [isLoading, SetIsLoading] = useState(false);
 
@@ -48,7 +48,7 @@ const WantedList = ({ navigation }) => {
         })
     );
 
-    const [dangerousLevelsChecked, SetDangerousLevelsChecked] = useState([]);
+    const [dangerousLevelsChecked, SetDangerousLevelsChecked] = useState(null);
 
     // useEffect(() => {
     //     console.log(dangerousLevelsChecked);
@@ -91,13 +91,12 @@ const WantedList = ({ navigation }) => {
         fetch(
             //&PageNumber=1&PageSize=10
             API_URL +
-            "v1/wanted-criminal" +
-            `?WantedType=${dangerousLevelsChecked.length > 0
-                ? dangerousLevelsChecked[0]
-                : ""
-            }&&YearOfBirth=${value != null && value.length > 0 ? value[0] : ""
-            }&&Keyword=${txtSearch == null ? "" : txtSearch
-            }&OrderBy="Id ASC"`,
+                "v1/wanted-criminal" +
+                `?WantedType=${
+                    dangerousLevelsChecked != null ? dangerousLevelsChecked : ""
+                }&&YearOfBirth=${value != null ? value : ""}&&Keyword=${
+                    txtSearch == null ? "" : txtSearch
+                }&OrderBy="Id ASC"`,
             {
                 method: "GET", // *GET, POST, PUT, DELETE, etc.
                 mode: "cors", // no-cors, cors, *same-origin
@@ -123,8 +122,8 @@ const WantedList = ({ navigation }) => {
                             res.messages != null
                                 ? res.messages
                                 : res.title
-                                    ? res.title
-                                    : res,
+                                ? res.title
+                                : res,
                     });
                 }
                 SetIsLoading(false);
@@ -140,15 +139,15 @@ const WantedList = ({ navigation }) => {
     };
 
     const resetFilter = () => {
-        SetDangerousLevelsChecked([]);
-        SetValue([]);
+        SetDangerousLevelsChecked(null);
+        SetValue(null);
     };
     const goToWantedDetail = (id) => {
         navigation.navigate("WantedDetail", (params = { criminalId: id }));
     };
 
     const inputRef = useRef(null);
-    const checkLogic = () => { };
+    const checkLogic = () => {};
 
     return (
         <View style={styles.container}>
@@ -240,13 +239,11 @@ const WantedList = ({ navigation }) => {
                                             </CustomText>
                                         </TouchableOpacity>
                                     </View>
-                                    <FilterFields
+                                    <RadioFields
                                         title="Mức độ nguy hiểm"
                                         listItems={wantedType}
-                                        listChecked={dangerousLevelsChecked}
-                                        setListChecked={
-                                            SetDangerousLevelsChecked
-                                        }
+                                        value={dangerousLevelsChecked}
+                                        setValue={SetDangerousLevelsChecked}
                                     />
                                     <DropDown
                                         title="Năm sinh"
