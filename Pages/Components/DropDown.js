@@ -16,7 +16,7 @@ const DropDown = (props) => {
                     gap: 10,
                     width: "100%",
                     alignItems: "flex-start",
-                    marginBottom: 20,
+                    marginBottom: 10,
                 },
                 Platform.OS === "ios" && { zIndex: 10 },
             ]}
@@ -30,7 +30,8 @@ const DropDown = (props) => {
                 {props.title}
             </CustomText>
             <DropDownPicker
-                multiple={props.multiple != undefined ? props.multiple : true}
+                // multiple={props.multiple != undefined ? props.multiple : true}
+                multiple={false}
                 open={open}
                 value={props.value}
                 items={props.items}

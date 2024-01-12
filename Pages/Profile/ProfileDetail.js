@@ -17,11 +17,9 @@ import { API_URL, roleEnum } from "../../Utils/constants.js";
 import { CustomText } from "../Components/CustomText.js";
 import InformationFlat from "../Components/InformationFlat.js";
 import { toastConfig } from "../Components/ToastConfig.js";
-import { scale } from "../../Utils/constants";
 
 const Profile = ({ navigation, route }) => {
-    const { logout, userInfo, refreshToken } = useContext(AuthContext);
-    const [isWarningShow, SetIsWarningShow] = useState(false);
+    const { refreshToken } = useContext(AuthContext);
     const [profile, SetProfile] = useState([]);
     const [userInformation, SetUserInformation] = useState([]);
     const [isLoading, SetIsLoading] = useState(false);
@@ -75,8 +73,8 @@ const Profile = ({ navigation, route }) => {
                             res.messages != null
                                 ? res.messages
                                 : res.title
-                                    ? res.title
-                                    : res,
+                                ? res.title
+                                : res,
                     });
                 }
                 SetIsLoading(false);
@@ -114,7 +112,7 @@ const Profile = ({ navigation, route }) => {
         }
     }, [route.params]);
 
-    const checkLogic = () => { };
+    const checkLogic = () => {};
 
     return (
         <View style={styles.container}>
@@ -170,7 +168,7 @@ const Profile = ({ navigation, route }) => {
                                     url: profile.imageLink,
                                 },
                             ]}
-                            renderIndicator={() => { }}
+                            renderIndicator={() => {}}
                             onClick={() => SetIsModalVisible(false)}
                             enableSwipeDown={true}
                             onSwipeDown={() => SetIsModalVisible(false)}

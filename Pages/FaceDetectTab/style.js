@@ -40,7 +40,6 @@ const styles = StyleSheet.create({
         opacity: 1,
     },
     btnCancel: {
-        marginTop: 22,
         padding: 5,
     },
     centerImage: {

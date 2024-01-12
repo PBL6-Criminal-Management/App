@@ -23,6 +23,8 @@ const InformationFields = ({ item, isShow, onHeadPressed }) => {
                     borderTopRightRadius: 5,
                     borderBottomLeftRadius: !isDropDown ? 5 : 0,
                     borderBottomRightRadius: !isDropDown ? 5 : 0,
+                    overflow: "hidden",
+                    marginBottom: isShow ? 0 : 2,
                 }}
             >
                 <CustomText

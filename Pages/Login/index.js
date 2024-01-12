@@ -171,7 +171,7 @@ const Login = ({ navigation, route }) => {
                                 Đăng nhập
                             </CustomText>
                         </TouchableOpacity>
-                        <CustomText
+                        {/* <CustomText
                             style={{
                                 color: "#53B6ED",
                                 textDecorationLine: "underline",
@@ -182,12 +182,12 @@ const Login = ({ navigation, route }) => {
                             }
                         >
                             Quên mật khẩu?
-                        </CustomText>
+                        </CustomText> */}
                     </View>
                 </View>
                 <View style={styles.foot}>
                     <View style={styles.footContent}>
-                        <CustomText>
+                        {/* <CustomText>
                             Cần sự giúp đỡ? Liên hệ{" "}
                             <CustomText
                                 style={{
@@ -202,7 +202,7 @@ const Login = ({ navigation, route }) => {
                             >
                                 Thanh Nhàn
                             </CustomText>
-                        </CustomText>
+                        </CustomText> */}
                     </View>
                 </View>
             </View>

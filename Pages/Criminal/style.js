@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
         left: 20,
         paddingRight: 5,
         paddingBottom: 5,
-        top: -10
+        top: 0,
     },
     backBtn: {
         width: 25,
@@ -29,10 +29,10 @@ const styles = StyleSheet.create({
         padding: 5,
         width: 25,
         height: 25,
-        top: -10,
+        top: 0,
         right: 100,
         alignItems: "center",
-        justifyContent: "center"
+        justifyContent: "center",
     },
     reloadBtn: {
         width: 15,
@@ -42,7 +42,6 @@ const styles = StyleSheet.create({
     avatar: {
         width: 180,
         height: 180,
-        marginBottom: 20,
         borderRadius: 100,
         alignSelf: "center",
         resizeMode: "stretch",

@@ -50,8 +50,7 @@ const InformationFlat = (props) => {
     }, [props]);
 
     return (
-        isShow &&
-        Object.keys(props.listItems).length > 0 && (
+        isShow && (
             <View
                 style={[
                     styles.body,
@@ -70,365 +69,400 @@ const InformationFlat = (props) => {
                     },
                 ]}
             >
-                {convertToArrayOfObjects(props.listItems).map((item, index) => {
-                    return (
-                        <View
-                            key={index}
-                            style={{
-                                borderRadius: 10,
-                                width: "100%",
-                                paddingVertical: 10,
-                                paddingLeft: 15,
-                                borderStyle: "solid",
-                                borderWidth: 1,
-                                borderColor: "lightgray",
-                            }}
-                        >
-                            {Object.entries(item)
-                                .filter(([key, value]) => key != "Id")
-                                .map(([key, value], index) => {
-                                    return (
-                                        <View
-                                            key={index}
-                                            style={{
-                                                flexDirection: "column",
-                                                paddingBottom: 10,
-                                            }}
-                                        >
-                                            {(key != "images" ||
-                                                (item.images.items != null &&
-                                                    item.images.items.length >
-                                                        0)) && (
-                                                <CustomText
-                                                    style={{
-                                                        fontFamily:
-                                                            "Be Vietnam bold",
-                                                        color: "#08354F",
-                                                    }}
-                                                >
-                                                    {key != "images"
-                                                        ? key
-                                                        : value.title}
-                                                    :
-                                                </CustomText>
-                                            )}
-                                            {(key == "Vụ án liên quan" ||
-                                                key == "Vụ án") &&
-                                            props.navigation != undefined ? (
+                {Object.keys(props.listItems).length > 0 ? (
+                    convertToArrayOfObjects(props.listItems).map(
+                        (item, index) => {
+                            return (
+                                <View
+                                    key={index}
+                                    style={{
+                                        borderRadius: 10,
+                                        width: "100%",
+                                        paddingVertical: 10,
+                                        paddingLeft: 15,
+                                        borderStyle: "solid",
+                                        borderWidth: 1,
+                                        borderColor: "lightgray",
+                                    }}
+                                >
+                                    {Object.entries(item)
+                                        .filter(([key, value]) => key != "Id")
+                                        .map(([key, value], index) => {
+                                            return (
                                                 <View
+                                                    key={index}
                                                     style={{
-                                                        display: "flex",
-                                                        flexDirection: "row",
-                                                        gap: 15,
+                                                        flexDirection: "column",
+                                                        paddingBottom: 10,
                                                     }}
                                                 >
-                                                    {value
-                                                        .toString()
-                                                        .split(",")
-                                                        .map((c, id) => {
-                                                            return (
-                                                                <CustomText
-                                                                    key={id}
-                                                                    style={{
-                                                                        color: "#53B6ED",
-                                                                        textDecorationLine:
-                                                                            "underline",
-                                                                    }}
-                                                                    onPress={() => {
-                                                                        console.log(
-                                                                            "CaseDetail",
-                                                                            (params =
-                                                                                {
-                                                                                    caseId: c,
-                                                                                    fromScreen:
-                                                                                        props.fromScreen,
-                                                                                })
+                                                    {(key != "images" ||
+                                                        (item.images.items !=
+                                                            null &&
+                                                            item.images.items
+                                                                .length >
+                                                                0)) && (
+                                                        <CustomText
+                                                            style={{
+                                                                fontFamily:
+                                                                    "Be Vietnam bold",
+                                                                color: "#08354F",
+                                                            }}
+                                                        >
+                                                            {key != "images"
+                                                                ? key
+                                                                : value.title}
+                                                            :
+                                                        </CustomText>
+                                                    )}
+                                                    {(key ==
+                                                        "Vụ án liên quan" ||
+                                                        key == "Vụ án") &&
+                                                    props.navigation !=
+                                                        undefined ? (
+                                                        <View
+                                                            style={{
+                                                                display: "flex",
+                                                                flexDirection:
+                                                                    "row",
+                                                                gap: 15,
+                                                            }}
+                                                        >
+                                                            {value
+                                                                .toString()
+                                                                .split(",")
+                                                                .map(
+                                                                    (c, id) => {
+                                                                        return (
+                                                                            <CustomText
+                                                                                key={
+                                                                                    id
+                                                                                }
+                                                                                style={{
+                                                                                    color: "#53B6ED",
+                                                                                    textDecorationLine:
+                                                                                        "underline",
+                                                                                }}
+                                                                                onPress={() => {
+                                                                                    console.log(
+                                                                                        "CaseDetail",
+                                                                                        (params =
+                                                                                            {
+                                                                                                caseId: c,
+                                                                                                fromScreen:
+                                                                                                    props.fromScreen,
+                                                                                            })
+                                                                                    );
+                                                                                    props.navigation.navigate(
+                                                                                        "CaseDetail",
+                                                                                        (params =
+                                                                                            {
+                                                                                                caseId: c,
+                                                                                                fromScreen:
+                                                                                                    props.fromScreen,
+                                                                                            })
+                                                                                    );
+                                                                                }}
+                                                                            >
+                                                                                Vụ
+                                                                                án{" "}
+                                                                                {id +
+                                                                                    1}
+                                                                            </CustomText>
                                                                         );
-                                                                        props.navigation.navigate(
-                                                                            "CaseDetail",
-                                                                            (params =
-                                                                                {
-                                                                                    caseId: c,
-                                                                                    fromScreen:
-                                                                                        props.fromScreen,
-                                                                                })
-                                                                        );
+                                                                    }
+                                                                )}
+                                                        </View>
+                                                    ) : key != "images" ? (
+                                                        <CustomText style={{}}>
+                                                            {value}
+                                                        </CustomText>
+                                                    ) : (
+                                                        item.images.items !=
+                                                            null &&
+                                                        item.images.items
+                                                            .length > 0 && (
+                                                            <>
+                                                                <ScrollView
+                                                                    snapToInterval={
+                                                                        200
+                                                                    }
+                                                                    decelerationRate={
+                                                                        "fast"
+                                                                    }
+                                                                    alwaysBounceHorizontal={
+                                                                        true
+                                                                    }
+                                                                    horizontal
+                                                                    contentContainerStyle={{
+                                                                        alignItems:
+                                                                            "center",
+                                                                        justifyContent:
+                                                                            "center",
                                                                     }}
                                                                 >
-                                                                    Vụ án{" "}
-                                                                    {id + 1}
-                                                                </CustomText>
-                                                            );
-                                                        })}
-                                                </View>
-                                            ) : key != "images" ? (
-                                                <CustomText style={{}}>
-                                                    {value}
-                                                </CustomText>
-                                            ) : (
-                                                item.images.items != null &&
-                                                item.images.items.length >
-                                                    0 && (
-                                                    <>
-                                                        <ScrollView
-                                                            snapToInterval={200}
-                                                            decelerationRate={
-                                                                "fast"
-                                                            }
-                                                            alwaysBounceHorizontal={
-                                                                true
-                                                            }
-                                                            horizontal
-                                                            contentContainerStyle={{
-                                                                alignItems:
-                                                                    "center",
-                                                                justifyContent:
-                                                                    "center",
-                                                            }}
-                                                        >
-                                                            {value.items.map(
-                                                                (
-                                                                    file,
-                                                                    index
-                                                                ) => (
-                                                                    <TouchableOpacity
-                                                                        key={
+                                                                    {value.items.map(
+                                                                        (
+                                                                            file,
                                                                             index
-                                                                        }
-                                                                        onPress={() => {
-                                                                            SetImageIndex(
-                                                                                index
-                                                                            );
-                                                                            SetIsModalVisible(
-                                                                                true
-                                                                            );
-                                                                        }}
-                                                                    >
-                                                                        {getFileType(
-                                                                            file.url
-                                                                        ) ===
-                                                                        "image" ? (
-                                                                            <Image
-                                                                                source={{
-                                                                                    uri: file.url,
-                                                                                }}
-                                                                                style={
-                                                                                    styles.image
+                                                                        ) => (
+                                                                            <TouchableOpacity
+                                                                                key={
+                                                                                    index
                                                                                 }
-                                                                            />
-                                                                        ) : (
-                                                                            <View
-                                                                                style={{
-                                                                                    width: 200,
-                                                                                    height: 200,
-                                                                                    overflow:
-                                                                                        "hidden",
-                                                                                    alignItems:
-                                                                                        "center",
-                                                                                    justifyContent:
-                                                                                        "center",
-                                                                                }}
-                                                                            >
-                                                                                <Video
-                                                                                    style={[
-                                                                                        styles.image,
-                                                                                        {
-                                                                                            position:
-                                                                                                "absolute",
-                                                                                        },
-                                                                                    ]}
-                                                                                    source={{
-                                                                                        uri: file.url,
-                                                                                    }}
-                                                                                    useNativeControls
-                                                                                    resizeMode={
-                                                                                        ResizeMode.CONTAIN
-                                                                                    }
-                                                                                    isLooping
-                                                                                    isMuted={
-                                                                                        false
-                                                                                    }
-                                                                                    rate={
-                                                                                        1.0
-                                                                                    }
-                                                                                    volume={
-                                                                                        1.0
-                                                                                    }
-                                                                                    onPlaybackStatusUpdate={
-                                                                                        setStatus
-                                                                                    }
-                                                                                />
-                                                                                <View
-                                                                                    style={{
-                                                                                        ...StyleSheet.absoluteFill,
-                                                                                    }}
-                                                                                />
-                                                                                <Image
-                                                                                    style={{
-                                                                                        width: 50,
-                                                                                        height: 50,
-                                                                                        tintColor:
-                                                                                            "white",
-                                                                                    }}
-                                                                                    source={require("../../Public/start.png")}
-                                                                                />
-                                                                            </View>
-                                                                        )}
-                                                                    </TouchableOpacity>
-                                                                )
-                                                            )}
-                                                        </ScrollView>
-                                                        <Modal
-                                                            visible={
-                                                                isModalVisible
-                                                            }
-                                                            transparent={true}
-                                                            onRequestClose={() => {
-                                                                SetIsModalVisible(
-                                                                    !isModalVisible
-                                                                );
-                                                            }}
-                                                            onBackdropPress={() =>
-                                                                SetIsModalVisible(
-                                                                    false
-                                                                )
-                                                            }
-                                                        >
-                                                            <ImageViewer
-                                                                index={
-                                                                    imageIndex
-                                                                }
-                                                                imageUrls={
-                                                                    value.items
-                                                                }
-                                                                // onClick={() =>
-                                                                //     SetIsModalVisible(
-                                                                //         false
-                                                                //     )
-                                                                // }
-                                                                enableSwipeDown={
-                                                                    true
-                                                                }
-                                                                onSwipeDown={() =>
-                                                                    SetIsModalVisible(
-                                                                        false
-                                                                    )
-                                                                }
-                                                                renderImage={(
-                                                                    file
-                                                                ) => {
-                                                                    if (
-                                                                        getFileType(
-                                                                            file
-                                                                                .source
-                                                                                .uri
-                                                                        ) ===
-                                                                        "image"
-                                                                    ) {
-                                                                        return (
-                                                                            <View
-                                                                                style={{
-                                                                                    flex: 1,
-                                                                                }}
-                                                                            >
-                                                                                <Image
-                                                                                    style={{
-                                                                                        flex: 1,
-                                                                                    }}
-                                                                                    source={{
-                                                                                        uri: file
-                                                                                            .source
-                                                                                            .uri,
-                                                                                    }}
-                                                                                />
-                                                                            </View>
-                                                                        );
-                                                                    } else
-                                                                        return (
-                                                                            <View
-                                                                                style={{
-                                                                                    flex: 1,
-                                                                                    justifyContent:
-                                                                                        "center",
-                                                                                    alignItems:
-                                                                                        "center",
-                                                                                }}
-                                                                            >
-                                                                                <Video
-                                                                                    style={{
-                                                                                        height: 562.2254758418741,
-                                                                                        width: 375,
-                                                                                    }}
-                                                                                    source={{
-                                                                                        uri: file
-                                                                                            .source
-                                                                                            .uri,
-                                                                                    }}
-                                                                                    useNativeControls
-                                                                                    resizeMode={
-                                                                                        ResizeMode.CONTAIN
-                                                                                    }
-                                                                                    isLooping
-                                                                                    isMuted={
-                                                                                        false
-                                                                                    }
-                                                                                    rate={
-                                                                                        1.0
-                                                                                    }
-                                                                                    volume={
-                                                                                        1.0
-                                                                                    }
-                                                                                    shouldPlay={
+                                                                                onPress={() => {
+                                                                                    SetImageIndex(
+                                                                                        index
+                                                                                    );
+                                                                                    SetIsModalVisible(
                                                                                         true
-                                                                                    }
-                                                                                    onPlaybackStatusUpdate={
-                                                                                        setStatus
-                                                                                    }
-                                                                                />
-                                                                            </View>
+                                                                                    );
+                                                                                }}
+                                                                            >
+                                                                                {getFileType(
+                                                                                    file.url
+                                                                                ) ===
+                                                                                "image" ? (
+                                                                                    <Image
+                                                                                        source={{
+                                                                                            uri: file.url,
+                                                                                        }}
+                                                                                        style={
+                                                                                            styles.image
+                                                                                        }
+                                                                                    />
+                                                                                ) : (
+                                                                                    <View
+                                                                                        style={{
+                                                                                            width: 200,
+                                                                                            height: 200,
+                                                                                            overflow:
+                                                                                                "hidden",
+                                                                                            alignItems:
+                                                                                                "center",
+                                                                                            justifyContent:
+                                                                                                "center",
+                                                                                        }}
+                                                                                    >
+                                                                                        <Video
+                                                                                            style={[
+                                                                                                styles.image,
+                                                                                                {
+                                                                                                    position:
+                                                                                                        "absolute",
+                                                                                                },
+                                                                                            ]}
+                                                                                            source={{
+                                                                                                uri: file.url,
+                                                                                            }}
+                                                                                            useNativeControls
+                                                                                            resizeMode={
+                                                                                                ResizeMode.CONTAIN
+                                                                                            }
+                                                                                            isLooping
+                                                                                            isMuted={
+                                                                                                false
+                                                                                            }
+                                                                                            rate={
+                                                                                                1.0
+                                                                                            }
+                                                                                            volume={
+                                                                                                1.0
+                                                                                            }
+                                                                                            onPlaybackStatusUpdate={
+                                                                                                setStatus
+                                                                                            }
+                                                                                        />
+                                                                                        <View
+                                                                                            style={{
+                                                                                                ...StyleSheet.absoluteFill,
+                                                                                            }}
+                                                                                        />
+                                                                                        <Image
+                                                                                            style={{
+                                                                                                width: 50,
+                                                                                                height: 50,
+                                                                                                tintColor:
+                                                                                                    "white",
+                                                                                            }}
+                                                                                            source={require("../../Public/start.png")}
+                                                                                        />
+                                                                                    </View>
+                                                                                )}
+                                                                            </TouchableOpacity>
+                                                                        )
+                                                                    )}
+                                                                </ScrollView>
+                                                                <Modal
+                                                                    visible={
+                                                                        isModalVisible
+                                                                    }
+                                                                    transparent={
+                                                                        true
+                                                                    }
+                                                                    onRequestClose={() => {
+                                                                        SetIsModalVisible(
+                                                                            !isModalVisible
                                                                         );
-                                                                }}
-                                                            />
-                                                        </Modal>
-                                                    </>
-                                                )
-                                            )}
+                                                                    }}
+                                                                    onBackdropPress={() =>
+                                                                        SetIsModalVisible(
+                                                                            false
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    <ImageViewer
+                                                                        index={
+                                                                            imageIndex
+                                                                        }
+                                                                        imageUrls={
+                                                                            value.items
+                                                                        }
+                                                                        // onClick={() =>
+                                                                        //     SetIsModalVisible(
+                                                                        //         false
+                                                                        //     )
+                                                                        // }
+                                                                        enableSwipeDown={
+                                                                            true
+                                                                        }
+                                                                        onSwipeDown={() =>
+                                                                            SetIsModalVisible(
+                                                                                false
+                                                                            )
+                                                                        }
+                                                                        renderImage={(
+                                                                            file
+                                                                        ) => {
+                                                                            if (
+                                                                                getFileType(
+                                                                                    file
+                                                                                        .source
+                                                                                        .uri
+                                                                                ) ===
+                                                                                "image"
+                                                                            ) {
+                                                                                return (
+                                                                                    <View
+                                                                                        style={{
+                                                                                            flex: 1,
+                                                                                        }}
+                                                                                    >
+                                                                                        <Image
+                                                                                            style={{
+                                                                                                flex: 1,
+                                                                                            }}
+                                                                                            source={{
+                                                                                                uri: file
+                                                                                                    .source
+                                                                                                    .uri,
+                                                                                            }}
+                                                                                        />
+                                                                                    </View>
+                                                                                );
+                                                                            } else
+                                                                                return (
+                                                                                    <View
+                                                                                        style={{
+                                                                                            flex: 1,
+                                                                                            justifyContent:
+                                                                                                "center",
+                                                                                            alignItems:
+                                                                                                "center",
+                                                                                        }}
+                                                                                    >
+                                                                                        <Video
+                                                                                            style={{
+                                                                                                height: 562.2254758418741,
+                                                                                                width: 375,
+                                                                                            }}
+                                                                                            source={{
+                                                                                                uri: file
+                                                                                                    .source
+                                                                                                    .uri,
+                                                                                            }}
+                                                                                            useNativeControls
+                                                                                            resizeMode={
+                                                                                                ResizeMode.CONTAIN
+                                                                                            }
+                                                                                            isLooping
+                                                                                            isMuted={
+                                                                                                false
+                                                                                            }
+                                                                                            rate={
+                                                                                                1.0
+                                                                                            }
+                                                                                            volume={
+                                                                                                1.0
+                                                                                            }
+                                                                                            shouldPlay={
+                                                                                                true
+                                                                                            }
+                                                                                            onPlaybackStatusUpdate={
+                                                                                                setStatus
+                                                                                            }
+                                                                                        />
+                                                                                    </View>
+                                                                                );
+                                                                        }}
+                                                                    />
+                                                                </Modal>
+                                                            </>
+                                                        )
+                                                    )}
+                                                </View>
+                                            );
+                                        })}
+                                    {props.hasDetailView && (
+                                        <View style={{ alignSelf: "center" }}>
+                                            <CustomText
+                                                style={{
+                                                    color: "#53B6ED",
+                                                    textDecorationLine:
+                                                        "underline",
+                                                }}
+                                                onPress={() => {
+                                                    console.log(
+                                                        "CriminalDetail",
+                                                        (params = {
+                                                            criminalId: item.Id,
+                                                            fromScreen:
+                                                                props.fromScreen,
+                                                        })
+                                                    );
+                                                    props.navigation.navigate(
+                                                        "CriminalDetail",
+                                                        (params = {
+                                                            criminalId: item.Id,
+                                                            fromScreen:
+                                                                props.fromScreen,
+                                                        })
+                                                    );
+                                                }}
+                                            >
+                                                Xem chi tiết
+                                            </CustomText>
                                         </View>
-                                    );
-                                })}
-                            {props.hasDetailView && (
-                                <View style={{ alignSelf: "center" }}>
-                                    <CustomText
-                                        style={{
-                                            color: "#53B6ED",
-                                            textDecorationLine: "underline",
-                                        }}
-                                        onPress={() => {
-                                            console.log(
-                                                "CriminalDetail",
-                                                (params = {
-                                                    criminalId: item.Id,
-                                                    fromScreen:
-                                                        props.fromScreen,
-                                                })
-                                            );
-                                            props.navigation.navigate(
-                                                "CriminalDetail",
-                                                (params = {
-                                                    criminalId: item.Id,
-                                                    fromScreen:
-                                                        props.fromScreen,
-                                                })
-                                            );
-                                        }}
-                                    >
-                                        Xem chi tiết
-                                    </CustomText>
+                                    )}
                                 </View>
-                            )}
-                        </View>
-                    );
-                })}
+                            );
+                        }
+                    )
+                ) : (
+                    <View
+                        style={{
+                            borderRadius: 10,
+                            width: "100%",
+                            paddingVertical: 10,
+                            paddingLeft: 15,
+                            borderStyle: "solid",
+                            borderWidth: 1,
+                            borderColor: "lightgray",
+                        }}
+                    >
+                        <CustomText>Không có thông tin!</CustomText>
+                    </View>
+                )}
             </View>
         )
     );

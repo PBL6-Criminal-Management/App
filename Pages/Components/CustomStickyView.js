@@ -29,7 +29,7 @@ const CustomStickyView = ({
         <View style={style}>
             <StickyHeaderFlatlist
                 keyExtractor={(_, i) => i + ""}
-                style={{ borderRadius: 5 }}
+                style={{ borderRadius: 5, overflow: "hidden" }}
                 childrenKey={childrenKey}
                 renderHeader={({ item, index }) => {
                     return (
