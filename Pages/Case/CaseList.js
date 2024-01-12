@@ -15,7 +15,7 @@ import {
 } from "react-native";
 import styles from "./style.js";
 import CaseElement from "../Components/CaseElement.js";
-import FilterFields from "../Components/FilterFields.js";
+import RadioFields from "../Components/RadioFields.js";
 import { AuthContext } from "../../Context/AuthContext.js";
 import { CustomText } from "../Components/CustomText.js";
 import Toast from "react-native-toast-message";
@@ -41,12 +41,12 @@ const CaseList = ({ navigation }) => {
     const [txtSearch, SetTxtSearch] = useState(null);
 
     //area
-    const [selectedArea, SetSelectedArea] = useState([]);
+    const [selectedArea, SetSelectedArea] = useState(null);
     const [areaItems, SetAreaItems] = useState([]);
 
     //checkbox
-    const [statusChecked, SetStatusChecked] = useState([]);
-    const [typeOfViolationChecked, SetTypeOfViolationChecked] = useState([]);
+    const [statusChecked, SetStatusChecked] = useState(null);
+    const [typeOfViolationChecked, SetTypeOfViolationChecked] = useState(null);
 
     //data to show
     const [caseList, SetCaseList] = useState([]);
@@ -83,8 +83,8 @@ const CaseList = ({ navigation }) => {
                                 res.messages != null
                                     ? res.messages
                                     : res.title
-                                        ? res.title
-                                        : res,
+                                    ? res.title
+                                    : res,
                         });
                     }
                 })
@@ -145,13 +145,13 @@ const CaseList = ({ navigation }) => {
         fetch(
             //&PageNumber=1&PageSize=10
             API_URL +
-            "v1/case" +
-            `?Status=${statusChecked.length > 0 ? statusChecked[0] : ""}
-            &TypeOfViolation=${typeOfViolationChecked.length > 0
-                ? typeOfViolationChecked[0]
-                : ""
-            }&Area=${selectedArea.length > 0 ? selectedArea[0] : ""}&Keyword=${txtSearch == null ? "" : txtSearch
-            }
+                "v1/case" +
+                `?Status=${statusChecked != null ? statusChecked : ""}
+            &TypeOfViolation=${
+                typeOfViolationChecked != null ? typeOfViolationChecked : ""
+            }&Area=${selectedArea != null ? selectedArea : ""}&Keyword=${
+                    txtSearch == null ? "" : txtSearch
+                }
             &OrderBy="Id ASC"`,
             {
                 method: "GET", // *GET, POST, PUT, DELETE, etc.
@@ -177,8 +177,8 @@ const CaseList = ({ navigation }) => {
                             res.messages != null
                                 ? res.messages
                                 : res.title
-                                    ? res.title
-                                    : res,
+                                ? res.title
+                                : res,
                     });
                 }
                 SetIsLoading(false);
@@ -194,9 +194,9 @@ const CaseList = ({ navigation }) => {
     };
 
     const resetFilter = () => {
-        SetStatusChecked([]);
-        SetTypeOfViolationChecked([]);
-        SetSelectedArea([]);
+        SetStatusChecked(null);
+        SetTypeOfViolationChecked(null);
+        SetSelectedArea(null);
     };
 
     const goToCaseDetail = (id) => {
@@ -204,7 +204,7 @@ const CaseList = ({ navigation }) => {
     };
 
     const inputRef = useRef(null);
-    const checkLogic = () => { };
+    const checkLogic = () => {};
 
     return (
         <View style={styles.container}>
@@ -313,19 +313,17 @@ const CaseList = ({ navigation }) => {
                                             setValue={SetSelectedArea}
                                             setItems={SetAreaItems}
                                         />
-                                        <FilterFields
+                                        <RadioFields
                                             title="Trạng thái"
                                             listItems={caseStatus}
-                                            listChecked={statusChecked}
-                                            setListChecked={SetStatusChecked}
+                                            value={statusChecked}
+                                            setValue={SetStatusChecked}
                                         />
-                                        <FilterFields
+                                        <RadioFields
                                             title="Loại vi phạm"
                                             listItems={typeOfViolation}
-                                            listChecked={typeOfViolationChecked}
-                                            setListChecked={
-                                                SetTypeOfViolationChecked
-                                            }
+                                            value={typeOfViolationChecked}
+                                            setValue={SetTypeOfViolationChecked}
                                         />
                                     </ScrollView>
                                     <TouchableOpacity

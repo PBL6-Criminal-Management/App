@@ -241,34 +241,34 @@ const SuccessDetect = ({ navigation, route }) => {
                                 // persistentScrollbar={true}
                                 style={{ height: "90%" }}
                                 data={
-                                    !SeeMore
-                                        ? [
-                                              {
-                                                  title: "Thông tin cơ bản",
-                                                  listItems: basicInformation,
-                                              },
-                                          ]
-                                        : [
-                                              {
-                                                  title: "Thông tin cơ bản",
-                                                  listItems: basicInformation,
-                                              },
-                                              {
-                                                  title: "Thông tin thêm",
-                                                  listItems: moreInformation,
-                                              },
-                                              {
-                                                  title: "Thông tin truy nã",
-                                                  listItems:
-                                                      wantedInformation.length >
-                                                      0
-                                                          ? wantedInformation
-                                                          : {
-                                                                "Số lần truy nã":
-                                                                    "Chưa bị truy nã lần nào",
-                                                            },
-                                              },
-                                          ]
+                                    // !SeeMore
+                                    //     ? [
+                                    //           {
+                                    //               title: "Thông tin cơ bản",
+                                    //               listItems: basicInformation,
+                                    //           },
+                                    //       ]
+                                    //     :
+                                    [
+                                        {
+                                            title: "Thông tin cơ bản",
+                                            listItems: basicInformation,
+                                        },
+                                        {
+                                            title: "Thông tin thêm",
+                                            listItems: moreInformation,
+                                        },
+                                        {
+                                            title: "Thông tin truy nã",
+                                            listItems:
+                                                wantedInformation.length > 0
+                                                    ? wantedInformation
+                                                    : {
+                                                          "Số lần truy nã":
+                                                              "Chưa bị truy nã lần nào",
+                                                      },
+                                        },
+                                    ]
                                 }
                                 childrenKey={"listItems"}
                                 navigation={navigation}
@@ -277,7 +277,7 @@ const SuccessDetect = ({ navigation, route }) => {
                                     id: criminalInfo.foundCriminal.id,
                                 }}
                             />
-                            {!SeeMore && (
+                            {/* {!SeeMore && (
                                 <CustomText
                                     style={{
                                         color: "#53B6ED",
@@ -288,7 +288,7 @@ const SuccessDetect = ({ navigation, route }) => {
                                 >
                                     Xem thêm
                                 </CustomText>
-                            )}
+                            )} */}
                         </>
                     ) : (
                         <CustomText style={{ alignSelf: "center" }}>

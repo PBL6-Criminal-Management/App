@@ -250,7 +250,14 @@ const CriminalDetail = ({ navigation, route }) => {
                         style={styles.reloadBtn}
                     />
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => SetIsModalVisible(true)}>
+                <TouchableOpacity
+                    style={{
+                        marginTop: 20,
+                        marginBottom: 20,
+                        borderRadius: 100,
+                    }}
+                    onPress={() => SetIsModalVisible(true)}
+                >
                     <Image
                         style={styles.avatar}
                         source={{ uri: titleInfo?.image }}
@@ -282,7 +289,7 @@ const CriminalDetail = ({ navigation, route }) => {
                 <CustomText style={styles.note}>
                     Tội danh gần nhất: {titleInfo?.charge}
                 </CustomText>
-                <View style={{ marginTop: 26, width: "100%" }}>
+                <View style={{ marginTop: 15, width: "100%" }}>
                     <CustomStickyView
                         style={styles.scroll}
                         data={[

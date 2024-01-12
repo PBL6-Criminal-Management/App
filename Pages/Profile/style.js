@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
         borderColor: "white",
         borderRadius: 100,
         padding: 5,
-        top: -10
+        top: 0,
     },
     reloadBtn: {
         width: 15,

@@ -18,6 +18,8 @@ sau đó npx expo start (hoặc npm start) để chạy chương trình, trong m
 
 Nếu muốn cài một package nào đó trong project hiện tại thì gõ 'npm install <package_name>', nếu muốn cài cho global thì gõ 'npm install -g <package_name>'
 
+Lưu package 'react-native-gesture-handler' vào project bằng lệnh 'npm install --save react-native-gesture-handler'
+
 # Về việc viết css
 
 Trong thư mục Pages chứa các trang của app, mỗi trang là 1 thư mục bao gồm file index và file styles tương ứng
